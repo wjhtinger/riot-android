@@ -1066,8 +1066,8 @@ public class VectorMemberDetailsActivity extends MXCActionBarActivity implements
             mMemberAvatarImageView = (ImageView) findViewById(R.id.avatar_img);
             mMemberAvatarBadgeImageView = (ImageView) findViewById(R.id.member_avatar_badge);
 
-            mFullMemberAvatarImageView = (ImageView) findViewById(R.id.member_details_fullscreen_avatar_image_view);
-            mFullMemberAvatarLayout = findViewById(R.id.member_details_fullscreen_avatar_layout);
+            mFullMemberAvatarImageView = (ImageView) findViewById(R.id.fullscreen_avatar_image_view);
+            mFullMemberAvatarLayout = findViewById(R.id.fullscreen_avatar_view);
 
             mMemberNameTextView = (TextView) findViewById(R.id.member_details_name);
             mPresenceTextView = (TextView) findViewById(R.id.member_details_presence);

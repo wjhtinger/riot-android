@@ -291,6 +291,7 @@ public class VectorParticipantsAdapter extends BaseExpandableListAdapter {
                         Contact dummyContact = new Contact(email);
                         dummyContact.setDisplayName(contact.getDisplayName());
                         dummyContact.addEmailAdress(email);
+                        dummyContact.setAvatarUri(contact.getAvatarUri());
                         dummyContact.setThumbnailUri(contact.getThumbnailUri());
 
                         ParticipantAdapterItem participant = new ParticipantAdapterItem(dummyContact);

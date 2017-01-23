@@ -21,6 +21,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+
 import org.matrix.androidsdk.util.Log;
 
 import org.matrix.androidsdk.rest.model.User;
@@ -52,7 +53,8 @@ public class Contact implements java.io.Serializable {
 
         /**
          * Constructor
-         * @param matrixId the matrix id
+         *
+         * @param matrixId  the matrix id
          * @param accountId the account id
          */
         public MXID(String matrixId, String accountId) {
@@ -67,9 +69,13 @@ public class Contact implements java.io.Serializable {
 
     // the contact display name
     private String mDisplayName = "";
-    // the thumbnail uri
+    // the avatar uri
+    private String mAvatarUri;
+    // the avatar thumbnail uri
     private String mThumbnailUri;
-    // the thumbnail image
+    // the avatar image
+    private transient Bitmap mAvatar;
+    // the avatar thumbnail image
     private transient Bitmap mThumbnail;
 
     // phone numbers list
@@ -83,6 +89,7 @@ public class Contact implements java.io.Serializable {
 
     /**
      * Constructor
+     *
      * @param contactId the contact id.
      */
     public Contact(String contactId) {
@@ -94,6 +101,7 @@ public class Contact implements java.io.Serializable {
     }
 
     // emails list
+
     /**
      * @return the emails list.
      */
@@ -103,6 +111,7 @@ public class Contact implements java.io.Serializable {
 
     /**
      * Add an email address to the list.
+     *
      * @param anEmailAddress the email address to add
      */
     public void addEmailAdress(String anEmailAddress) {
@@ -110,7 +119,7 @@ public class Contact implements java.io.Serializable {
             mEmails.add(anEmailAddress);
 
             // test if the email address also matches to a matrix ID
-            MXID mxid =  PIDsRetriever.getInstance().getMXID(anEmailAddress);
+            MXID mxid = PIDsRetriever.getInstance().getMXID(anEmailAddress);
 
             if (null != mxid) {
                 mMXIDsByElement.put(anEmailAddress, mxid);
@@ -127,6 +136,7 @@ public class Contact implements java.io.Serializable {
 
     /**
      * Add a phone number address to the list.
+     *
      * @param aPhonenumber the phone number to add
      */
     public void addPhonenumber(String aPhonenumber) {
@@ -136,8 +146,27 @@ public class Contact implements java.io.Serializable {
     }
 
     /**
+     * Get the avatar URI
+     *
+     * @return the avatar URI
+     */
+    public String getAvatarUri() {
+        return mAvatarUri;
+    }
+
+    /**
+     * Defines an avatar URI
+     *
+     * @param avatarUri the avatar uri
+     */
+    public void setAvatarUri(String avatarUri) {
+        mAvatarUri = avatarUri;
+    }
+
+    /**
      * Defines a thumbnail URI.
-     * @return the thumbnail uri.
+     *
+     * @return the thumbnail URI.
      */
     public String getThumbnailUri() {
         return mThumbnailUri;
@@ -145,6 +174,7 @@ public class Contact implements java.io.Serializable {
 
     /**
      * Defines a new thumbnail uri.
+     *
      * @param aThumbnailUri the new thumbnail ur.
      */
     public void setThumbnailUri(String aThumbnailUri) {
@@ -170,8 +200,9 @@ public class Contact implements java.io.Serializable {
 
     /**
      * Defines a matrix identifier for a dedicated pattern
+     *
      * @param email the pattern
-     * @param mxid the matrixId
+     * @param mxid  the matrixId
      */
     public void put(String email, MXID mxid) {
         if ((null != email) && (null != mxid) && !TextUtils.isEmpty(mxid.mMatrixId)) {
@@ -181,6 +212,7 @@ public class Contact implements java.io.Serializable {
 
     /**
      * Check if the contact could contain some matrix Ids
+     *
      * @return true if the contact could contain some matrix IDs
      */
     private boolean couldContainMatridIds() {
@@ -189,6 +221,7 @@ public class Contact implements java.io.Serializable {
 
     /**
      * Tell if one field contains the pattern
+     *
      * @param pattern the pattern to find
      * @return true if it is found.
      */
@@ -205,7 +238,7 @@ public class Contact implements java.io.Serializable {
         }
 
         if (!matched) {
-            for(String email : mEmails) {
+            for (String email : mEmails) {
                 matched |= email.toLowerCase().contains(pattern);
             }
         }
@@ -215,6 +248,7 @@ public class Contact implements java.io.Serializable {
 
     /**
      * Tell whether a matrix id/email has the provided prefix.
+     *
      * @param prefix the prefix
      * @return true if one item matched
      */
@@ -224,7 +258,7 @@ public class Contact implements java.io.Serializable {
             return false;
         }
 
-        for(String email : mEmails) {
+        for (String email : mEmails) {
             if (email.startsWith(prefix)) {
                 return true;
             }
@@ -243,6 +277,7 @@ public class Contact implements java.io.Serializable {
 
     /**
      * test if some fields match with the reg ex.
+     *
      * @param aRegEx the reg ex.
      * @return true if it matches
      */
@@ -259,7 +294,7 @@ public class Contact implements java.io.Serializable {
         }
 
         if (!matched) {
-            for(String email : mEmails) {
+            for (String email : mEmails) {
                 matched |= email.matches(aRegEx);
             }
         }
@@ -276,6 +311,7 @@ public class Contact implements java.io.Serializable {
 
     /**
      * Retrieve a MXID from an identifier
+     *
      * @param media the media
      * @return the matched MXID if it exists.
      */
@@ -289,6 +325,7 @@ public class Contact implements java.io.Serializable {
 
     /**
      * Returns the first retrieved matrix ID.
+     *
      * @return the first retrieved matrix ID.
      */
     public MXID getFirstMatrixId() {
@@ -301,6 +338,7 @@ public class Contact implements java.io.Serializable {
 
     /**
      * Set the display name.
+     *
      * @param displayName the new display name.
      */
     public void setDisplayName(String displayName) {
@@ -314,7 +352,7 @@ public class Contact implements java.io.Serializable {
         String res = mDisplayName;
 
         if (TextUtils.isEmpty(res)) {
-            for(String email : mEmails) {
+            for (String email : mEmails) {
                 if (!TextUtils.isEmpty(email)) {
                     return email;
                 }
@@ -322,7 +360,7 @@ public class Contact implements java.io.Serializable {
         }
 
         if (TextUtils.isEmpty(res)) {
-            for(String pn : mPhoneNumbers) {
+            for (String pn : mPhoneNumbers) {
                 if (!TextUtils.isEmpty(pn)) {
                     return pn;
                 }
@@ -340,9 +378,28 @@ public class Contact implements java.io.Serializable {
     }
 
     /**
-     * Return the contact thumbnail bitmap.
+     * Return the contact avatar bitmap.
+     *
      * @param context the context.
-     * @return the contact thumbnail bitmap.
+     * @return the contact avatar bitmap.
+     */
+    public Bitmap getAvatar(Context context) {
+        if ((null == mAvatar) && (null != mAvatarUri)) {
+            try {
+                mAvatar = MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(mAvatarUri));
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "getAvatar " + e.getLocalizedMessage());
+            }
+        }
+
+        return mAvatar;
+    }
+
+    /**
+     * Return the contact avatar thumbnail bitmap.
+     *
+     * @param context the context.
+     * @return the contact avatar thumbnail bitmap.
      */
     public Bitmap getThumbnail(Context context) {
         if ((null == mThumbnail) && (null != mThumbnailUri)) {

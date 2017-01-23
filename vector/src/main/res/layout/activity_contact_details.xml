@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contact_details_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/room_background"
+    tools:context=".activity.VectorContactDetailsActivity">
+
+    <RelativeLayout
+        android:id="@+id/contact_details_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/vector_green_color">
+
+        <RelativeLayout
+            android:id="@+id/action_bar_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="16dp"
+            android:visibility="visible">
+
+            <!-- Contact avatar-->
+            <RelativeLayout
+                android:id="@+id/contact_avatar_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
+
+                <include
+                    android:id="@+id/contact_round_avatar"
+                    layout="@layout/vector_large_round_avatar"
+                    android:layout_width="84dp"
+                    android:layout_height="84dp" />
+            </RelativeLayout>
+
+            <!-- Contact name -->
+            <TextView
+                android:id="@+id/contact_details_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/contact_avatar_container"
+                android:layout_marginTop="10dp"
+                android:ellipsize="end"
+                android:gravity="center_horizontal"
+                android:singleLine="true"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" />
+        </RelativeLayout>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/contact_details_toolbar"
+            style="@style/VectorToolbarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_alignParentTop="true"
+            android:background="@android:color/transparent"
+            app:contentInsetEnd="0dp"
+            app:contentInsetStart="0dp">
+
+        </android.support.v7.widget.Toolbar>
+    </RelativeLayout>
+
+    <!-- Contact actions -->
+    <TextView
+        android:id="@+id/start_new_chat_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/contact_details_action_bar"
+        android:background="@color/vector_recents_header_background_color"
+        android:fontFamily="sans-serif-medium"
+        android:padding="16dp"
+        android:text="@string/room_participants_header_direct_chats"
+        android:textColor="@color/vector_text_black_color"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:id="@+id/start_new_chat_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/start_new_chat_title"
+        android:layout_margin="16dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginRight="32dp"
+            android:src="@drawable/vector_create_direct_room" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/start_new_chat"
+            android:textColor="@color/vector_text_black_color" />
+
+    </LinearLayout>
+
+    <!-- progress bar view -->
+    <include
+        android:id="@+id/progress_bar"
+        layout="@layout/progress_bar_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <!-- display the avatar in fullscreen -->
+    <include layout="@layout/view_fullscreen_avatar" />
+
+</RelativeLayout>

@@ -357,7 +357,8 @@ public class ContactsManager {
                         namesCur = cr.query(ContactsContract.Data.CONTENT_URI,
                                 new String[]{ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
                                         ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID,
-                                        ContactsContract.Contacts.PHOTO_THUMBNAIL_URI
+                                        ContactsContract.Contacts.PHOTO_THUMBNAIL_URI,
+                                        ContactsContract.Contacts.PHOTO_URI
                                 },
                                 ContactsContract.Data.MIMETYPE + " = ?",
                                 new String[]{ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE}, null);
@@ -371,6 +372,7 @@ public class ContactsManager {
                                 String displayName = namesCur.getString(namesCur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY));
                                 String contactId = namesCur.getString(namesCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.CONTACT_ID));
                                 String thumbnailUri = namesCur.getString(namesCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.PHOTO_THUMBNAIL_URI));
+                                String avatarUri = namesCur.getString(namesCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.PHOTO_URI));
 
                                 if (null != contactId) {
                                     Contact contact = dict.get(contactId);
@@ -382,6 +384,10 @@ public class ContactsManager {
 
                                     if (null != displayName) {
                                         contact.setDisplayName(displayName);
+                                    }
+
+                                    if (null != avatarUri) {
+                                        contact.setAvatarUri(avatarUri);
                                     }
 
                                     if (null != thumbnailUri) {

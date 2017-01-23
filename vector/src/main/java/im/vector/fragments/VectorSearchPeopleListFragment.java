@@ -38,6 +38,7 @@ import im.vector.Matrix;
 import im.vector.R;
 
 import im.vector.activity.VectorBaseSearchActivity;
+import im.vector.activity.VectorContactDetailsActivity;
 import im.vector.activity.VectorMemberDetailsActivity;
 
 import im.vector.adapters.ParticipantAdapterItem;
@@ -73,7 +74,7 @@ public class VectorSearchPeopleListFragment extends Fragment {
                     @Override
                     public void run() {
                         if (getActivity() instanceof VectorBaseSearchActivity.IVectorSearchActivity) {
-                            ((VectorBaseSearchActivity.IVectorSearchActivity)getActivity()).refreshSearch();
+                            ((VectorBaseSearchActivity.IVectorSearchActivity) getActivity()).refreshSearch();
                         }
                     }
                 });
@@ -107,16 +108,16 @@ public class VectorSearchPeopleListFragment extends Fragment {
                     public void run() {
                         Map<Integer, List<Integer>> visibleChildViews = VectorUtils.getVisibleChildViews(mPeopleListView, mAdapter);
 
-                        for(Integer groupPosition : visibleChildViews.keySet()) {
+                        for (Integer groupPosition : visibleChildViews.keySet()) {
                             List<Integer> childPositions = visibleChildViews.get(groupPosition);
 
-                            for(Integer childPosition : childPositions) {
-                                Object item =  mAdapter.getChild(groupPosition, childPosition);
+                            for (Integer childPosition : childPositions) {
+                                Object item = mAdapter.getChild(groupPosition, childPosition);
 
                                 if (item instanceof ParticipantAdapterItem) {
-                                    ParticipantAdapterItem participantAdapterItem = (ParticipantAdapterItem)item;
+                                    ParticipantAdapterItem participantAdapterItem = (ParticipantAdapterItem) item;
 
-                                    if (TextUtils.equals(user.user_id,  participantAdapterItem.mUserId)) {
+                                    if (TextUtils.equals(user.user_id, participantAdapterItem.mUserId)) {
                                         mAdapter.notifyDataSetChanged();
                                         break;
                                     }
@@ -132,6 +133,7 @@ public class VectorSearchPeopleListFragment extends Fragment {
 
     /**
      * Static constructor
+     *
      * @param matrixId the matrix id
      * @return a VectorSearchPeopleListFragment instance
      */
@@ -173,12 +175,17 @@ public class VectorSearchPeopleListFragment extends Fragment {
                 Object child = mAdapter.getChild(groupPosition, childPosition);
 
                 if (child instanceof ParticipantAdapterItem && ((ParticipantAdapterItem) child).mIsValid) {
-                    ParticipantAdapterItem item = (ParticipantAdapterItem)child;
+                    ParticipantAdapterItem item = (ParticipantAdapterItem) child;
 
-                    Intent startRoomInfoIntent = new Intent(getActivity(), VectorMemberDetailsActivity.class);
-                    startRoomInfoIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MEMBER_ID, item.mUserId);
-                    startRoomInfoIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MATRIX_ID, mSession.getCredentials().userId);
-                    startActivity(startRoomInfoIntent);
+                    if (item.mContact != null && TextUtils.equals(item.mContact.getContactId(), item.mUserId)) {
+                        // Contact not corresponding to any matrix user id
+                        VectorContactDetailsActivity.start(getActivity(), item.mContact);
+                    } else {
+                        Intent startRoomInfoIntent = new Intent(getActivity(), VectorMemberDetailsActivity.class);
+                        startRoomInfoIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MEMBER_ID, item.mUserId);
+                        startRoomInfoIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MATRIX_ID, mSession.getCredentials().userId);
+                        startActivity(startRoomInfoIntent);
+                    }
                 }
 
                 return true;
@@ -197,7 +204,8 @@ public class VectorSearchPeopleListFragment extends Fragment {
 
     /**
      * Search a pattern in the room
-     * @param pattern the pattern to search
+     *
+     * @param pattern                the pattern to search
      * @param onSearchResultListener the result listener
      */
     public void searchPattern(final String pattern, final MatrixMessageListFragment.OnSearchResultListener onSearchResultListener) {
@@ -247,7 +255,7 @@ public class VectorSearchPeopleListFragment extends Fragment {
         super.onResume();
 
         if (getActivity() instanceof VectorBaseSearchActivity.IVectorSearchActivity) {
-            ((VectorBaseSearchActivity.IVectorSearchActivity)getActivity()).refreshSearch();
+            ((VectorBaseSearchActivity.IVectorSearchActivity) getActivity()).refreshSearch();
         } else {
             if (null != mPendingPattern) {
                 searchPattern(mPendingPattern, mPendingSearchResultListener);

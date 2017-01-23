@@ -153,6 +153,17 @@
         </activity>
 
         <activity
+            android:name="im.vector.activity.VectorContactDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_contact_details"
+            android:parentActivityName="im.vector.activity.VectorRoomActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="im.vector.activity.VectorRoomActivity"/>
+        </activity>
+
+        <activity
             android:name="im.vector.activity.LockScreenActivity"
             android:theme="@android:style/Theme.Holo.Light.Dialog"
             android:excludeFromRecents="true"
