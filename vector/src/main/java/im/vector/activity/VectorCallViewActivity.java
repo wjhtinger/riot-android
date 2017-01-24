@@ -71,8 +71,6 @@ import im.vector.view.VectorPendingCallView;
  */
 public class VectorCallViewActivity extends Activity implements SensorEventListener {
     private static final String LOG_TAG = "VCallViewActivity";
-    private static final String HANGUP_MSG_HEADER_UI_CALL = "user hangup from header back arrow";
-    private static final String HANGUP_MSG_BACK_KEY = "user hangup from back key";
     /** threshold used to manage the backlight during the call **/
     private static final float PROXIMITY_THRESHOLD = 3.0f; // centimeters
     private static final String HANGUP_MSG_USER_CANCEL = "user hangup";
@@ -167,7 +165,7 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
                                         TextUtils.equals(IMXCall.CALL_STATE_INVITE_SENT, mLastCallState))) {
 
                             if (!TextUtils.equals(HANGUP_MSG_USER_CANCEL, mHangUpReason)) {
-                                // display message only if the caller originated the hang up
+                                // display message only if the callee originated the hang up
                                 showToast(VectorCallViewActivity.this.getString(R.string.call_error_user_not_responding));
                             }
 
@@ -558,9 +556,7 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
             public void onClick(View v) {
                 // simulate a back button press
                 if (!canCallBeResumed()) {
-                    if (null != mCall) {
-                        mCall.hangup(HANGUP_MSG_HEADER_UI_CALL);
-                    }
+                    onHangUp();
                 } else {
                     saveCallView();
                 }
@@ -599,7 +595,7 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
         mHangUpImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onHangUp(HANGUP_MSG_USER_CANCEL);
+                onHangUp();
             }
         });
 
@@ -704,9 +700,7 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
                 public void onClick(View v) {
                     // simulate a back button press
                     if (!canCallBeResumed()) {
-                        if (null != mCall) {
-                            mCall.hangup(HANGUP_MSG_HEADER_UI_CALL);
-                        }
+                        onHangUp();
                     } else {
                         saveCallView();
                     }
@@ -825,9 +819,7 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
         // assume that the user cancels the call if it is ringing
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (!canCallBeResumed()) {
-                if (null != mCall) {
-                    mCall.hangup(HANGUP_MSG_BACK_KEY);
-                }
+                onHangUp();
             } else {
                 saveCallView();
             }
@@ -1195,13 +1187,13 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
     /**
      * hangup the call.
      */
-    private void onHangUp(String hangUpMsg) {
+    private void onHangUp() {
         mSavedCallView = null;
         mSavedLocalVideoLayoutConfig = null;
-        mHangUpReason = hangUpMsg;
+        mHangUpReason = HANGUP_MSG_USER_CANCEL;
 
         if (null != mCall) {
-            mCall.hangup(hangUpMsg);
+            mCall.hangup(mHangUpReason);
         }
     }
 
