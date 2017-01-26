@@ -17,6 +17,7 @@
 package im.vector.util;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import org.matrix.androidsdk.call.IMXCall;
 
@@ -66,34 +67,49 @@ public class CallUtilities {
             return null;
         }
 
-        String callState = call.getCallState();
+        final String callState = call.getCallState();
 
-        if (callState.equals(IMXCall.CALL_STATE_CONNECTING) || callState.equals(IMXCall.CALL_STATE_CREATE_ANSWER)
-                || callState.equals(IMXCall.CALL_STATE_WAIT_LOCAL_MEDIA) || callState.equals(IMXCall.CALL_STATE_WAIT_CREATE_OFFER)
-                ) {
-            return context.getResources().getString(R.string.call_connecting);
-        } else if (callState.equals(IMXCall.CALL_STATE_CONNECTED)) {
-            long elapsedTime = call.getCallElapsedTime();
+        String callStatus = null;
+        switch (callState) {
+            case IMXCall.CALL_STATE_CONNECTING:
+            case IMXCall.CALL_STATE_CREATE_ANSWER:
+            case IMXCall.CALL_STATE_WAIT_LOCAL_MEDIA:
+            case IMXCall.CALL_STATE_WAIT_CREATE_OFFER:
+                callStatus = context.getString(R.string.call_connecting);
+                break;
+            case IMXCall.CALL_STATE_CONNECTED:
+                long elapsedTime = call.getCallElapsedTime();
 
-            if (elapsedTime < 0) {
-                return context.getResources().getString(R.string.call_connected);
-            } else {
-                return formatSecondsToHMS(elapsedTime);
-            }
-        } else if (callState.equals(IMXCall.CALL_STATE_ENDED)) {
-            return context.getResources().getString(R.string.call_ended);
-        } else if (callState.equals(IMXCall.CALL_STATE_RINGING)) {
-            if (call.isIncoming()) {
-                if (call.isVideo()) {
-                    return context.getResources().getString(R.string.incoming_video_call);
+                if (elapsedTime < 0) {
+                    callStatus = context.getString(R.string.call_connected);
                 } else {
-                    return context.getResources().getString(R.string.incoming_voice_call);
+                    callStatus = formatSecondsToHMS(elapsedTime);
                 }
-            } else {
-                return context.getResources().getString(R.string.call_ring);
-            }
+                break;
+            case IMXCall.CALL_STATE_ENDED:
+                callStatus = context.getString(R.string.call_ended);
+                break;
+            case IMXCall.CALL_STATE_RINGING:
+                if (call.isIncoming()) {
+                    if (call.isVideo()) {
+                        callStatus = context.getString(R.string.incoming_video_call);
+                    } else {
+                        callStatus = context.getString(R.string.incoming_voice_call);
+                    }
+                } else {
+                    callStatus = context.getString(R.string.call_ring);
+                }
+                break;
         }
 
-        return null;
+        return callStatus;
+    }
+
+    public static boolean isWaitingUserResponse(final String callState){
+        return TextUtils.equals(callState, IMXCall.CALL_STATE_CREATING_CALL_VIEW) ||
+                TextUtils.equals(callState, IMXCall.CALL_STATE_FLEDGLING) ||
+                TextUtils.equals(callState, IMXCall.CALL_STATE_WAIT_LOCAL_MEDIA) ||
+                TextUtils.equals(callState, IMXCall.CALL_STATE_WAIT_CREATE_OFFER) ||
+                TextUtils.equals(callState, IMXCall.CALL_STATE_RINGING);
     }
 }

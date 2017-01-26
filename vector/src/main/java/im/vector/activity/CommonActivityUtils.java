@@ -43,7 +43,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
-import org.matrix.androidsdk.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -54,27 +53,17 @@ import org.matrix.androidsdk.MXDataHandler;
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo;
-import org.matrix.androidsdk.data.store.IMXStore;
 import org.matrix.androidsdk.data.Room;
 import org.matrix.androidsdk.data.RoomPreviewData;
 import org.matrix.androidsdk.data.RoomSummary;
+import org.matrix.androidsdk.data.store.IMXStore;
 import org.matrix.androidsdk.db.MXMediasCache;
 import org.matrix.androidsdk.rest.callback.ApiCallback;
 import org.matrix.androidsdk.rest.model.Event;
 import org.matrix.androidsdk.rest.model.MatrixError;
 import org.matrix.androidsdk.rest.model.PowerLevels;
 import org.matrix.androidsdk.rest.model.RoomMember;
-import im.vector.VectorApp;
-import im.vector.Matrix;
-import im.vector.MyPresenceManager;
-import im.vector.R;
-import im.vector.adapters.VectorRoomsSelectionAdapter;
-import im.vector.contacts.ContactsManager;
-import im.vector.contacts.PIDsRetriever;
-import im.vector.fragments.AccountsSelectionDialogFragment;
-import im.vector.ga.GAHelper;
-import im.vector.gcm.GcmRegistrationManager;
-import im.vector.services.EventStreamService;
+import org.matrix.androidsdk.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -88,6 +77,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import im.vector.Matrix;
+import im.vector.MyPresenceManager;
+import im.vector.R;
+import im.vector.VectorApp;
+import im.vector.adapters.VectorRoomsSelectionAdapter;
+import im.vector.contacts.ContactsManager;
+import im.vector.contacts.PIDsRetriever;
+import im.vector.fragments.AccountsSelectionDialogFragment;
+import im.vector.ga.GAHelper;
+import im.vector.gcm.GcmRegistrationManager;
+import im.vector.services.EventStreamService;
 import im.vector.util.VectorUtils;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
@@ -1496,7 +1496,7 @@ public class CommonActivityUtils {
      * @param aMsgToDisplay message to display
      */
     public static void displayToastOnUiThread(final Activity aCallingActivity, final String aMsgToDisplay)  {
-        if(null != aCallingActivity) {
+        if (null != aCallingActivity && !TextUtils.isEmpty(aMsgToDisplay)) {
             aCallingActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -1549,7 +1549,6 @@ public class CommonActivityUtils {
                     case IMXCall.END_CALL_REASON_PEER_HANG_UP_ELSEWHERE:
                         CommonActivityUtils.displayToastOnUiThread(aCallingActivity, aCallingActivity.getString(R.string.call_error_peer_hangup_elsewhere));
                         break;
-
                     default:
                         break;
                 }

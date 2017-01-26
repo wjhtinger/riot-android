@@ -24,13 +24,14 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import org.matrix.androidsdk.call.IMXCall;
+import org.matrix.androidsdk.data.Room;
+
 import im.vector.R;
 import im.vector.activity.VectorCallViewActivity;
 import im.vector.util.CallUtilities;
 import im.vector.util.VectorUtils;
-
-import org.matrix.androidsdk.call.IMXCall;
-import org.matrix.androidsdk.data.Room;
 
 /**
  * This class displays the pending call information.
@@ -89,7 +90,6 @@ public class VectorPendingCallView extends RelativeLayout {
         public void onPreviewSizeChanged(int width, int height) {
         }
     };
-
 
     /**
      * constructors

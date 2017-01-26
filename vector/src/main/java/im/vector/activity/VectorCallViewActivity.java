@@ -33,8 +33,6 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import org.matrix.androidsdk.util.Log;
-
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
@@ -51,6 +49,7 @@ import android.widget.Toast;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
+import org.matrix.androidsdk.util.Log;
 
 import java.util.HashMap;
 import java.util.Timer;
@@ -61,6 +60,7 @@ import im.vector.R;
 import im.vector.VectorApp;
 import im.vector.receiver.HeadsetConnectionReceiver;
 import im.vector.services.EventStreamService;
+import im.vector.util.VectorCallManager;
 import im.vector.util.VectorCallSoundManager;
 import im.vector.util.VectorUtils;
 import im.vector.view.VectorPendingCallView;
@@ -202,20 +202,13 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
 
         @Override
         public void onCallError(String error) {
-            Context context = getInstance();
-
             Log.d(LOG_TAG, "## onCallError(): error=" + error);
 
-            if (null != context) {
-                if (IMXCall.CALL_ERROR_USER_NOT_RESPONDING.equals(error)) {
-                    showToast(context.getString(R.string.call_error_user_not_responding));
-                    mIsCalleeBusy = true;
-                } else if (IMXCall.CALL_ERROR_ICE_FAILED.equals(error)) {
-                    showToast(context.getString(R.string.call_error_ice_failed));
-                } else if (IMXCall.CALL_ERROR_CAMERA_INIT_FAILED.equals(error)) {
-                    showToast(context.getString(R.string.call_error_camera_init_failed));
-                }
+            if (IMXCall.CALL_ERROR_USER_NOT_RESPONDING.equals(error)) {
+                mIsCalleeBusy = true;
             }
+            final String errorMsg = VectorCallManager.getInstance().getUserFriendlyError(error);
+            CommonActivityUtils.displayToastOnUiThread(VectorCallViewActivity.this, errorMsg);
         }
 
         @Override
@@ -371,6 +364,22 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
             return false;
         }
     };
+
+
+     /*
+     * *********************************************************************************************
+     * Static methods
+     * *********************************************************************************************
+     */
+
+    public static void start(final Context context, final MXSession mxSession, final String callId,
+                             final boolean autoAccept) {
+        final Intent intent = new Intent(context, VectorCallViewActivity.class);
+        intent.putExtra(EXTRA_MATRIX_ID, mxSession.getCredentials().userId);
+        intent.putExtra(EXTRA_CALL_ID, callId);
+        intent.putExtra(VectorCallViewActivity.EXTRA_AUTO_ACCEPT, autoAccept);
+        context.startActivity(intent);
+    }
 
     /**
      * @return true if the call can be resumed.
@@ -609,7 +618,7 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
             }
         });
 
-        mAutoAccept = intent.hasExtra(EXTRA_AUTO_ACCEPT);
+        mAutoAccept = intent.getBooleanExtra(EXTRA_AUTO_ACCEPT, false);
 
         // life cycle management
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);

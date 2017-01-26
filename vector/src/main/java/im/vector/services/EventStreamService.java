@@ -17,7 +17,6 @@
 package im.vector.services;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -32,17 +31,13 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
-import org.matrix.androidsdk.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.matrix.androidsdk.MXSession;
-import org.matrix.androidsdk.call.IMXCall;
-import org.matrix.androidsdk.call.MXCallsManager;
-import org.matrix.androidsdk.data.store.IMXStore;
 import org.matrix.androidsdk.data.Room;
 import org.matrix.androidsdk.data.RoomState;
+import org.matrix.androidsdk.data.store.IMXStore;
 import org.matrix.androidsdk.data.store.MXStoreListener;
 import org.matrix.androidsdk.listeners.MXEventListener;
 import org.matrix.androidsdk.rest.model.Event;
@@ -50,24 +45,25 @@ import org.matrix.androidsdk.rest.model.RoomMember;
 import org.matrix.androidsdk.rest.model.User;
 import org.matrix.androidsdk.rest.model.bingrules.BingRule;
 import org.matrix.androidsdk.util.EventDisplay;
-import im.vector.VectorApp;
-import im.vector.Matrix;
-import im.vector.R;
-import im.vector.ViewedRoomTracker;
-import im.vector.activity.VectorCallViewActivity;
-import im.vector.activity.CommonActivityUtils;
-import im.vector.activity.VectorHomeActivity;
-import im.vector.gcm.GcmRegistrationManager;
-import im.vector.util.NotificationUtils;
-import im.vector.util.VectorCallSoundManager;
-import im.vector.util.VectorUtils;
+import org.matrix.androidsdk.util.Log;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import java.util.List;
+
+import im.vector.Matrix;
+import im.vector.R;
+import im.vector.VectorApp;
+import im.vector.ViewedRoomTracker;
+import im.vector.activity.CommonActivityUtils;
+import im.vector.activity.VectorCallViewActivity;
+import im.vector.activity.VectorHomeActivity;
+import im.vector.gcm.GcmRegistrationManager;
+import im.vector.util.NotificationUtils;
+import im.vector.util.VectorCallSoundManager;
+import im.vector.util.VectorUtils;
 
 /**
  * A foreground service in charge of controlling whether the event stream is running or not.
@@ -185,91 +181,6 @@ public class EventStreamService extends Service {
     }
 
     /**
-     * Calls events listener.
-     */
-    private final MXCallsManager.MXCallsManagerListener mCallsManagerListener = new MXCallsManager.MXCallsManagerListener() {
-
-        /**
-         * Manage hangup event.
-         * The ringing sound is disabled and pending incoming call is dismissed.
-         * @param callId the callId
-         */
-        private void manageHangUpEvent(String callId) {
-            if (null != callId) {
-                Log.d(LOG_TAG, "manageHangUpEvent : hide call notification and stopRinging for call " + callId);
-                hideCallNotifications();
-            } else {
-                Log.d(LOG_TAG, "manageHangUpEvent : stopRinging");
-            }
-            VectorCallSoundManager.stopRinging();
-        }
-
-        @Override
-        public void onIncomingCall(final IMXCall call) {
-            Log.d(LOG_TAG, "onIncomingCall " + call.getCallId());
-
-            IMXCall.MXCallListener callListener = new IMXCall.MXCallListener() {
-                @Override
-                public void onStateDidChange(String state) {
-                    Log.d(LOG_TAG, "dispatchOnStateDidChange " + call.getCallId() + " : " + state);
-
-                    // if there is no call push rule
-                    // display the incoming call notification but with no sound
-                    if (TextUtils.equals(state, IMXCall.CALL_STATE_CREATED) || TextUtils.equals(state, IMXCall.CALL_STATE_CREATING_CALL_VIEW)) {
-                        displayIncomingCallNotification(call.getSession(), call.getRoom(), null, call.getCallId(), null);
-                    }
-                }
-
-                @Override
-                public void onCallError(String error) {
-                    Log.d(LOG_TAG, "dispatchOnCallError " + call.getCallId() + " : " + error);
-                    manageHangUpEvent(call.getCallId());
-                }
-
-                @Override
-                public void onViewLoading(View callView) {
-                }
-
-                @Override
-                public void onViewReady() {
-                }
-
-                @Override
-                public void onCallAnsweredElsewhere() {
-                    Log.d(LOG_TAG, "onCallAnsweredElsewhere " + call.getCallId());
-                    manageHangUpEvent(call.getCallId());
-                }
-
-                @Override
-                public void onCallEnd(final int aReasonId) {
-                    Log.d(LOG_TAG, "dispatchOnCallEnd " + call.getCallId());
-                    manageHangUpEvent(call.getCallId());
-                }
-
-                @Override
-                public void onPreviewSizeChanged(int width, int height) {
-                }
-            };
-
-            call.addListener(callListener);
-        }
-
-        @Override
-        public void onCallHangUp(final IMXCall call) {
-            Log.d(LOG_TAG, "onCallHangUp " + call.getCallId());
-            manageHangUpEvent(call.getCallId());
-        }
-
-        @Override
-        public void onVoipConferenceStarted(String roomId) {
-        }
-
-        @Override
-        public void onVoipConferenceFinished(String roomId) {
-        }
-    };
-
-    /**
      * Live events listener
      */
     private final MXEventListener mEventsListener = new MXEventListener() {
@@ -334,7 +245,6 @@ public class EventStreamService extends Service {
                 mSessions.add(session);
                 mMatrixIds.add(matrixId);
                 session.getDataHandler().addListener(mEventsListener);
-                session.getDataHandler().getCallsManager().addListener(mCallsManagerListener);
                 // perform a full sync
                 session.startEventStream(null);
             }
@@ -355,7 +265,6 @@ public class EventStreamService extends Service {
 
                     session.stopEventStream();
                     session.getDataHandler().removeListener(mEventsListener);
-                    session.getDataHandler().getCallsManager().removeListener(mCallsManagerListener);
 
                     mSessions.remove(session);
                     mMatrixIds.remove(matrixId);
@@ -492,7 +401,6 @@ public class EventStreamService extends Service {
             }
 
             session.getDataHandler().addListener(mEventsListener);
-            session.getDataHandler().getCallsManager().addListener(mCallsManagerListener);
             final IMXStore store = session.getDataHandler().getStore();
 
             // the store is ready (no data loading in progress...)
@@ -553,7 +461,6 @@ public class EventStreamService extends Service {
                 if (session.isAlive()) {
                     session.stopEventStream();
                     session.getDataHandler().removeListener(mEventsListener);
-                    session.getDataHandler().getCallsManager().removeListener(mCallsManagerListener);
                 }
             }
         }
@@ -1133,7 +1040,7 @@ public class EventStreamService extends Service {
      * @param callId the callId
      * @param bingRule the bing rule.
      */
-    private void displayIncomingCallNotification(MXSession session, Room room, Event event, String callId, BingRule bingRule) {
+    public void displayIncomingCallNotification(MXSession session, Room room, Event event, String callId, BingRule bingRule) {
         Log.d(LOG_TAG, "displayIncomingCallNotification : " + callId + " in " + room.getRoomId());
 
         // the incoming call in progress is already displayed

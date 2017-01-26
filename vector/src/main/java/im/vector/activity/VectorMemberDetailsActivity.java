@@ -59,6 +59,7 @@ import im.vector.R;
 import im.vector.VectorApp;
 import im.vector.adapters.VectorMemberDetailsAdapter;
 import im.vector.adapters.VectorMemberDetailsDevicesAdapter;
+import im.vector.util.VectorCallManager;
 import im.vector.util.VectorUtils;
 
 /**
@@ -262,44 +263,15 @@ public class VectorMemberDetailsActivity extends MXCActionBarActivity implements
             return;
         }
 
-        // create the call object
-        mSession.mCallsManager.createCallInRoom(mRoom.getRoomId(), new ApiCallback<IMXCall>() {
+        VectorCallManager.getInstance().startCall(mSession.mCallsManager, mRoom.getRoomId(), isVideo, new VectorCallManager.OnStartCallListener() {
             @Override
-            public void onSuccess(final IMXCall call) {
-                VectorMemberDetailsActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        call.setIsVideo(isVideo);
-                        call.setIsIncoming(false);
-
-                        final Intent intent = new Intent(VectorMemberDetailsActivity.this, VectorCallViewActivity.class);
-
-                        intent.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, mSession.getCredentials().userId);
-                        intent.putExtra(VectorCallViewActivity.EXTRA_CALL_ID, call.getCallId());
-
-                        VectorMemberDetailsActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                VectorMemberDetailsActivity.this.startActivity(intent);
-                            }
-                        });
-                    }
-                });
+            public void onStartCallSuccess(IMXCall call) {
+                VectorCallViewActivity.start(VectorMemberDetailsActivity.this, mSession, call.getCallId(), false);
             }
 
             @Override
-            public void onNetworkError(Exception e) {
-
-            }
-
-            @Override
-            public void onMatrixError(MatrixError e) {
-
-            }
-
-            @Override
-            public void onUnexpectedError(Exception e) {
-
+            public void onStartCallFailed(String errorMessage) {
+                // Do nothing
             }
         });
     }

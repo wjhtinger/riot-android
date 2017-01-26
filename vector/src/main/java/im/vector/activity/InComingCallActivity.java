@@ -20,8 +20,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
-import org.matrix.androidsdk.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -30,9 +28,12 @@ import android.widget.TextView;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
+import org.matrix.androidsdk.util.Log;
 
 import im.vector.Matrix;
 import im.vector.R;
+import im.vector.util.CallUtilities;
+import im.vector.util.VectorCallManager;
 import im.vector.util.VectorCallSoundManager;
 import im.vector.util.VectorUtils;
 
@@ -63,18 +64,10 @@ public class InComingCallActivity extends Activity { // do NOT extend from UC*Ac
         }
 
         @Override
-        public void onCallError(String aErrorMsg) {
-            Log.d(LOG_TAG, "## dispatchOnCallError(): error=" + aErrorMsg);
-
-            if (IMXCall.CALL_ERROR_USER_NOT_RESPONDING.equals(aErrorMsg)) {
-                CommonActivityUtils.displayToastOnUiThread(InComingCallActivity.this, InComingCallActivity.this.getString(R.string.call_error_user_not_responding));
-            } else if (IMXCall.CALL_ERROR_ICE_FAILED.equals(aErrorMsg)) {
-                CommonActivityUtils.displayToastOnUiThread(InComingCallActivity.this, InComingCallActivity.this.getString(R.string.call_error_ice_failed));
-            } else if (IMXCall.CALL_ERROR_CAMERA_INIT_FAILED.equals(aErrorMsg)) {
-                CommonActivityUtils.displayToastOnUiThread(InComingCallActivity.this, InComingCallActivity.this.getString(R.string.call_error_camera_init_failed));
-            } else {
-                CommonActivityUtils.displayToastOnUiThread(InComingCallActivity.this, aErrorMsg);
-            }
+        public void onCallError(String error) {
+            Log.d(LOG_TAG, "## dispatchOnCallError(): error=" + error);
+            final String errorMsg = VectorCallManager.getInstance().getUserFriendlyError(error);
+            CommonActivityUtils.displayToastOnUiThread(InComingCallActivity.this, errorMsg);
         }
 
         @Override
@@ -193,7 +186,7 @@ public class InComingCallActivity extends Activity { // do NOT extend from UC*Ac
                 mIgnoreCallButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onHangUp();
+                        VectorCallManager.getInstance().hangUp();
                         finish();
                     }
                 });
@@ -234,15 +227,7 @@ public class InComingCallActivity extends Activity { // do NOT extend from UC*Ac
 
         if (null != mMxCall) {
             String callState = mMxCall.getCallState();
-            boolean isWaitingUserResponse =
-                    TextUtils.equals(callState, IMXCall.CALL_STATE_CREATING_CALL_VIEW) ||
-                            TextUtils.equals(callState, IMXCall.CALL_STATE_FLEDGLING) ||
-                            TextUtils.equals(callState, IMXCall.CALL_STATE_WAIT_LOCAL_MEDIA) ||
-                            TextUtils.equals(callState, IMXCall.CALL_STATE_WAIT_CREATE_OFFER) ||
-                            TextUtils.equals(callState, IMXCall.CALL_STATE_RINGING);
-
-
-            if (isWaitingUserResponse) {
+            if (CallUtilities.isWaitingUserResponse(callState)) {
                 mMxCall.onResume();
                 mMxCall.addListener(mMxCallListener);
             } else {
@@ -289,7 +274,7 @@ public class InComingCallActivity extends Activity { // do NOT extend from UC*Ac
 
     @Override
     public void onBackPressed() {
-        onHangUp();
+        VectorCallManager.getInstance().hangUp();
     }
 
     /**
@@ -304,15 +289,6 @@ public class InComingCallActivity extends Activity { // do NOT extend from UC*Ac
         intent.putExtras(receivedData);
         intent.putExtra(VectorCallViewActivity.EXTRA_AUTO_ACCEPT, true);
         startActivity(intent);
-    }
-
-    /**
-     * Hangup the call.
-     */
-    private void onHangUp() {
-        if (null != mMxCall) {
-            mMxCall.hangup("");
-        }
     }
 
 }

@@ -26,12 +26,17 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import org.matrix.androidsdk.util.Log;
 
 import org.matrix.androidsdk.MXSession;
+import org.matrix.androidsdk.util.Log;
 
-import im.vector.activity.VectorCallViewActivity;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import im.vector.activity.CommonActivityUtils;
+import im.vector.activity.VectorCallViewActivity;
 import im.vector.contacts.ContactsManager;
 import im.vector.contacts.PIDsRetriever;
 import im.vector.ga.GAHelper;
@@ -39,13 +44,9 @@ import im.vector.gcm.GcmRegistrationManager;
 import im.vector.receiver.HeadsetConnectionReceiver;
 import im.vector.services.EventStreamService;
 import im.vector.util.RageShake;
+import im.vector.util.VectorCallManager;
 import im.vector.util.VectorCallSoundManager;
 import im.vector.util.VectorMarkdownParser;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * The main application injection point
@@ -144,6 +145,8 @@ public class VectorApp extends Application {
         catch (PackageManager.NameNotFoundException e) {
             Log.e(LOG_TAG, "fails to retrieve the package info " + e.getMessage());
         }
+
+        VectorCallManager.init(this);
 
         VECTOR_VERSION_STRING = Matrix.getInstance(this).getVersion(true);
 
@@ -296,6 +299,7 @@ public class VectorApp extends Application {
                 } else {
                     VectorApp.this.mIsInBackground = true;
                     mIsCallingInBackground = (null != VectorCallViewActivity.getActiveCall());
+                    //mIsCallingInBackground = VectorCallManager.getInstance().hasActiveCall();
 
                     // if there is a pending call
                     // the application is not suspended
@@ -366,7 +370,7 @@ public class VectorApp extends Application {
             if (VectorCallSoundManager.isRinging() && !hasActiveCall && (null != EventStreamService.getInstance())) {
                 Log.e(LOG_TAG, "## suspendApp() : fix an infinite ringing");
                 EventStreamService.getInstance().hideCallNotifications();
-                
+
                 if (VectorCallSoundManager.isRinging()) {
                     VectorCallSoundManager.stopRinging();
                 }
