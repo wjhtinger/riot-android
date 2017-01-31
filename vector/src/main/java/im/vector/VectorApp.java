@@ -36,7 +36,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import im.vector.activity.CommonActivityUtils;
-import im.vector.activity.VectorCallViewActivity;
 import im.vector.contacts.ContactsManager;
 import im.vector.contacts.PIDsRetriever;
 import im.vector.ga.GAHelper;
@@ -45,7 +44,6 @@ import im.vector.receiver.HeadsetConnectionReceiver;
 import im.vector.services.EventStreamService;
 import im.vector.util.RageShake;
 import im.vector.util.VectorCallManager;
-import im.vector.util.VectorCallSoundManager;
 import im.vector.util.VectorMarkdownParser;
 
 /**
@@ -145,8 +143,6 @@ public class VectorApp extends Application {
         catch (PackageManager.NameNotFoundException e) {
             Log.e(LOG_TAG, "fails to retrieve the package info " + e.getMessage());
         }
-
-        VectorCallManager.init(this);
 
         VECTOR_VERSION_STRING = Matrix.getInstance(this).getVersion(true);
 
@@ -297,9 +293,8 @@ public class VectorApp extends Application {
                 if (null != mCurrentActivity) {
                     Log.e(LOG_TAG, "## startActivityTransitionTimer() : the timer expires but there is an active activity.");
                 } else {
-                    VectorApp.this.mIsInBackground = true;
-                    mIsCallingInBackground = (null != VectorCallViewActivity.getActiveCall());
-                    //mIsCallingInBackground = VectorCallManager.getInstance().hasActiveCall();
+                    mIsInBackground = true;
+                    mIsCallingInBackground =  VectorCallManager.getInstance().hasActiveCall();
 
                     // if there is a pending call
                     // the application is not suspended
@@ -367,14 +362,14 @@ public class VectorApp extends Application {
             }
 
             // detect if an infinite ringing has been triggered
-            if (VectorCallSoundManager.isRinging() && !hasActiveCall && (null != EventStreamService.getInstance())) {
+            /*if (VectorCallSoundManager.isRinging() && !hasActiveCall && (null != EventStreamService.getInstance())) {
                 Log.e(LOG_TAG, "## suspendApp() : fix an infinite ringing");
                 EventStreamService.getInstance().hideCallNotifications();
 
                 if (VectorCallSoundManager.isRinging()) {
                     VectorCallSoundManager.stopRinging();
                 }
-            }
+            }*/
         }
 
         MyPresenceManager.advertiseAllOnline();

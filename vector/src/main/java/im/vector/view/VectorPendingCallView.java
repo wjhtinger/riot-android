@@ -29,8 +29,8 @@ import org.matrix.androidsdk.call.IMXCall;
 import org.matrix.androidsdk.data.Room;
 
 import im.vector.R;
-import im.vector.activity.VectorCallViewActivity;
 import im.vector.util.CallUtilities;
+import im.vector.util.VectorCallManager;
 import im.vector.util.VectorUtils;
 
 /**
@@ -54,42 +54,6 @@ public class VectorPendingCallView extends RelativeLayout {
 
     /** set to true to hide the line displaying the call status **/
     private boolean mIsCallStatusHidden;
-
-    // the call listener
-    private final IMXCall.MXCallListener mCallListener = new IMXCall.MXCallListener() {
-        @Override
-        public void onStateDidChange(String state) {
-            refresh();
-        }
-
-        @Override
-        public void onCallError(String error) {
-            refresh();
-        }
-
-        @Override
-        public void onViewLoading(View callView) {
-            refresh();
-        }
-
-        @Override
-        public void onViewReady() {
-        }
-
-        @Override
-        public void onCallAnsweredElsewhere() {
-            onCallTerminated();
-        }
-
-        @Override
-        public void onCallEnd(final int aReasonId) {
-            onCallTerminated();
-        }
-
-        @Override
-        public void onPreviewSizeChanged(int width, int height) {
-        }
-    };
 
     /**
      * constructors
@@ -132,37 +96,15 @@ public class VectorPendingCallView extends RelativeLayout {
      * If there is none, this view is gone.
      */
     public void checkPendingCall() {
-        IMXCall call = VectorCallViewActivity.getActiveCall();
+        mCall = VectorCallManager.getInstance().getCall();
 
         // no more call
-        if (null == call) {
-
-            // unregister the listener
-            if (null != mCall) {
-                mCall.removeListener(mCallListener);
-            }
-            mCall = null;
-
+        if (mCall == null) {
             // hide the view
             setVisibility(View.GONE);
         } else {
-            // check if is a new call
-            if (mCall != call) {
-                // remove any pending listener
-                if (null != mCall) {
-                    mCall.removeListener(mCallListener);
-                }
-
-                // replace the previous one
-                mCall = call;
-
-                // listener
-                call.addListener(mCallListener);
-
-                // display it
-                setVisibility(View.VISIBLE);
-            }
-
+            // display it
+            setVisibility(View.VISIBLE);
             refresh();
         }
     }

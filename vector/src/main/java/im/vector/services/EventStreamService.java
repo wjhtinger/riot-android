@@ -58,7 +58,6 @@ import im.vector.R;
 import im.vector.VectorApp;
 import im.vector.ViewedRoomTracker;
 import im.vector.activity.CommonActivityUtils;
-import im.vector.activity.VectorCallViewActivity;
 import im.vector.activity.VectorHomeActivity;
 import im.vector.gcm.GcmRegistrationManager;
 import im.vector.util.NotificationUtils;
@@ -221,11 +220,11 @@ public class EventStreamService extends Service {
                     // the call listener does not dispatch the call end
                     // for example when the call is stopped while the incoming call activity is creating
                     // the call is not initialized so the answerelsewhere / stop don't make sense.
-                    if (VectorCallSoundManager.isRinging()) {
+                    /*if (VectorCallSoundManager.isRinging()) {
                         Log.d(LOG_TAG, "onLiveEventsChunkProcessed : there is no more call but the device is still ringing");
                         hideCallNotifications();
                         VectorCallSoundManager.stopRinging();
-                    }
+                    }*/
                     setServiceState(StreamAction.PAUSE);
                 }
             }
@@ -1049,8 +1048,6 @@ public class EventStreamService extends Service {
         } else if (!TextUtils.isEmpty(mCallIdInProgress)) {
             Log.d(LOG_TAG, "displayIncomingCallNotification : a 'call in progress' notification is displayed");
         }
-        // test if there is no active call
-        else if (null == VectorCallViewActivity.getActiveCall()) {
             Log.d(LOG_TAG, "displayIncomingCallNotification : display the dedicated notification");
 
             if ((null != bingRule) && bingRule.isCallRingNotificationSound(bingRule.notificationSound())) {
@@ -1077,10 +1074,6 @@ public class EventStreamService extends Service {
             PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "MXEventListener");
             wl.acquire(3000);
             wl.release();
-
-        } else {
-            Log.d(LOG_TAG, "displayIncomingCallNotification : do not display the incoming call notification because there is a pending call");
-        }
     }
 
     /**

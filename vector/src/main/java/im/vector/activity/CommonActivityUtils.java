@@ -51,7 +51,6 @@ import android.widget.Toast;
 
 import org.matrix.androidsdk.MXDataHandler;
 import org.matrix.androidsdk.MXSession;
-import org.matrix.androidsdk.call.IMXCall;
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo;
 import org.matrix.androidsdk.data.Room;
 import org.matrix.androidsdk.data.RoomPreviewData;
@@ -1261,7 +1260,7 @@ public class CommonActivityUtils {
         for (int index = 0; index < mergedSummaries.size(); index++) {
             RoomSummary summary = mergedSummaries.get(index);
             Room room = session.getDataHandler().getRoom(summary.getRoomId());
-            
+
             if ((null == room) || room.isInvited() || room.isConferenceUserRoom()) {
                 mergedSummaries.remove(index);
                 index--;
@@ -1522,38 +1521,6 @@ public class CommonActivityUtils {
      */
     public static void displaySnack(View aTargetView, CharSequence aTextToDisplay) {
         Snackbar.make(aTargetView, aTextToDisplay, Snackbar.LENGTH_SHORT).show();
-    }
-
-    //==============================================================================================================
-    // call utils
-    //==============================================================================================================
-
-    /**
-     * Display a toast message according to the end call reason.
-     *
-     * @param aCallingActivity calling activity
-     * @param aCallEndReason define the reason of the end call
-     */
-    public static void processEndCallInfo(Activity aCallingActivity, int aCallEndReason) {
-        if(null != aCallingActivity) {
-            if (IMXCall.END_CALL_REASON_UNDEFINED != aCallEndReason) {
-                switch (aCallEndReason) {
-                    case IMXCall.END_CALL_REASON_PEER_HANG_UP:
-                        if(aCallingActivity instanceof InComingCallActivity) {
-                            CommonActivityUtils.displayToastOnUiThread(aCallingActivity, aCallingActivity.getString(R.string.call_error_peer_cancelled_call));
-                        } else {
-                            // let VectorCallActivity manage its
-                        }
-                        break;
-
-                    case IMXCall.END_CALL_REASON_PEER_HANG_UP_ELSEWHERE:
-                        CommonActivityUtils.displayToastOnUiThread(aCallingActivity, aCallingActivity.getString(R.string.call_error_peer_hangup_elsewhere));
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
     }
 
     //==============================================================================================================

@@ -26,6 +26,7 @@ import org.matrix.androidsdk.call.IMXCall;
 
 import im.vector.VectorApp;
 import im.vector.activity.VectorCallViewActivity;
+import im.vector.util.VectorCallManager;
 import im.vector.util.VectorCallSoundManager;
 
 // this class detect if the headset is plugged / unplugged
@@ -79,7 +80,7 @@ public class HeadsetConnectionReceiver extends BroadcastReceiver {
                 // TODO : all this stuff should be done in a vector calls manager
                 // via a dedicated listener.
                 // do it here until this manager is not implemented.
-                IMXCall call = VectorCallViewActivity.getActiveCall();
+                IMXCall call = VectorCallManager.getInstance().getCall();
                 if (null != call) {
                     boolean isSpeakerOn = getAudioManager().isSpeakerphoneOn();
 

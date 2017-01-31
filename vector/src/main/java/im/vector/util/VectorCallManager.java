@@ -17,6 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import im.vector.R;
+import im.vector.VectorApp;
+import im.vector.activity.CommonActivityUtils;
+import im.vector.activity.VectorCallViewActivity;
 import im.vector.activity.VectorHomeActivity;
 import im.vector.services.EventStreamService;
 
@@ -25,14 +28,13 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
 
     private static VectorCallManager sInstance;
 
-    private Context mContext;
-
     private List<MXCallsManager> mMxCallsManagerList;
 
-    private IMXCall mIncomingCall;
     private IMXCall mCall;
-
-    private VectorCallSoundManager mVectorCallSoundManager;
+    // True when incoming call
+    private boolean mIsIncoming;
+    // True when the incoming/outgoing call is not answered yet by the callee
+    private boolean mIsAwaitingAnswer;
 
     /*
      * *********************************************************************************************
@@ -40,22 +42,16 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
      * *********************************************************************************************
      */
 
-    private VectorCallManager(final Context context) {
+    private VectorCallManager() {
         Log.e(LOG_TAG, "Create VectorCallManager instance ");
-        mContext = context;
         mMxCallsManagerList = new ArrayList<>();
     }
 
     public static VectorCallManager getInstance() {
         if (sInstance == null) {
-            throw new IllegalStateException("VectorCallManager is not initialized");
+            sInstance = new VectorCallManager();
         }
         return sInstance;
-    }
-
-    public static void init(final Context context) {
-        sInstance = new VectorCallManager(context);
-        //TODO init call state ?
     }
 
     /*
@@ -65,34 +61,38 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
      */
 
     public void addMXCallsManager(final MXCallsManager callsManager) {
-        Log.e(LOG_TAG, "addMXCallsManager");
-        if (callsManager != null && mMxCallsManagerList.contains(callsManager)) {
+        if (callsManager != null && !mMxCallsManagerList.contains(callsManager)) {
             callsManager.addListener(this);
-//            callsManager.checkPendingIncomingCalls();
             mMxCallsManagerList.add(callsManager);
+            Log.e(LOG_TAG, "Added MXCallsManager " + mMxCallsManagerList.size());
         }
     }
 
     public void removeMXCallsManager(final MXCallsManager callsManager) {
-        Log.e(LOG_TAG, "removeMXCallsManager");
         for (Iterator<MXCallsManager> iterator = mMxCallsManagerList.listIterator(); iterator.hasNext(); ) {
             MXCallsManager mxCallsManager = iterator.next();
             if (mxCallsManager == callsManager) {
                 iterator.remove();
+                Log.e(LOG_TAG, "Removed MXCallsManager");
             }
         }
     }
 
     public void setCurrentCall(final IMXCall call) {
-        mCall = call;
-        call.addListener(this);
+        if (call != null) {
+            mCall = call;
+            mIsIncoming = call.isIncoming();
+            Log.e(LOG_TAG, "setCurrentCall " + mCall.getCallId());
+            call.addListener(this);
+        }
     }
 
     /**
      * Start a call for the given session call manager in the given room
+     *
      * @param callsManager
-     * @param roomId roomId in which the call should be made
-     * @param withVideo whether it is audio only or video
+     * @param roomId       roomId in which the call should be made
+     * @param withVideo    whether it is audio only or video
      * @param callback
      */
     public void startCall(final MXCallsManager callsManager, final String roomId,
@@ -141,7 +141,18 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
     }
 
     public boolean hasIncomingCall() {
-        return mIncomingCall != null;
+        return mCall != null && mCall.isIncoming();
+    }
+
+    public IMXCall getCall() {
+        return mCall;
+    }
+
+    public void answerIncomingCall() {
+        if (hasIncomingCall()) {
+            mCall.answer();
+            EventStreamService.getInstance().hideCallNotifications();
+        }
     }
 
     /**
@@ -159,6 +170,7 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
             if (!canCallBeResumed() || (null == mCall.getSession().mCallsManager.getCallWithCallId(mCall.getCallId()))) {
                 Log.d(LOG_TAG, "Hide the call notifications because the current one cannot be resumed");
                 EventStreamService.getInstance().hideCallNotifications();
+                mCall.removeListener(this);
                 mCall = null;
             }
         }
@@ -166,15 +178,25 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
         return mCall;
     }
 
-    public IMXCall getPendingCall() {
-        return mIncomingCall;
+    /**
+     * Check whether the current call is still valid
+     *
+     * @return true if valid
+     */
+    public boolean isValidCall() {
+        final boolean isValid = mCall.getSession().mCallsManager.getCallWithCallId(mCall.getCallId()) != null;
+        if (!isValid) {
+            mCall.removeListener(this);
+            mCall = null;
+        }
+        return isValid;
     }
 
     /**
      * @return true if the call can be resumed.
      * i.e this callView can be closed to be re opened later.
      */
-    private boolean canCallBeResumed() {
+    public boolean canCallBeResumed() {
         if (null != mCall) {
             final String state = mCall.getCallState();
 
@@ -196,11 +218,11 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
     public boolean isBackgroundedCallId(String callId) {
         boolean res = false;
 
-        /*if ((null != mCall) && (null == instance)) {
+        if ((null != mCall) && (null == VectorCallViewActivity.getInstance())) {
             res = mCall.getCallId().equals(callId);
             // clear unexpected call.
             getActiveCall();
-        }*/
+        }
 
         return res;
     }
@@ -214,26 +236,21 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
     public String getUserFriendlyError(final String error) {
         String userFriendlyError = error;
         if (error != null) {
+            final Context context = VectorApp.getInstance();
             switch (error) {
                 case IMXCall.CALL_ERROR_USER_NOT_RESPONDING:
-                    userFriendlyError = mContext.getString(R.string.call_error_user_not_responding);
+                    userFriendlyError = context.getString(R.string.call_error_user_not_responding);
                     break;
                 case IMXCall.CALL_ERROR_ICE_FAILED:
-                    userFriendlyError = mContext.getString(R.string.call_error_ice_failed);
+                    userFriendlyError = context.getString(R.string.call_error_ice_failed);
                     break;
                 case IMXCall.CALL_ERROR_CAMERA_INIT_FAILED:
-                    userFriendlyError = mContext.getString(R.string.call_error_camera_init_failed);
+                    userFriendlyError = context.getString(R.string.call_error_camera_init_failed);
                     break;
             }
         }
         return userFriendlyError;
     }
-
-    /*
-     * *********************************************************************************************
-     * Private methods
-     * *********************************************************************************************
-     */
 
     /**
      * Manage hangup event.
@@ -243,16 +260,26 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
         if (mCall != null) {
             Log.d(LOG_TAG, "hangUp : hide call notification and stopRinging for call " + mCall.getCallId());
             mCall.hangup(null);
-            hideCallNotifications();
+            EventStreamService.getInstance().hideCallNotifications();
             VectorCallSoundManager.stopRinging();
-            mCall = null;
         }
     }
 
-    private void hideCallNotifications() {
-        EventStreamService.getInstance().hideCallNotifications();
-    }
+    /*
+     * *********************************************************************************************
+     * Private methods
+     * *********************************************************************************************
+     */
 
+    private void clearCall() {
+        EventStreamService.getInstance().hideCallNotifications();
+        if (mCall != null) {
+            mCall.removeListener(this);
+            mCall = null;
+        }
+        mIsAwaitingAnswer = false;
+        mIsIncoming = false;
+    }
 
     /*
      * *********************************************************************************************
@@ -269,8 +296,7 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
                 call.hangup(null);
             } else {
                 // Call can be taken
-                mCall = call;
-                call.addListener(this);
+                setCurrentCall(call);
                 // Display notification
                 // Ring/vibrate
                 EventStreamService.getInstance().displayIncomingCallNotification(call.getSession(), call.getRoom(), null, call.getCallId(), null);
@@ -282,11 +308,13 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
                     Log.d(LOG_TAG, "onIncomingCall : the home activity does not exist -> launch it");
 
                     // clear the activity stack to home activity
-                    Intent intent = new Intent(mContext, VectorHomeActivity.class);
+
+                    final Context context = VectorApp.getInstance();
+                    Intent intent = new Intent(context, VectorHomeActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra(VectorHomeActivity.EXTRA_CALL_SESSION_ID, call.getSession().getMyUserId());
                     intent.putExtra(VectorHomeActivity.EXTRA_CALL_ID, call.getCallId());
-                    mContext.startActivity(intent);
+                    context.startActivity(intent);
                 } else {
                     Log.d(LOG_TAG, "onIncomingCall : the home activity exists : but permissions have to be checked before");
                     // check incoming call required permissions, before allowing the call..
@@ -311,7 +339,6 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
                 }
             });
         }
-        hangUp();
     }
 
     @Override
@@ -331,14 +358,51 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
      */
 
     @Override
-    public void onStateDidChange(String state) {
-        Log.e(LOG_TAG, "onStateDidChange state " + state);
+    public void onStateDidChange(String callState) {
+        Log.e(LOG_TAG, "onStateDidChange state " + callState);
+
+        // Manage audio focus
+        VectorCallSoundManager.manageCallStateFocus(callState);
+
+        // Ringing management
+        switch (callState) {
+            case IMXCall.CALL_STATE_RINGING:
+            case IMXCall.CALL_STATE_INVITE_SENT:
+                mIsAwaitingAnswer = true;
+                if (mCall.isIncoming()) {
+                    VectorCallSoundManager.startRinging();
+                } else {
+                    VectorCallSoundManager.startRingBackSound(mCall.isVideo());
+                }
+                break;
+            case IMXCall.CALL_STATE_CREATE_ANSWER:
+            case IMXCall.CALL_STATE_CONNECTING:
+            case IMXCall.CALL_STATE_ENDED:
+                VectorCallSoundManager.stopRinging();
+                break;
+            case IMXCall.CALL_STATE_CONNECTED:
+                mIsAwaitingAnswer = false;
+                VectorCallSoundManager.stopRinging();
+                if (null != VectorCallViewActivity.getInstance()) {
+                    VectorCallViewActivity.getInstance().refreshSpeakerButton();
+                }
+                break;
+        }
     }
 
     @Override
     public void onCallError(String error) {
         Log.e(LOG_TAG, "onCallError " + error);
-        hangUp();
+        switch (error) {
+            case IMXCall.CALL_ERROR_USER_NOT_RESPONDING:
+                VectorCallSoundManager.startBusyCallSound();
+                break;
+            case IMXCall.CALL_ERROR_ICE_FAILED:
+            case IMXCall.CALL_ERROR_CAMERA_INIT_FAILED:
+            default:
+                break;
+        }
+        clearCall();
     }
 
     @Override
@@ -355,35 +419,61 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
     public void onCallAnsweredElsewhere() {
         Log.e(LOG_TAG, "onCallAnsweredElsewhere");
 
-        hangUp();
+        CommonActivityUtils.displayToastOnUiThread(VectorApp.getCurrentActivity(),
+                VectorApp.getInstance().getString(R.string.call_error_answered_elsewhere));
+
+        clearCall();
     }
 
     @Override
     public void onCallEnd(int aReasonId) {
         switch (aReasonId) {
-            case IMXCall.END_CALL_REASON_PEER_HANG_UP: // R.string.call_error_peer_cancelled_call)
+            case IMXCall.END_CALL_REASON_PEER_HANG_UP:
                 Log.e(LOG_TAG, "onCallEnd: END_CALL_REASON_PEER_HANG_UP");
+                if (mIsAwaitingAnswer) {
+                    if (mIsIncoming) {
+                        // Caller cancelled his call before we took it
+                        CommonActivityUtils.displayToastOnUiThread(VectorApp.getCurrentActivity(),
+                                VectorApp.getInstance().getString(R.string.call_error_peer_cancelled_call));
+                    } else {
+                        // Callee declined our call
+                        VectorCallSoundManager.startBusyCallSound();
+                        // TODO determine if we display that "remote failed to pick up" instead to remain blurry
+                        CommonActivityUtils.displayToastOnUiThread(VectorApp.getCurrentActivity(),
+                                VectorApp.getInstance().getString(R.string.call_error_peer_hangup));
+                    }
+                } else {
+                    // Peers have been connected but the peer hung up
+                    VectorCallSoundManager.startEndCallSound();
+                    CommonActivityUtils.displayToastOnUiThread(VectorApp.getCurrentActivity(),
+                            VectorApp.getInstance().getString(R.string.call_error_peer_hangup));
+                }
                 break;
-            case IMXCall.END_CALL_REASON_PEER_HANG_UP_ELSEWHERE: // R.string.call_error_peer_hangup_elsewhere
+            case IMXCall.END_CALL_REASON_PEER_HANG_UP_ELSEWHERE:
+                //TODO test that case
                 Log.e(LOG_TAG, "onCallEnd: END_CALL_REASON_PEER_HANG_UP_ELSEWHERE");
+                VectorCallSoundManager.startBusyCallSound();
+                CommonActivityUtils.displayToastOnUiThread(VectorApp.getCurrentActivity(),
+                        VectorApp.getInstance().getString(R.string.call_error_peer_hangup_elsewhere));
                 break;
             case IMXCall.END_CALL_REASON_USER_HIMSELF:
                 Log.e(LOG_TAG, "onCallEnd: END_CALL_REASON_USER_HIMSELF");
+                VectorCallSoundManager.startEndCallSound();
                 break;
             case IMXCall.END_CALL_REASON_UNDEFINED:
             default:
+                VectorCallSoundManager.startEndCallSound();
                 Log.e(LOG_TAG, "onCallEnd: END_CALL_REASON_UNDEFINED");
                 break;
         }
 
-        hangUp();
+        clearCall();
     }
 
     @Override
     public void onPreviewSizeChanged(int width, int height) {
         Log.e(LOG_TAG, "onPreviewSizeChanged");
     }
-
 
     /*
      * *********************************************************************************************
@@ -393,6 +483,7 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
 
     public interface OnStartCallListener {
         void onStartCallSuccess(final IMXCall call);
+
         void onStartCallFailed(final String errorMessage);
     }
 }

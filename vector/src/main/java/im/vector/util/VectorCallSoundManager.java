@@ -50,6 +50,7 @@ import im.vector.receiver.HeadsetConnectionReceiver;
  * It is in charge of playing ringtones and managing the audio focus.
  */
 public class VectorCallSoundManager {
+
     /** Observer pattern class to notify sound events.
      *  Clients listen to events by calling {@link #addSoundListener(IVectorCallSoundListener)}**/
     public interface IVectorCallSoundListener {
@@ -71,6 +72,11 @@ public class VectorCallSoundManager {
 
     // the ringtones are played on loudspeaker
     private static Ringtone mRingTone = null;
+
+    // true when microphone is muted
+    private static boolean sIsMute;
+    // true when speaker is on
+    private static boolean sIsSpeakerOn;
 
     // the media players are played on loudspeaker / earpiece according to setSpeakerOn
     private static MediaPlayer mRingBackPlayer = null;
@@ -246,6 +252,13 @@ public class VectorCallSoundManager {
         return (null != mRingTone);
     }
 
+    public static boolean isMute(){
+        return sIsMute;
+    }
+
+    public static boolean isSpeakerOn(){
+        return sIsSpeakerOn;
+    }
     /**
      * Stop any playing ring tones.
      */
@@ -260,20 +273,6 @@ public class VectorCallSoundManager {
                 mRingBackPlayer.stop();
             }
             mRingBackPlayer = null;
-        }
-
-        if (null != mCallEndPlayer) {
-            if (mCallEndPlayer.isPlaying()) {
-                mCallEndPlayer.stop();
-            }
-            mCallEndPlayer = null;
-        }
-
-        if (null != mBusyPlayer) {
-            if (mBusyPlayer.isPlaying()) {
-                mBusyPlayer.stop();
-            }
-            mBusyPlayer = null;
         }
     }
 
@@ -359,7 +358,7 @@ public class VectorCallSoundManager {
      * Start the ringing sound
      */
     public static void startRinging() {
-        Log.d(LOG_TAG, "startRinging");
+        Log.d(LOG_TAG, "startRinging isHeadsetPlugged:" + HeadsetConnectionReceiver.isHeadsetPlugged());
 
         if (null != mRingTone) {
             Log.d(LOG_TAG, "ring tone already ringing");
@@ -426,7 +425,7 @@ public class VectorCallSoundManager {
      * Start the ring back sound
      */
     public static void startRingBackSound(boolean isVideo) {
-        Log.d(LOG_TAG, "startRingBackSound");
+        Log.d(LOG_TAG, "startRingBackSound isHeadsetPlugged:" + HeadsetConnectionReceiver.isHeadsetPlugged());
 
         if (null != mRingBackPlayer) {
             Log.d(LOG_TAG, "ringtone already ringing");
@@ -471,6 +470,8 @@ public class VectorCallSoundManager {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     restoreAudioConfig();
+                    mp.release();
+                    mCallEndPlayer = null;
                 }
             });
         } else {
@@ -503,6 +504,8 @@ public class VectorCallSoundManager {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     restoreAudioConfig();
+                    mp.release();
+                    mBusyPlayer = null;
                 }
             });
         }
@@ -595,6 +598,7 @@ public class VectorCallSoundManager {
 
         if (isSpeakerOn != audioManager.isSpeakerphoneOn()) {
             audioManager.setSpeakerphoneOn(isSpeakerOn);
+            sIsSpeakerOn = isSpeakerOn;
         }
     }
 
@@ -604,5 +608,20 @@ public class VectorCallSoundManager {
     public static void toggleSpeaker() {
         AudioManager audioManager = getAudioManager();
         audioManager.setSpeakerphoneOn(!audioManager.isSpeakerphoneOn());
+        sIsSpeakerOn = !audioManager.isSpeakerphoneOn();
+    }
+
+    /**
+     * Toggle the microphone mute
+     */
+    public static void toggleMute() {
+        final boolean isMuted = getAudioManager().isMicrophoneMute();
+        Log.d(LOG_TAG,"## toggleMicMute(): current mute val="+isMuted+" new mute val="+!isMuted);
+        setMute(!isMuted);
+    }
+
+    public static void setMute(final boolean mustBeMute){
+        getAudioManager().setMicrophoneMute(mustBeMute);
+        sIsMute = mustBeMute;
     }
 }

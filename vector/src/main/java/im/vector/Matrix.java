@@ -433,6 +433,7 @@ public class Matrix {
         }
 
         session.getDataHandler().removeListener(mLiveEventListener);
+        VectorCallManager.getInstance().removeMXCallsManager(session.mCallsManager);
 
         if (clearCredentials) {
             session.logout(context, null);
@@ -444,7 +445,6 @@ public class Matrix {
 
         synchronized (LOG_TAG) {
             mMXSessions.remove(session);
-            VectorCallManager.getInstance().removeMXCallsManager(session.mCallsManager);
         }
     }
 

@@ -93,26 +93,14 @@ public class InComingCallActivity extends Activity { // do NOT extend from UC*Ac
          */
         @Override
         public void onCallAnsweredElsewhere() {
-            InComingCallActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Log.d(LOG_TAG, "## onCallAnsweredElsewhere(): finish activity");
-                    CommonActivityUtils.displayToastOnUiThread(InComingCallActivity.this, InComingCallActivity.this.getString(R.string.call_error_answered_elsewhere));
-                    InComingCallActivity.this.finish();
-                }
-            });
+            Log.d(LOG_TAG, "## onCallAnsweredElsewhere(): finish activity");
+            finish();
         }
 
         @Override
         public void onCallEnd(final int aReasonId) {
-            InComingCallActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Log.d(LOG_TAG, "## onCallEnd(): finish activity");
-                    CommonActivityUtils.processEndCallInfo(InComingCallActivity.this, aReasonId);
-                    InComingCallActivity.this.finish();
-                }
-            });
+            Log.d(LOG_TAG, "## onCallEnd(): finish activity");
+            finish();
         }
 
         @Override
@@ -197,7 +185,7 @@ public class InComingCallActivity extends Activity { // do NOT extend from UC*Ac
                 mAcceptCallButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startCallViewActivity(intent);
+                        VectorCallViewActivity.start(InComingCallActivity.this, true);
                         finish();
                     }
                 });
@@ -275,20 +263,6 @@ public class InComingCallActivity extends Activity { // do NOT extend from UC*Ac
     @Override
     public void onBackPressed() {
         VectorCallManager.getInstance().hangUp();
-    }
-
-    /**
-     * Helper method: starts the CallViewActivity in auto accept mode.
-     * The extras provided in  are copied to
-     * the CallViewActivity and {@link VectorCallViewActivity#EXTRA_AUTO_ACCEPT} is set to true.
-     * @param aSourceIntent the intent whose extras are transmitted
-     */
-    private void startCallViewActivity(final Intent aSourceIntent) {
-        Intent intent = new Intent(this, VectorCallViewActivity.class);
-        Bundle receivedData = aSourceIntent.getExtras();
-        intent.putExtras(receivedData);
-        intent.putExtra(VectorCallViewActivity.EXTRA_AUTO_ACCEPT, true);
-        startActivity(intent);
     }
 
 }
