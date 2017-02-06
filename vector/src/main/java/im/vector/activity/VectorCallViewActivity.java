@@ -760,25 +760,6 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
      */
 
     /**
-     * release the call info
-     */
-    private void clearCallData() {
-        if (null != mCall) {
-            mCall.removeListener(mListener);
-        }
-
-        // remove header call view
-        mHeaderPendingCallView.checkPendingCall();
-
-        // release audio focus
-        VectorCallSoundManager.releaseAudioFocus();
-
-        mCall = null;
-        mCallView = null;
-        mSavedCallView = null;
-    }
-
-    /**
      * Insert the callView in the activity (above the other room member).
      * The callView is setup in the SDK, and provided via dispatchOnViewLoading() in {@link #mListener}.
      */

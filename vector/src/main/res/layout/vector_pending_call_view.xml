@@ -63,6 +63,7 @@
                 android:layout_width="wrap_content"
                 android:textSize="14sp"
                 android:textIsSelectable="false"
+                android:gravity="center_horizontal"
                 tools:text="Elapsed time"
                 android:textColor="@android:color/white"
                 android:id="@+id/pending_call_status_textview"/>
