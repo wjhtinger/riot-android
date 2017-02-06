@@ -73,12 +73,9 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
     private static final String LOG_TAG = "VCallViewActivity";
     /** threshold used to manage the backlight during the call **/
     private static final float PROXIMITY_THRESHOLD = 3.0f; // centimeters
-    private static final String HANGUP_MSG_USER_CANCEL = "user hangup";
-    private static final String HANGUP_MSG_NOT_DEFINED = "not defined";
 
     public static final String EXTRA_MATRIX_ID = "CallViewActivity.EXTRA_MATRIX_ID";
     public static final String EXTRA_CALL_ID = "CallViewActivity.EXTRA_CALL_ID";
-    public static final String EXTRA_AUTO_ACCEPT = "CallViewActivity.EXTRA_AUTO_ACCEPT";
 
     private static final String EXTRA_MIC_MUTE_STATUS = "EXTRA_MIC_MUTE_STATUS";
     private static final String EXTRA_SPEAKER_STATUS = "EXTRA_SPEAKER_STATUS";
@@ -91,35 +88,6 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
 
     private View mCallView;
     private IMXCall mCall;
-
-    private boolean mIsCallEnded;
-    private boolean mIsCalleeBusy;
-    private String mHangUpReason = HANGUP_MSG_NOT_DEFINED;
-
-    // UI
-    @BindView(R.id.hang_up_button)
-    ImageView mHangUpImageView;
-
-    @BindView(R.id.call_speaker_view)
-    ImageView mSpeakerSelectionView;
-
-    @BindView(R.id.call_other_member)
-    ImageView mAvatarView;
-
-    @BindView(R.id.mute_audio)
-    ImageView mMuteMicImageView;
-
-    @BindView(R.id.call_switch_camera_view)
-    ImageView mSwitchRearFrontCameraImageView;
-
-    @BindView(R.id.mute_local_camera)
-    ImageView mMuteLocalCameraView;
-
-    @BindView(R.id.header_pending_callview)
-    VectorPendingCallView mHeaderPendingCallView;
-
-    @BindView(R.id.call_menu_buttons_layout_container)
-    View mButtonsContainerView;
 
     // video screen management
     private Timer mVideoFadingEdgesTimer;
@@ -157,15 +125,39 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
     // so the call must not be suspended
     private boolean mIsScreenOff = false;
 
+    // UI
+    @BindView(R.id.hang_up_button)
+    ImageView mHangUpImageView;
+
+    @BindView(R.id.call_speaker_view)
+    ImageView mSpeakerSelectionView;
+
+    @BindView(R.id.call_other_member)
+    ImageView mAvatarView;
+
+    @BindView(R.id.mute_audio)
+    ImageView mMuteMicImageView;
+
+    @BindView(R.id.call_switch_camera_view)
+    ImageView mSwitchRearFrontCameraImageView;
+
+    @BindView(R.id.mute_local_camera)
+    ImageView mMuteLocalCameraView;
+
+    @BindView(R.id.header_pending_callview)
+    VectorPendingCallView mHeaderPendingCallView;
+
+    @BindView(R.id.call_menu_buttons_layout_container)
+    View mButtonsContainerView;
+
      /*
      * *********************************************************************************************
      * Static methods
      * *********************************************************************************************
      */
 
-    public static void start(final Context context, final boolean autoAccept) {
+    public static void start(final Context context) {
         final Intent intent = new Intent(context, VectorCallViewActivity.class);
-        intent.putExtra(EXTRA_AUTO_ACCEPT, autoAccept);
         context.startActivity(intent);
     }
 
@@ -196,12 +188,6 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
             Log.e(LOG_TAG, "invalid callId and/or session");
             finish();
             return;
-        }
-
-        final Intent intent = getIntent();
-        final boolean autoAccept = intent != null && intent.getBooleanExtra(EXTRA_AUTO_ACCEPT, false);
-        if (autoAccept) {
-            VectorCallManager.getInstance().answerIncomingCall();
         }
 
         findViewById(R.id.call_layout).setOnTouchListener(mMainViewTouchListener);
@@ -401,6 +387,9 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
     public void finish() {
         super.finish();
         VectorCallSoundManager.stopRinging();
+        if (null != mCall) {
+            mCall.removeListener(mListener);
+        }
         instance = null;
 
         // do not release the proximity sensor while pausing the activity
@@ -599,7 +588,6 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
                                         TextUtils.equals(IMXCall.CALL_STATE_INVITE_SENT, mLastCallState))) {
 
 
-                            mIsCalleeBusy = true;
                             Log.d(LOG_TAG, "## onStateDidChange(): the callee is busy");
                         }
                         mLastCallState = fState;
@@ -616,12 +604,6 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
         @Override
         public void onCallError(String error) {
             Log.d(LOG_TAG, "## onCallError(): error=" + error);
-
-            if (IMXCall.CALL_ERROR_USER_NOT_RESPONDING.equals(error)) {
-                mIsCalleeBusy = true;
-            }
-            final String errorMsg = VectorCallManager.getInstance().getUserFriendlyError(error);
-            CommonActivityUtils.displayToastOnUiThread(VectorCallViewActivity.this, errorMsg);
         }
 
         @Override
@@ -653,7 +635,6 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
             VectorCallViewActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    clearCallData();
                     VectorCallViewActivity.this.finish();
                 }
             });
@@ -661,13 +642,10 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
 
         @Override
         public void onCallEnd(final int aReasonId) {
+            Log.d(LOG_TAG, "## onCallEnd(): ");
             VectorCallViewActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d(LOG_TAG, "## onCallEnd(): ");
-
-                    clearCallData();
-                    mIsCallEnded = true;
                     finish();
                 }
             });
@@ -1169,7 +1147,6 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
     private void onHangUp() {
         mSavedCallView = null;
         mSavedLocalVideoLayoutConfig = null;
-        mHangUpReason = HANGUP_MSG_USER_CANCEL;
 
         VectorCallManager.getInstance().hangUp();
     }

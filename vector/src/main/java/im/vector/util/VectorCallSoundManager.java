@@ -29,9 +29,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
 import android.provider.MediaStore;
-import org.matrix.androidsdk.util.Log;
 
-import org.matrix.androidsdk.call.IMXCall;
+import org.matrix.androidsdk.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,7 +51,7 @@ import im.vector.receiver.HeadsetConnectionReceiver;
 public class VectorCallSoundManager {
 
     /** Observer pattern class to notify sound events.
-     *  Clients listen to events by calling {@link #addSoundListener(IVectorCallSoundListener)}**/
+     *  Clients listen to events by calling {@link IVectorCallSoundListener}**/
     public interface IVectorCallSoundListener {
         /**
          * Call back indicating new focus events (ex: {@link AudioManager#AUDIOFOCUS_GAIN},
@@ -298,7 +297,7 @@ public class VectorCallSoundManager {
     /**
      * Request a permanent audio focus if the focus was not yet granted.
      */
-    private static void requestAudioFocus() {
+    public static void requestAudioFocus() {
         if(! mIsFocusGranted) {
             int focusResult;
             AudioManager audioMgr;
@@ -371,7 +370,7 @@ public class VectorCallSoundManager {
         mRingTone = getRingTone(R.raw.ring, RING_TONE_START_RINGING);
 
         if (null != mRingTone) {
-            setSpeakerphoneOn(false, true);
+            setSpeakerphoneOn(false, !HeadsetConnectionReceiver.isHeadsetPlugged());
             mRingTone.play();
         } else {
             Log.e(LOG_TAG, "startRinging : fail to retrieve RING_TONE_START_RINGING");
@@ -398,26 +397,6 @@ public class VectorCallSoundManager {
             }
         } else {
             Log.w(LOG_TAG, "## startVibrating(): vibrator access failed");
-        }
-    }
-
-    /**
-     * Perform the audio focus management according to the VoIP call
-     * states.
-     * @param aCallState voip state
-     */
-    public static void manageCallStateFocus(String aCallState){
-        switch (aCallState) {
-            case IMXCall.CALL_STATE_CONNECTED:
-                requestAudioFocus();
-                break;
-
-            case IMXCall.CALL_STATE_ENDED:
-                releaseAudioFocus();
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -607,8 +586,8 @@ public class VectorCallSoundManager {
      */
     public static void toggleSpeaker() {
         AudioManager audioManager = getAudioManager();
-        audioManager.setSpeakerphoneOn(!audioManager.isSpeakerphoneOn());
         sIsSpeakerOn = !audioManager.isSpeakerphoneOn();
+        audioManager.setSpeakerphoneOn(sIsSpeakerOn);
     }
 
     /**

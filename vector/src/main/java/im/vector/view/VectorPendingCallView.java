@@ -36,7 +36,7 @@ import im.vector.util.VectorUtils;
 /**
  * This class displays the pending call information.
  */
-public class VectorPendingCallView extends RelativeLayout {
+public class VectorPendingCallView extends RelativeLayout implements IMXCall.MXCallListener {
 
     /**
      * The current managed call
@@ -54,6 +54,18 @@ public class VectorPendingCallView extends RelativeLayout {
 
     /** set to true to hide the line displaying the call status **/
     private boolean mIsCallStatusHidden;
+
+    private Runnable mDurationChecker = new Runnable() {
+        @Override
+        public void run() {
+            if (null != mCall) {
+                refreshCallStatus();
+                mUIHandler.postDelayed(mDurationChecker, 1000);
+            } else {
+                stopDurationMonitoring();
+            }
+        }
+    };
 
     /**
      * constructors
@@ -92,43 +104,35 @@ public class VectorPendingCallView extends RelativeLayout {
 
     /**
      * Check if there is a pending call.
-     * If there is a pending call, this view is visible.
+     * If there is an active call, this view is visible.
      * If there is none, this view is gone.
      */
     public void checkPendingCall() {
         mCall = VectorCallManager.getInstance().getCall();
 
-        // no more call
-        if (mCall == null) {
+        if (mCall == null || VectorCallManager.getInstance().hasPendingIncomingCall()) {
             // hide the view
             setVisibility(View.GONE);
+            stopDurationMonitoring();
         } else {
             // display it
             setVisibility(View.VISIBLE);
-            refresh();
+            mCall.addListener(this);
+            refreshCallStatus();
+            refreshCallDescription();
+            if (TextUtils.equals(mCall.getCallState(), IMXCall.CALL_STATE_CONNECTED)) {
+                startDurationMonitoring();
+            }
         }
     }
 
-    /**
-     * Refresh the call information.
-     */
-    private void refresh() {
-        mUIHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (null != mCall) {
-                    refreshCallDescription();
-                    refreshCallStatus();
+    private void startDurationMonitoring() {
+        stopDurationMonitoring();
+        mUIHandler.post(mDurationChecker);
+    }
 
-                    mUIHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            refresh();
-                        }
-                    }, 1000);
-                }
-            }
-        });
+    private void stopDurationMonitoring() {
+        mUIHandler.removeCallbacks(mDurationChecker);
     }
 
     /**
@@ -136,6 +140,8 @@ public class VectorPendingCallView extends RelativeLayout {
      * Terminates the refresh processes.
      */
     public void onCallTerminated() {
+        stopDurationMonitoring();
+        mCall.removeListener(this);
         mCall = null;
         setVisibility(View.GONE);
     }
@@ -171,8 +177,7 @@ public class VectorPendingCallView extends RelativeLayout {
      * Refresh the call status
      */
     private void refreshCallStatus() {
-        String callStatus = CallUtilities.getCallStatus(getContext(), mCall);
-
+        final String callStatus = CallUtilities.getCallStatus(getContext(), mCall);
         mCallStatusTextView.setText(callStatus);
         mCallStatusTextView.setVisibility(TextUtils.isEmpty(callStatus) ? View.GONE : View.VISIBLE);
     }
@@ -180,9 +185,56 @@ public class VectorPendingCallView extends RelativeLayout {
 
     /**
      * Enable/disable the display of the status active call.
+     *
      * @param aIsEnabled true to display the call status, false otherwise
      */
-    public void enableCallStatusDisplay(boolean aIsEnabled){
+    public void enableCallStatusDisplay(boolean aIsEnabled) {
         mIsCallStatusHidden = !aIsEnabled;
+    }
+
+    /*
+     * *********************************************************************************************
+     * Call listener
+     * *********************************************************************************************
+     */
+
+    @Override
+    public void onStateDidChange(String state) {
+        refreshCallStatus();
+        refreshCallDescription();
+
+        if (TextUtils.equals(state, IMXCall.CALL_STATE_CONNECTED)) {
+            startDurationMonitoring();
+        }
+    }
+
+    @Override
+    public void onCallError(String error) {
+        onCallTerminated();
+    }
+
+    @Override
+    public void onViewLoading(View callView) {
+
+    }
+
+    @Override
+    public void onViewReady() {
+
+    }
+
+    @Override
+    public void onCallAnsweredElsewhere() {
+        onCallTerminated();
+    }
+
+    @Override
+    public void onCallEnd(int aReasonId) {
+        onCallTerminated();
+    }
+
+    @Override
+    public void onPreviewSizeChanged(int width, int height) {
+
     }
 }

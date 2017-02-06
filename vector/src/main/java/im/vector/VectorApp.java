@@ -294,7 +294,7 @@ public class VectorApp extends Application {
                     Log.e(LOG_TAG, "## startActivityTransitionTimer() : the timer expires but there is an active activity.");
                 } else {
                     mIsInBackground = true;
-                    mIsCallingInBackground =  VectorCallManager.getInstance().hasActiveCall();
+                    mIsCallingInBackground =  VectorCallManager.getInstance().getCall() != null;
 
                     // if there is a pending call
                     // the application is not suspended

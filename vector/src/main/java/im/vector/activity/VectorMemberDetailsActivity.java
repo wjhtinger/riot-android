@@ -266,7 +266,7 @@ public class VectorMemberDetailsActivity extends MXCActionBarActivity implements
         VectorCallManager.getInstance().startCall(mSession.mCallsManager, mRoom.getRoomId(), isVideo, new VectorCallManager.OnStartCallListener() {
             @Override
             public void onStartCallSuccess(IMXCall call) {
-                VectorCallViewActivity.start(VectorMemberDetailsActivity.this, false);
+                VectorCallViewActivity.start(VectorMemberDetailsActivity.this);
             }
 
             @Override
@@ -758,7 +758,7 @@ public class VectorMemberDetailsActivity extends MXCActionBarActivity implements
             }
         } else if (null != mRoomMember) {
             // 1:1 call
-            if ((null != searchCallableRoom()) && mSession.isVoipCallSupported() && (null == VectorCallManager.getInstance().getActiveCall())) {
+            if ((null != searchCallableRoom()) && mSession.isVoipCallSupported() && (null == VectorCallManager.getInstance().getCall())) {
                 // Offer voip call options
                 supportedActions.add(ITEM_ACTION_START_VOICE_CALL);
                 supportedActions.add(ITEM_ACTION_START_VIDEO_CALL);

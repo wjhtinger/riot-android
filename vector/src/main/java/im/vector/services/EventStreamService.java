@@ -1040,7 +1040,7 @@ public class EventStreamService extends Service {
      * @param bingRule the bing rule.
      */
     public void displayIncomingCallNotification(MXSession session, Room room, Event event, String callId, BingRule bingRule) {
-        Log.d(LOG_TAG, "displayIncomingCallNotification : " + callId + " in " + room.getRoomId());
+        Log.e(LOG_TAG, "displayIncomingCallNotification : " + callId + " in " + room.getRoomId());
 
         // the incoming call in progress is already displayed
         if (!TextUtils.isEmpty(mIncomingCallId)) {

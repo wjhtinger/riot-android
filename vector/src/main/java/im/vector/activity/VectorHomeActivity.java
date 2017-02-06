@@ -73,7 +73,6 @@ import im.vector.receiver.VectorUniversalLinkReceiver;
 import im.vector.services.EventStreamService;
 import im.vector.util.BugReporter;
 import im.vector.util.VectorCallManager;
-import im.vector.util.VectorCallSoundManager;
 import im.vector.util.VectorUtils;
 import im.vector.view.VectorPendingCallView;
 
@@ -239,16 +238,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
             public void onClick(View v) {
                 IMXCall call = VectorCallManager.getInstance().getCall();
                 if (null != call) {
-                    final Intent intent = new Intent(VectorHomeActivity.this, VectorCallViewActivity.class);
-                    intent.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, call.getSession().getCredentials().userId);
-                    intent.putExtra(VectorCallViewActivity.EXTRA_CALL_ID, call.getCallId());
-
-                    VectorHomeActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            VectorHomeActivity.this.startActivity(intent);
-                        }
-                    });
+                    VectorCallViewActivity.start(VectorHomeActivity.this);
                 }
             }
         });
@@ -1231,54 +1221,26 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
 
     /**
      * Start a call with a session Id and a call Id
+     *
      * @param sessionId the session Id
-     * @param callId teh call Id
+     * @param callId    teh call Id
      */
-    public void startCall(String sessionId, String callId) {
+    public void startCall(final String sessionId, final String callId) {
         // sanity checks
-        if ((null != sessionId) && (null != callId)) {
-            final Intent intent = new Intent(VectorHomeActivity.this, InComingCallActivity.class);
-
-            intent.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, sessionId);
-            intent.putExtra(VectorCallViewActivity.EXTRA_CALL_ID, callId);
-
-            VectorHomeActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    VectorHomeActivity.this.startActivity(intent);
-                }
-            });
+        if (!TextUtils.isEmpty(sessionId) && !TextUtils.isEmpty(callId)) {
+            InComingCallActivity.start(this, sessionId, callId);
         }
     }
 
     /**
      * End of call management.
-     * @param call the ended call/
      */
-    public void onCallEnd(IMXCall call) {
-        if (null != call) {
-            String callId = call.getCallId();
-            // either the call view has been put in background
-            // or the ringing started because of a notified call in lockscreen (the callview was never created)
-            final boolean isActiveCall = VectorCallManager.getInstance().isBackgroundedCallId(callId) ||
-                    (!mSession.mCallsManager.hasActiveCalls() && IMXCall.CALL_STATE_CREATED.equals(call.getCallState()));
-
-            VectorHomeActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (isActiveCall) {
-                        // suspend the app if required
-                        VectorApp.getInstance().onCallEnd();
-                        // hide the view
-                        mVectorPendingCallView.checkPendingCall();
-                        // clear call in progress notification
-                        EventStreamService.checkDisplayedNotification();
-                        // and play a lovely sound
-                        VectorCallSoundManager.startEndCallSound();
-                    }
-                }
-            });
-        }
+    public void onCallEnd() {
+        mVectorPendingCallView.checkPendingCall();
+        // suspend the app if required
+        VectorApp.getInstance().onCallEnd();
+        // clear call in progress notification
+        EventStreamService.checkDisplayedNotification();
     }
 
     //==============================================================================================================

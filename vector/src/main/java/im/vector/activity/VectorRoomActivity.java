@@ -678,12 +678,9 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
         mVectorPendingCallView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                IMXCall call = VectorCallManager.getInstance().getActiveCall();
+                IMXCall call = VectorCallManager.getInstance().getCall();
                 if (null != call) {
-                    VectorCallViewActivity.start(VectorRoomActivity.this, false);
-                } else {
-                    // if the call is no more active, just remove the view
-                    mVectorPendingCallView.onCallTerminated();
+                    VectorCallViewActivity.start(VectorRoomActivity.this);
                 }
             }
         });
@@ -727,11 +724,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
         mStopCallLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        IMXCall call = mSession.mCallsManager.getCallWithRoomId(mRoom.getRoomId());
-
-                        if (null != call) {
-                            call.hangup(null);
-                        }
+                        VectorCallManager.getInstance().hangUp();
                     }
                 }
         );
@@ -973,13 +966,13 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
         }
 
         if (null != mCallId) {
-            IMXCall call = VectorCallManager.getInstance().getActiveCall();
+            IMXCall call = VectorCallManager.getInstance().getCall();
 
             // can only manage one call instance.
             // either there is no active call or resume the active one
             if (null == call || call.getCallId().equals(mCallId)) {
                 enableActionBarHeader(HIDE_ACTION_BAR_HEADER);
-                VectorCallViewActivity.start(VectorRoomActivity.this, call == null);
+                VectorCallViewActivity.start(VectorRoomActivity.this);
             }
 
             mCallId = null;
@@ -1294,7 +1287,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
             @Override
             public void onStartCallSuccess(IMXCall call) {
                 setProgressVisibility(View.GONE);
-                VectorCallViewActivity.start(VectorRoomActivity.this, false);
+                VectorCallViewActivity.start(VectorRoomActivity.this);
             }
 
             @Override
@@ -1888,7 +1881,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
     private void refreshCallButtons() {
         if ((null == sRoomPreviewData) && (null == mEventId) && canSendMessages()) {
             boolean isCallSupported = mRoom.canPerformCall() && mSession.isVoipCallSupported();
-            IMXCall call = VectorCallManager.getInstance().getActiveCall();
+            IMXCall call = VectorCallManager.getInstance().getCall();
 
             if (null == call) {
                 mStartCallLayout.setVisibility((isCallSupported && (mEditText.getText().length() == 0)) ? View.VISIBLE : View.GONE);

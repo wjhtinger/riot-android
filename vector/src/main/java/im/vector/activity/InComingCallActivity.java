@@ -17,6 +17,7 @@
 package im.vector.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,7 +33,6 @@ import org.matrix.androidsdk.util.Log;
 
 import im.vector.Matrix;
 import im.vector.R;
-import im.vector.util.CallUtilities;
 import im.vector.util.VectorCallManager;
 import im.vector.util.VectorCallSoundManager;
 import im.vector.util.VectorUtils;
@@ -41,8 +41,8 @@ import im.vector.util.VectorUtils;
  * InComingCallActivity is Dialog Activity, displayed when an incoming call (audio or a video) over IP
  * is received by the user. The user is asked to accept or ignore.
  */
-public class InComingCallActivity extends Activity { // do NOT extend from UC*Activity, we do not want to login on this screen!
-    private static final String LOG_TAG = "InComingCallActivity";
+public class InComingCallActivity extends Activity implements IMXCall.MXCallListener { // do NOT extend from UC*Activity, we do not want to login on this screen!
+    private static final String LOG_TAG = InComingCallActivity.class.getSimpleName();
 
     // only one instance of this class should be displayed
     // TODO find how to avoid multiple creations
@@ -57,56 +57,24 @@ public class InComingCallActivity extends Activity { // do NOT extend from UC*Ac
     private MXSession mSession;
     private IMXCall mMxCall;
 
-    private final IMXCall.MXCallListener mMxCallListener = new IMXCall.MXCallListener() {
-        @Override
-        public void onStateDidChange(String state) {
-            Log.d(LOG_TAG,"## onStateDidChange(): state="+state);
-        }
+     /*
+     * *********************************************************************************************
+     * Static methods
+     * *********************************************************************************************
+     */
 
-        @Override
-        public void onCallError(String error) {
-            Log.d(LOG_TAG, "## dispatchOnCallError(): error=" + error);
-            final String errorMsg = VectorCallManager.getInstance().getUserFriendlyError(error);
-            CommonActivityUtils.displayToastOnUiThread(InComingCallActivity.this, errorMsg);
-        }
+    public static void start(final Context context, final String sessionId, final String callId) {
+        final Intent intent = new Intent(context, InComingCallActivity.class);
+        intent.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, sessionId);
+        intent.putExtra(VectorCallViewActivity.EXTRA_CALL_ID, callId);
+        context.startActivity(intent);
+    }
 
-        @Override
-        public void onViewLoading(View callView) {
-            Log.d(LOG_TAG, "## onViewLoading():");
-        }
-
-        @Override
-        public void onViewReady() {
-            Log.d(LOG_TAG, "## onViewReady(): ");
-
-            if(null != mMxCall) {
-                if (mMxCall.isIncoming()) {
-                    mMxCall.launchIncomingCall(null);
-                } else {
-                    Log.d(LOG_TAG, "## onViewReady(): not incoming call");
-                }
-            }
-        }
-
-        /**
-         * The call was answered on another device
-         */
-        @Override
-        public void onCallAnsweredElsewhere() {
-            Log.d(LOG_TAG, "## onCallAnsweredElsewhere(): finish activity");
-            finish();
-        }
-
-        @Override
-        public void onCallEnd(final int aReasonId) {
-            Log.d(LOG_TAG, "## onCallEnd(): finish activity");
-            finish();
-        }
-
-        @Override
-        public void onPreviewSizeChanged(int width, int height) {
-        }
-    };
+    /*
+     * *********************************************************************************************
+     * Activity lifecycle
+     * *********************************************************************************************
+     */
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -126,16 +94,16 @@ public class InComingCallActivity extends Activity { // do NOT extend from UC*Ac
             mMatrixId = intent.getStringExtra(VectorCallViewActivity.EXTRA_MATRIX_ID);
             mCallId = intent.getStringExtra(VectorCallViewActivity.EXTRA_CALL_ID);
 
-            if(null == mMatrixId){
+            if (null == mMatrixId) {
                 Log.e(LOG_TAG, "## onCreate(): matrix ID is missing in extras");
                 finish();
-            } else if(null == mCallId){
+            } else if (null == mCallId) {
                 Log.e(LOG_TAG, "## onCreate(): call ID is missing in extras");
                 finish();
-            } else if(null == (mSession = Matrix.getInstance(getApplicationContext()).getSession(mMatrixId))){
+            } else if (null == (mSession = Matrix.getInstance(getApplicationContext()).getSession(mMatrixId))) {
                 Log.e(LOG_TAG, "## onCreate(): invalid session (null)");
                 finish();
-            } else if(null == (mMxCall = mSession.mCallsManager.getCallWithCallId(mCallId))){
+            } else if (null == (mMxCall = mSession.mCallsManager.getCallWithCallId(mCallId))) {
                 Log.e(LOG_TAG, "## onCreate(): invalid call ID (null)");
                 // assume that the user tap on a staled notification
                 if (VectorCallSoundManager.isRinging()) {
@@ -185,24 +153,10 @@ public class InComingCallActivity extends Activity { // do NOT extend from UC*Ac
                 mAcceptCallButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        VectorCallViewActivity.start(InComingCallActivity.this, true);
                         finish();
+                        VectorCallViewActivity.start(InComingCallActivity.this);
                     }
                 });
-                
-                // create the call view to enable mMxCallListener being used,
-                // otherwise call API is not enabled
-                mMxCall.createCallView();
-            }
-        }
-    }
-
-    @Override
-    public  void finish() {
-        super.finish();
-        synchronized (LOG_TAG) {
-            if (this == sharedInstance) {
-                sharedInstance = null;
             }
         }
     }
@@ -214,17 +168,19 @@ public class InComingCallActivity extends Activity { // do NOT extend from UC*Ac
         mMxCall = mSession.mCallsManager.getCallWithCallId(mCallId);
 
         if (null != mMxCall) {
-            String callState = mMxCall.getCallState();
-            if (CallUtilities.isWaitingUserResponse(callState)) {
-                mMxCall.onResume();
-                mMxCall.addListener(mMxCallListener);
-            } else {
-                Log.d(LOG_TAG, "## onResume : the call has already been managed.");
-                finish();
-            }
+            mMxCall.addListener(this);
         } else {
             Log.d(LOG_TAG, "## onResume : the call does not exist anymore");
             finish();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (null != mMxCall) {
+            mMxCall.removeListener(this);
         }
     }
 
@@ -242,27 +198,59 @@ public class InComingCallActivity extends Activity { // do NOT extend from UC*Ac
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (null != mMxCall) {
-            mMxCall.onPause();
-            mMxCall.removeListener(mMxCallListener);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        if (null != mMxCall) {
-            mMxCall.removeListener(mMxCallListener);
-        }
-    }
-
-    @Override
     public void onBackPressed() {
         VectorCallManager.getInstance().hangUp();
+        super.onBackPressed();
     }
 
+    @Override
+    public void finish() {
+        Log.d(LOG_TAG, "## finish");
+        super.finish();
+        synchronized (LOG_TAG) {
+            if (this == sharedInstance) {
+                sharedInstance = null;
+            }
+        }
+    }
+    /*
+     * *********************************************************************************************
+     *  Call listener
+     * *********************************************************************************************
+     */
+
+    @Override
+    public void onStateDidChange(String s) {
+    }
+
+    @Override
+    public void onCallError(String s) {
+        Log.d(LOG_TAG, "## onCallError");
+        finish();
+    }
+
+    @Override
+    public void onViewLoading(View view) {
+    }
+
+    @Override
+    public void onViewReady() {
+    }
+
+    @Override
+    public void onCallAnsweredElsewhere() {
+        Log.d(LOG_TAG, "## onCallAnsweredElsewhere(): finish activity");
+        finish();
+    }
+
+    @Override
+    public void onCallEnd(final int aReasonId) {
+        Log.d(LOG_TAG, "## onCallEnd(): finish activity");
+        finish();
+    }
+
+    @Override
+    public void onPreviewSizeChanged(int i, int i1) {
+
+    }
 }

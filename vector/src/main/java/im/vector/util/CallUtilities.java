@@ -17,7 +17,6 @@
 package im.vector.util;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import org.matrix.androidsdk.call.IMXCall;
 
@@ -33,16 +32,17 @@ import im.vector.R;
 public class CallUtilities {
     //
     private static SimpleDateFormat mHourMinSecFormat = null;
-    private static SimpleDateFormat mMinSecFormat =  null;
+    private static SimpleDateFormat mMinSecFormat = null;
 
     /**
      * Format a time in seconds to a HH:MM:SS string.
+     *
      * @param seconds the time in seconds
      * @return the formatted time
      */
     private static String formatSecondsToHMS(long seconds) {
         if (null == mHourMinSecFormat) {
-            mHourMinSecFormat =  new SimpleDateFormat("HH:mm:ss");
+            mHourMinSecFormat = new SimpleDateFormat("HH:mm:ss");
             mHourMinSecFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
             mMinSecFormat = new SimpleDateFormat("mm:ss");
@@ -57,11 +57,38 @@ public class CallUtilities {
     }
 
     /**
+     * Return a user friendly message for the given error
+     *
+     * @param context
+     * @param error
+     * @return user friendly error
+     */
+    public static String getUserFriendlyError(final Context context, final String error) {
+        String userFriendlyError = error;
+        if (error != null) {
+            switch (error) {
+                case IMXCall.CALL_ERROR_USER_NOT_RESPONDING:
+                    userFriendlyError = context.getString(R.string.call_error_user_not_responding);
+                    break;
+                case IMXCall.CALL_ERROR_ICE_FAILED:
+                    userFriendlyError = context.getString(R.string.call_error_ice_failed);
+                    break;
+                case IMXCall.CALL_ERROR_CAMERA_INIT_FAILED:
+                    userFriendlyError = context.getString(R.string.call_error_camera_init_failed);
+                    break;
+            }
+        }
+        return userFriendlyError;
+    }
+
+    /**
      * Return the call status.
-     * @param call the dedicated call
+     *
+     * @param context
+     * @param call    the dedicated call
      * @return the call status.
      */
-    public static String getCallStatus(Context context, IMXCall call) {
+    public static String getCallStatus(final Context context, final IMXCall call) {
         // sanity check
         if (null == call) {
             return null;
@@ -71,15 +98,26 @@ public class CallUtilities {
 
         String callStatus = null;
         switch (callState) {
-            case IMXCall.CALL_STATE_CONNECTING:
-            case IMXCall.CALL_STATE_CREATE_ANSWER:
+            case IMXCall.CALL_STATE_RINGING:
+                if (call.isIncoming()) {
+                    callStatus = context.getString(call.isVideo() ? R.string.incoming_video_call : R.string.incoming_voice_call);
+                } else {
+                    callStatus = context.getString(R.string.call_ring);
+                }
+                break;
+            case IMXCall.CALL_STATE_CREATING_CALL_VIEW:
+            case IMXCall.CALL_STATE_FLEDGLING:
             case IMXCall.CALL_STATE_WAIT_LOCAL_MEDIA:
             case IMXCall.CALL_STATE_WAIT_CREATE_OFFER:
+            case IMXCall.CALL_STATE_CREATE_ANSWER:
+            case IMXCall.CALL_STATE_INVITE_SENT:
+                callStatus = context.getString(call.isIncoming() ? R.string.call_connecting : R.string.call_ring);
+                break;
+            case IMXCall.CALL_STATE_CONNECTING:
                 callStatus = context.getString(R.string.call_connecting);
                 break;
             case IMXCall.CALL_STATE_CONNECTED:
-                long elapsedTime = call.getCallElapsedTime();
-
+                final long elapsedTime = call.getCallElapsedTime();
                 if (elapsedTime < 0) {
                     callStatus = context.getString(R.string.call_connected);
                 } else {
@@ -89,27 +127,9 @@ public class CallUtilities {
             case IMXCall.CALL_STATE_ENDED:
                 callStatus = context.getString(R.string.call_ended);
                 break;
-            case IMXCall.CALL_STATE_RINGING:
-                if (call.isIncoming()) {
-                    if (call.isVideo()) {
-                        callStatus = context.getString(R.string.incoming_video_call);
-                    } else {
-                        callStatus = context.getString(R.string.incoming_voice_call);
-                    }
-                } else {
-                    callStatus = context.getString(R.string.call_ring);
-                }
-                break;
         }
 
         return callStatus;
     }
 
-    public static boolean isWaitingUserResponse(final String callState){
-        return TextUtils.equals(callState, IMXCall.CALL_STATE_CREATING_CALL_VIEW) ||
-                TextUtils.equals(callState, IMXCall.CALL_STATE_FLEDGLING) ||
-                TextUtils.equals(callState, IMXCall.CALL_STATE_WAIT_LOCAL_MEDIA) ||
-                TextUtils.equals(callState, IMXCall.CALL_STATE_WAIT_CREATE_OFFER) ||
-                TextUtils.equals(callState, IMXCall.CALL_STATE_RINGING);
-    }
 }
