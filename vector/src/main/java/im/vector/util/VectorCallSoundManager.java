@@ -16,29 +16,18 @@
 
 package im.vector.util;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
+import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Environment;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
-import android.provider.MediaStore;
 
 import org.matrix.androidsdk.util.Log;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import im.vector.R;
 import im.vector.VectorApp;
@@ -49,6 +38,8 @@ import im.vector.receiver.HeadsetConnectionReceiver;
  * It is in charge of playing ringtones and managing the audio focus.
  */
 public class VectorCallSoundManager {
+
+    private static final String LOG_TAG = VectorCallSoundManager.class.getSimpleName();
 
     /** Observer pattern class to notify sound events.
      *  Clients listen to events by calling {@link IVectorCallSoundListener}**/
@@ -61,26 +52,18 @@ public class VectorCallSoundManager {
         void onFocusChanged(int aFocusEvent);
     }
 
-    private static final String LOG_TAG = "CallSoundManager";
-
-    // ring tones resource names
-    private static final String RING_TONE_START_RINGING = "ring.ogg";
-
     // audio focus
     private static boolean mIsFocusGranted = false;
-
-    // the ringtones are played on loudspeaker
-    private static Ringtone mRingTone = null;
-
     // true when microphone is muted
     private static boolean sIsMute;
     // true when speaker is on
     private static boolean sIsSpeakerOn;
 
     // the media players are played on loudspeaker / earpiece according to setSpeakerOn
-    private static MediaPlayer mRingBackPlayer = null;
-    private static MediaPlayer mCallEndPlayer = null;
-    private static MediaPlayer mBusyPlayer = null;
+    private static MediaPlayer mRingtonePlayer;
+    private static MediaPlayer mRingBackPlayer;
+    private static MediaPlayer mCallEndPlayer;
+    private static MediaPlayer mBusyPlayer;
 
     private static final int VIBRATE_DURATION = 500; // milliseconds
     private static final int VIBRATE_SLEEP = 1000;  // milliseconds
@@ -135,8 +118,6 @@ public class VectorCallSoundManager {
     // the audio manager
     private static AudioManager mAudioManager = null;
 
-    private static final HashMap<String, Uri> mRingtoneUrlByFileName = new HashMap<>();
-
     /**
      * @return the audio manager
      */
@@ -149,106 +130,11 @@ public class VectorCallSoundManager {
     }
 
     /**
-     * Provide a ringtone from a resource and a filename.
-     * The audio file must have a ANDROID_LOOP metatada set to true to loop the sound.
-     * @param resId The audio resource.
-     * @param filename the audio filename
-     * @return a RingTone, null if the operation fails.
-     */
-    static private Ringtone getRingTone(int resId, String filename) {
-        Context context = VectorApp.getInstance();
-        Uri ringToneUri = mRingtoneUrlByFileName.get(filename);
-        Ringtone ringtone = null;
-
-        // test if the ring tone has been cached
-        if (null != ringToneUri) {
-            ringtone = RingtoneManager.getRingtone(context, ringToneUri);
-
-            // provide it
-            return ringtone;
-        }
-
-        try {
-            File directory = new File(Environment.getExternalStorageDirectory(), "/" + context.getApplicationContext().getPackageName().hashCode() + "/Audio/");
-
-            // create the directory if it does not exist
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-
-            File file = new File(directory + "/", filename);
-
-            // if the file exists, check if the resource has been created
-            if (file.exists()) {
-                Cursor cursor = context.getContentResolver().query(
-                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        new String[] { MediaStore.Audio.Media._ID },
-                        MediaStore.Audio.Media.DATA + "=? ",
-                        new String[] {file.getAbsolutePath()}, null);
-
-                if ((null != cursor) && cursor.moveToFirst()) {
-                    int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
-                    ringToneUri = Uri.withAppendedPath(Uri.parse("content://media/external/audio/media"), "" + id);
-                }
-
-                if (null != cursor) {
-                    cursor.close();
-                }
-            }
-
-            // the Uri has been retrieved
-            if (null == ringToneUri) {
-                // create the file
-                if (!file.exists()) {
-                    try {
-                        byte[] readData = new byte[1024];
-                        InputStream fis = context.getResources().openRawResource(resId);
-                        FileOutputStream fos = new FileOutputStream(file);
-                        int i = fis.read(readData);
-
-                        while (i != -1) {
-                            fos.write(readData, 0, i);
-                            i = fis.read(readData);
-                        }
-
-                        fos.close();
-                    } catch (Exception e) {
-                        Log.e(LOG_TAG, "## getRingTone():  Exception1 Msg=" + e.getLocalizedMessage());
-                    }
-                }
-
-                // and the resource Uri
-                ContentValues values = new ContentValues();
-                values.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath());
-                values.put(MediaStore.MediaColumns.TITLE, filename);
-                values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/ogg");
-                values.put(MediaStore.MediaColumns.SIZE, file.length());
-                values.put(MediaStore.Audio.Media.ARTIST, R.string.app_name);
-                values.put(MediaStore.Audio.Media.IS_RINGTONE, true);
-                values.put(MediaStore.Audio.Media.IS_NOTIFICATION, true);
-                values.put(MediaStore.Audio.Media.IS_ALARM, true);
-                values.put(MediaStore.Audio.Media.IS_MUSIC, true);
-
-                ringToneUri = context.getContentResolver() .insert(MediaStore.Audio.Media.getContentUriForPath(file.getAbsolutePath()), values);
-            }
-
-            if (null != ringToneUri) {
-                mRingtoneUrlByFileName.put(filename, ringToneUri);
-                ringtone = RingtoneManager.getRingtone(context, ringToneUri);
-            }
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "## getRingTone():  Exception2 Msg=" + e.getLocalizedMessage());
-        }
-
-        return ringtone;
-    }
-
-    /**
      * Tells that the device is ringing.
      * @return true if the device is ringing
      */
     public static boolean isRinging() {
-        return (null != mRingTone);
+        return (null != mRingtonePlayer);
     }
 
     public static boolean isMute(){
@@ -262,15 +148,19 @@ public class VectorCallSoundManager {
      * Stop any playing ring tones.
      */
     private static void stopRingTones() {
-        if (null != mRingTone) {
-            mRingTone.stop();
-            mRingTone = null;
+        if (null != mRingtonePlayer) {
+            if (mRingtonePlayer.isPlaying()) {
+                mRingtonePlayer.stop();
+            }
+            mRingtonePlayer.release();
+            mRingtonePlayer = null;
         }
 
         if (null != mRingBackPlayer) {
             if (mRingBackPlayer.isPlaying()) {
                 mRingBackPlayer.stop();
             }
+            mRingBackPlayer.release();
             mRingBackPlayer = null;
         }
     }
@@ -352,34 +242,6 @@ public class VectorCallSoundManager {
             }, 300);
         }
     }
-
-    /**
-     * Start the ringing sound
-     */
-    public static void startRinging() {
-        Log.d(LOG_TAG, "startRinging isHeadsetPlugged:" + HeadsetConnectionReceiver.isHeadsetPlugged());
-
-        if (null != mRingTone) {
-            Log.d(LOG_TAG, "ring tone already ringing");
-            return;
-        }
-
-        stopRinging();
-
-        // use the ringTone to manage sound volume properly
-        mRingTone = getRingTone(R.raw.ring, RING_TONE_START_RINGING);
-
-        if (null != mRingTone) {
-            setSpeakerphoneOn(false, !HeadsetConnectionReceiver.isHeadsetPlugged());
-            mRingTone.play();
-        } else {
-            Log.e(LOG_TAG, "startRinging : fail to retrieve RING_TONE_START_RINGING");
-        }
-
-        // start vibrate
-        enableVibrating(true);
-    }
-
     /**
      * Enable the vibrate mode.
      * @param aIsVibrateEnabled true to force vibrate, false to stop vibrate.
@@ -398,6 +260,47 @@ public class VectorCallSoundManager {
         } else {
             Log.w(LOG_TAG, "## startVibrating(): vibrator access failed");
         }
+    }
+
+    /**
+     * Start the ring back sound
+     */
+    public static void startRingtoneSound() {
+        Log.d(LOG_TAG, "Ringtone isHeadsetPlugged:" + HeadsetConnectionReceiver.isHeadsetPlugged());
+
+        if (null != mRingtonePlayer) {
+            Log.d(LOG_TAG, "ringtone already ringing");
+            return;
+        }
+
+        stopRinging();
+
+        try {
+            AssetFileDescriptor afd = VectorApp.getInstance().getResources().openRawResourceFd(R.raw.ring);
+            if (afd == null) return;
+            mRingtonePlayer = new MediaPlayer();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mRingtonePlayer.setAudioSessionId(getAudioManager().generateAudioSessionId());
+            }
+            mRingtonePlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+            mRingtonePlayer.setAudioStreamType(AudioManager.STREAM_RING);
+            mRingtonePlayer.prepare();
+            mRingtonePlayer.setLooping(true);
+        } catch (Exception ex) {
+            Log.d(LOG_TAG, "create failed:", ex);
+            // fall through
+        }
+
+        if (null != mRingtonePlayer) {
+            setSpeakerphoneOn(false, !HeadsetConnectionReceiver.isHeadsetPlugged());
+            mRingtonePlayer.start();
+        } else {
+            Log.e(LOG_TAG, "Failed to start ringtone");
+        }
+
+        // start vibrate
+        enableVibrating(true);
     }
 
     /**
@@ -498,21 +401,11 @@ public class VectorCallSoundManager {
     private static Integer mAudioMode = null;
     private static Boolean mIsSpeakerOn = null;
 
-    private static Timer mRestoreAudioConfigTimer = null;
-    private static TimerTask mRestoreAudioConfigTimerMask = null;
-    private static Handler mUIHandler = null;
-
     /**
      * Back up the current audio config.
      */
     private static void backupAudioConfig() {
-        // there is a pending timer to restore the audio config
-        if (null != mRestoreAudioConfigTimer) {
-            // cancel the timer and don't get the audio config
-            mRestoreAudioConfigTimer.cancel();
-            mRestoreAudioConfigTimer = null;
-            mRestoreAudioConfigTimerMask = null;
-        } else if (null == mAudioMode) { // not yet backuped
+        if (null == mAudioMode) { // not yet backuped
             AudioManager audioManager = getAudioManager();
 
             mAudioMode = audioManager.getMode();

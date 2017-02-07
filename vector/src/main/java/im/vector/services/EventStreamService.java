@@ -1051,7 +1051,7 @@ public class EventStreamService extends Service {
             Log.d(LOG_TAG, "displayIncomingCallNotification : display the dedicated notification");
 
             if ((null != bingRule) && bingRule.isCallRingNotificationSound(bingRule.notificationSound())) {
-                VectorCallSoundManager.startRinging();
+                VectorCallSoundManager.startRingtoneSound();
             }
 
             Notification notification = NotificationUtils.buildIncomingCallNotification(

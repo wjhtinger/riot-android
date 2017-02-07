@@ -252,11 +252,11 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
     }
 
     /**
-     * Take the incoming call and display the appropriate screen to the user
+     * Handle the incoming call and display the appropriate screen to the user
      *
      * @param call
      */
-    private void takeIncomingCall(final IMXCall call) {
+    private void handleIncomingCall(final IMXCall call) {
         setCurrentCall(call);
         mIsAwaitingAnswer = true;
 
@@ -296,7 +296,7 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
                 call.hangup(null);
             } else {
                 // Call can be taken
-                takeIncomingCall(call);
+                handleIncomingCall(call);
             }
         }
     }
@@ -348,6 +348,7 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
             case IMXCall.CALL_STATE_CREATING_CALL_VIEW:
             case IMXCall.CALL_STATE_CREATE_ANSWER:
                 if (mCall.isIncoming()) {
+                    VectorCallSoundManager.stopRinging();
                     EventStreamService.getInstance().hideCallNotifications();
                 }
                 break;
@@ -401,6 +402,8 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
 
     @Override
     public void onCallEnd(int aReasonId) {
+        VectorCallSoundManager.stopRinging();
+
         switch (aReasonId) {
             case IMXCall.END_CALL_REASON_PEER_HANG_UP:
                 Log.e(LOG_TAG, "onCallEnd: END_CALL_REASON_PEER_HANG_UP incoming:" + mIsIncoming + " awaitingAnswer:" + mIsAwaitingAnswer);
@@ -423,7 +426,6 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
                 }
                 break;
             case IMXCall.END_CALL_REASON_PEER_HANG_UP_ELSEWHERE:
-                //TODO test that case
                 Log.e(LOG_TAG, "onCallEnd: END_CALL_REASON_PEER_HANG_UP_ELSEWHERE");
                 CommonActivityUtils.displayToastOnUiThread(VectorApp.getCurrentActivity(),
                         VectorApp.getInstance().getString(R.string.call_error_peer_hangup_elsewhere));
