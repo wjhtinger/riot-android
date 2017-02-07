@@ -35,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.matrix.androidsdk.MXSession;
+import org.matrix.androidsdk.call.IMXCall;
 import org.matrix.androidsdk.data.Room;
 import org.matrix.androidsdk.data.RoomState;
 import org.matrix.androidsdk.data.store.IMXStore;
@@ -1047,33 +1048,38 @@ public class EventStreamService extends Service {
             Log.d(LOG_TAG, "displayIncomingCallNotification : the incoming call in progress is already displayed");
         } else if (!TextUtils.isEmpty(mCallIdInProgress)) {
             Log.d(LOG_TAG, "displayIncomingCallNotification : a 'call in progress' notification is displayed");
+        } else {
+            // Check that the call is still valid
+            final IMXCall call = session.mCallsManager.getCallWithCallId(callId);
+            if (call != null) {
+                Log.d(LOG_TAG, "displayIncomingCallNotification : display the dedicated notification");
+
+                if ((null != bingRule) && bingRule.isCallRingNotificationSound(bingRule.notificationSound())) {
+                    VectorCallSoundManager.startRingtoneSound();
+                }
+
+                Notification notification = NotificationUtils.buildIncomingCallNotification(
+                        EventStreamService.this,
+                        getRoomName(session, room, event),
+                        session.getMyUserId(),
+                        callId);
+
+                if ((null != bingRule) && bingRule.isDefaultNotificationSound(bingRule.notificationSound())) {
+                    notification.defaults |= Notification.DEFAULT_SOUND;
+                }
+
+                startForeground(NOTIF_ID_FOREGROUND_SERVICE, notification);
+                mForegroundServiceIdentifier = FOREGROUND_ID_INCOMING_CALL;
+
+                mIncomingCallId = callId;
+
+                // turn the screen on for 3 seconds
+                PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "MXEventListener");
+                wl.acquire(3000);
+                wl.release();
+            }
         }
-            Log.d(LOG_TAG, "displayIncomingCallNotification : display the dedicated notification");
-
-            if ((null != bingRule) && bingRule.isCallRingNotificationSound(bingRule.notificationSound())) {
-                VectorCallSoundManager.startRingtoneSound();
-            }
-
-            Notification notification = NotificationUtils.buildIncomingCallNotification(
-                    EventStreamService.this,
-                    getRoomName(session, room, event),
-                    session.getMyUserId(),
-                    callId);
-
-            if ((null != bingRule) && bingRule.isDefaultNotificationSound(bingRule.notificationSound())) {
-                notification.defaults |= Notification.DEFAULT_SOUND;
-            }
-
-            startForeground(NOTIF_ID_FOREGROUND_SERVICE, notification);
-            mForegroundServiceIdentifier = FOREGROUND_ID_INCOMING_CALL;
-
-            mIncomingCallId = callId;
-
-            // turn the screen on for 3 seconds
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "MXEventListener");
-            wl.acquire(3000);
-            wl.release();
     }
 
     /**

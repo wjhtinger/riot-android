@@ -33,6 +33,7 @@ import org.matrix.androidsdk.util.Log;
 
 import im.vector.Matrix;
 import im.vector.R;
+import im.vector.services.EventStreamService;
 import im.vector.util.VectorCallManager;
 import im.vector.util.VectorCallSoundManager;
 import im.vector.util.VectorUtils;
@@ -110,6 +111,7 @@ public class InComingCallActivity extends Activity implements IMXCall.MXCallList
                     Log.e(LOG_TAG, "## onCreate(): the device was ringing so assume that the call " + mCallId + " does not exist anymore");
                     VectorCallSoundManager.stopRinging();
                 }
+                EventStreamService.getInstance().hideCallNotifications();
                 finish();
             } else {
                 synchronized (LOG_TAG) {
