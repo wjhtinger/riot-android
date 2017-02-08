@@ -291,10 +291,7 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
     public void onIncomingCall(IMXCall call) {
         if (call != null) {
             Log.e(LOG_TAG, "onIncomingCall for " + call.getSession().getMyUserId());
-            if (mCall != null) {
-                // Already in call, directly hang up the new call
-                call.hangup(null);
-            } else {
+            if (mCall == null) {
                 // Call can be taken
                 handleIncomingCall(call);
             }
