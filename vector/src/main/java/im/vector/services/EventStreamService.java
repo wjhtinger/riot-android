@@ -62,6 +62,7 @@ import im.vector.activity.CommonActivityUtils;
 import im.vector.activity.VectorHomeActivity;
 import im.vector.gcm.GcmRegistrationManager;
 import im.vector.util.NotificationUtils;
+import im.vector.util.VectorCallManager;
 import im.vector.util.VectorCallSoundManager;
 import im.vector.util.VectorUtils;
 
@@ -1051,7 +1052,7 @@ public class EventStreamService extends Service {
         } else {
             // Check that the call is still valid
             final IMXCall call = session.mCallsManager.getCallWithCallId(callId);
-            if (call != null) {
+            if (call != null && VectorCallManager.getInstance().getCall() == null) {
                 Log.d(LOG_TAG, "displayIncomingCallNotification : display the dedicated notification");
 
                 if ((null != bingRule) && bingRule.isCallRingNotificationSound(bingRule.notificationSound())) {
