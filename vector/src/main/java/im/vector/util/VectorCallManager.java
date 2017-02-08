@@ -81,15 +81,6 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
         }
     }
 
-    public void setCurrentCall(final IMXCall call) {
-        if (call != null) {
-            mCall = call;
-            mIsIncoming = call.isIncoming();
-            Log.e(LOG_TAG, "setCurrentCall " + call.getCallId() + " state:" + call.getCallState());
-            call.addListener(this);
-        }
-    }
-
     /**
      * Provide the current call
      *
@@ -99,6 +90,11 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
         return mCall;
     }
 
+    /**
+     * Check whether the current call is an incoming one
+     *
+     * @return
+     */
     public boolean hasIncomingCall() {
         return mCall != null && mCall.isIncoming();
     }
@@ -109,6 +105,10 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
      * @return true if valid
      */
     public boolean isValidCall() {
+        if (mCall == null) {
+            return false;
+        }
+
         final boolean isValid = mCall.getSession().mCallsManager.getCallWithCallId(mCall.getCallId()) != null;
         if (!isValid) {
             mCall.removeListener(this);
@@ -164,30 +164,6 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
     }
 
     /**
-     * Check whether an answer is expected for the current call
-     *
-     * @return true if the callee did not accept yet
-     */
-    public boolean isWaitingUserResponse() {
-        if (mCall == null) {
-            return false;
-        }
-
-        final String callState = mCall.getCallState();
-        if (hasIncomingCall()) {
-            return TextUtils.equals(mCall.getCallState(), IMXCall.CALL_STATE_CREATED) ||
-                    TextUtils.equals(callState, IMXCall.CALL_STATE_RINGING);
-        } else {
-            return TextUtils.equals(callState, IMXCall.CALL_STATE_CREATING_CALL_VIEW) ||
-                    TextUtils.equals(callState, IMXCall.CALL_STATE_FLEDGLING) ||
-                    TextUtils.equals(callState, IMXCall.CALL_STATE_WAIT_LOCAL_MEDIA) ||
-                    TextUtils.equals(callState, IMXCall.CALL_STATE_WAIT_CREATE_OFFER) ||
-                    TextUtils.equals(callState, IMXCall.CALL_STATE_INVITE_SENT) ||
-                    TextUtils.equals(callState, IMXCall.CALL_STATE_RINGING);
-        }
-    }
-
-    /**
      * Start a call for the given session call manager in the given room
      *
      * @param callsManager
@@ -238,6 +214,20 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
      */
 
     /**
+     * Set the call that will be managed
+     *
+     * @param call
+     */
+    private void setCurrentCall(final IMXCall call) {
+        if (call != null) {
+            Log.e(LOG_TAG, "setCurrentCall " + call.getCallId() + " state:" + call.getCallState());
+            mCall = call;
+            mIsIncoming = call.isIncoming();
+            call.addListener(this);
+        }
+    }
+
+    /**
      * Clear current call data so a new call can be taken later
      */
     private void clearCall() {
@@ -254,7 +244,7 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
     /**
      * Handle the incoming call and display the appropriate screen to the user
      *
-     * @param call
+     * @param call incoming call
      */
     private void handleIncomingCall(final IMXCall call) {
         setCurrentCall(call);
@@ -267,7 +257,6 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
             Log.d(LOG_TAG, "onIncomingCall : the home activity does not exist -> launch it");
 
             // clear the activity stack to home activity
-
             final Context context = VectorApp.getInstance();
             Intent intent = new Intent(context, VectorHomeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
