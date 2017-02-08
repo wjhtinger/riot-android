@@ -366,6 +366,8 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
     @Override
     public void onCallError(String error) {
         Log.e(LOG_TAG, "onCallError " + error);
+        VectorCallSoundManager.stopRinging();
+
         switch (error) {
             case IMXCall.CALL_ERROR_USER_NOT_RESPONDING:
                 VectorCallSoundManager.startBusyCallSound();
@@ -373,6 +375,7 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
             case IMXCall.CALL_ERROR_ICE_FAILED:
             case IMXCall.CALL_ERROR_CAMERA_INIT_FAILED:
             default:
+                VectorCallSoundManager.restoreAudioConfig();
                 break;
         }
 
@@ -395,6 +398,8 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
     public void onCallAnsweredElsewhere() {
         Log.e(LOG_TAG, "onCallAnsweredElsewhere");
 
+        VectorCallSoundManager.stopRinging();
+        VectorCallSoundManager.restoreAudioConfig();
         CommonActivityUtils.displayToastOnUiThread(VectorApp.getCurrentActivity(),
                 VectorApp.getInstance().getString(R.string.call_error_answered_elsewhere));
         clearCall();
@@ -410,6 +415,7 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
                 if (mIsAwaitingAnswer) {
                     if (mIsIncoming) {
                         // Caller cancelled his call before we took it
+                        VectorCallSoundManager.restoreAudioConfig();
                         CommonActivityUtils.displayToastOnUiThread(VectorApp.getCurrentActivity(),
                                 VectorApp.getInstance().getString(R.string.call_error_peer_cancelled_call));
                     } else {
@@ -427,6 +433,7 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
                 break;
             case IMXCall.END_CALL_REASON_PEER_HANG_UP_ELSEWHERE:
                 Log.e(LOG_TAG, "onCallEnd: END_CALL_REASON_PEER_HANG_UP_ELSEWHERE");
+                VectorCallSoundManager.restoreAudioConfig();
                 CommonActivityUtils.displayToastOnUiThread(VectorApp.getCurrentActivity(),
                         VectorApp.getInstance().getString(R.string.call_error_peer_hangup_elsewhere));
                 break;
@@ -434,6 +441,8 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
                 Log.e(LOG_TAG, "onCallEnd: END_CALL_REASON_USER_HIMSELF");
                 if (!mIsAwaitingAnswer || !mIsIncoming) {
                     VectorCallSoundManager.startEndCallSound();
+                } else {
+                    VectorCallSoundManager.restoreAudioConfig();
                 }
                 break;
             case IMXCall.END_CALL_REASON_UNDEFINED:

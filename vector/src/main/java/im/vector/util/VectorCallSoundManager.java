@@ -416,20 +416,15 @@ public class VectorCallSoundManager {
     /**
      * Restore the audio config.
      */
-    private static void restoreAudioConfig() {
+    public static void restoreAudioConfig() {
         // ensure that something has been saved
         if ((null != mAudioMode) && (null != mIsSpeakerOn)) {
             AudioManager audioManager = getAudioManager();
 
-            // ignore speaker button if a headset is connected
-            if (!audioManager.isBluetoothA2dpOn() && !audioManager.isWiredHeadsetOn()) {
-                if (mAudioMode!= audioManager.getMode()) {
-                    audioManager.setMode(mAudioMode);
-                }
+            audioManager.setMode(AudioManager.MODE_NORMAL);
 
-                if (mIsSpeakerOn != audioManager.isSpeakerphoneOn()) {
-                    audioManager.setSpeakerphoneOn(mIsSpeakerOn);
-                }
+            if (mIsSpeakerOn != audioManager.isSpeakerphoneOn()) {
+                audioManager.setSpeakerphoneOn(mIsSpeakerOn);
             }
 
             mAudioMode = null;
