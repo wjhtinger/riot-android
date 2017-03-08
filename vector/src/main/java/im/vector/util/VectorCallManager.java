@@ -25,6 +25,7 @@ import android.view.View;
 
 import org.matrix.androidsdk.call.IMXCall;
 import org.matrix.androidsdk.call.MXCallsManager;
+import org.matrix.androidsdk.crypto.MXCryptoError;
 import org.matrix.androidsdk.rest.callback.ApiCallback;
 import org.matrix.androidsdk.rest.model.MatrixError;
 import org.matrix.androidsdk.util.Log;
@@ -212,7 +213,19 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
             @Override
             public void onMatrixError(MatrixError e) {
                 Log.e(LOG_TAG, "## startIpCall(): onMatrixError Msg=" + e.getLocalizedMessage());
-                callback.onStartCallFailed(e.getLocalizedMessage());
+
+                if (e instanceof MXCryptoError) {
+                    MXCryptoError cryptoError = (MXCryptoError)e;
+
+                    if (MXCryptoError.UNKNOWN_DEVICES_CODE.equals(cryptoError.errcode)) {
+                        callback.onStartCallFailed(MXCryptoError.UNKNOWN_DEVICES_CODE);
+                    } else {
+                        callback.onStartCallFailed(e.getLocalizedMessage());
+                    }
+                } else {
+                    callback.onStartCallFailed(e.getLocalizedMessage());
+                }
+
             }
 
             @Override

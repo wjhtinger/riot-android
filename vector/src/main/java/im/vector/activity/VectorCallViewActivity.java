@@ -1,5 +1,6 @@
 /*
  * Copyright 2016 OpenMarket Ltd
+ * Copyright 2017 Vector Creations Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -338,6 +339,16 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+
+        // called when the application is put in background
+        if (!mIsScreenOff) {
+            stopProximitySensor();
+        }
+    }
+
+    @Override
     public void onDestroy() {
         if (null != mCall) {
             mCall.removeListener(mListener);
@@ -392,15 +403,7 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
         }
         instance = null;
 
-        // do not release the proximity sensor while pausing the activity
-        // when the screen is turned off, the activity is paused.
-        if ((null != mProximitySensor) && (null != mSensorMgr)) {
-            mSensorMgr.unregisterListener(this);
-            mProximitySensor = null;
-            mSensorMgr = null;
-        }
-
-        turnScreenOn();
+        stopProximitySensor();
     }
 
 
@@ -788,8 +791,11 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
             layout.removeView(mCallView);
-            layout.addView(mCallView, 1, params);
 
+            // add the call view only is the call is a video one
+            if (mCall.isVideo()) {
+                layout.addView(mCallView, 1, params);
+            }
             // init as GONE, will be displayed according to call states..
             mCall.setVisibility(View.GONE);
         }
@@ -859,6 +865,21 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
             }
         }
 
+    }
+
+    /**
+     * Stop the proximity sensor.
+     */
+    private void stopProximitySensor() {
+        // do not release the proximity sensor while pausing the activity
+        // when the screen is turned off, the activity is paused.
+        if ((null != mProximitySensor) && (null != mSensorMgr)) {
+            mSensorMgr.unregisterListener(this);
+            mProximitySensor = null;
+            mSensorMgr = null;
+        }
+
+        turnScreenOn();
     }
 
     /**
@@ -1214,6 +1235,7 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
             Log.e(LOG_TAG, "## turnScreenOn() failed");
         }
 
+        mIsScreenOff = false;
         mWakeLock = null;
 
         // restore previous brightness (whatever it was)
