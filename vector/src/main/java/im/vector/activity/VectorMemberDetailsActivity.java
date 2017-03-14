@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
+import org.matrix.androidsdk.crypto.MXCryptoError;
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo;
 import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap;
 import org.matrix.androidsdk.data.Room;
@@ -271,9 +272,13 @@ public class VectorMemberDetailsActivity extends MXCActionBarActivity implements
             }
 
             @Override
-            public void onStartCallFailed(String errorMessage) {
-                CommonActivityUtils.displayToast(VectorMemberDetailsActivity.this, errorMessage);
+            public void onStartCallFailed(String errorMessage, MXCryptoError cryptoError) {
                 Log.e(LOG_TAG, "## startCall() failed " + errorMessage);
+                if (cryptoError != null) {
+                    // TODO handle the crypto error
+                } else {
+                    CommonActivityUtils.displayToast(VectorMemberDetailsActivity.this, errorMessage);
+                }
             }
         });
     }

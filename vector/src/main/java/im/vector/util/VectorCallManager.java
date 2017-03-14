@@ -209,7 +209,7 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
             @Override
             public void onNetworkError(Exception e) {
                 Log.e(LOG_TAG, "## startIpCall(): onNetworkError Msg=" + e.getMessage());
-                callback.onStartCallFailed(e.getLocalizedMessage());
+                callback.onStartCallFailed(e.getLocalizedMessage(), null);
             }
 
             @Override
@@ -220,12 +220,12 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
                     MXCryptoError cryptoError = (MXCryptoError) e;
 
                     if (MXCryptoError.UNKNOWN_DEVICES_CODE.equals(cryptoError.errcode)) {
-                        callback.onStartCallFailed(MXCryptoError.UNKNOWN_DEVICES_CODE);
+                        callback.onStartCallFailed(MXCryptoError.UNKNOWN_DEVICES_CODE, cryptoError);
                     } else {
-                        callback.onStartCallFailed(e.getLocalizedMessage());
+                        callback.onStartCallFailed(e.getLocalizedMessage(), null);
                     }
                 } else {
-                    callback.onStartCallFailed(e.getLocalizedMessage());
+                    callback.onStartCallFailed(e.getLocalizedMessage(), null);
                 }
 
             }
@@ -233,7 +233,7 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
             @Override
             public void onUnexpectedError(Exception e) {
                 Log.e(LOG_TAG, "## startIpCall(): onUnexpectedError Msg=" + e.getLocalizedMessage());
-                callback.onStartCallFailed(e.getLocalizedMessage());
+                callback.onStartCallFailed(e.getLocalizedMessage(), null);
             }
         });
     }
@@ -490,6 +490,6 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
     public interface OnStartCallListener {
         void onStartCallSuccess(final IMXCall call);
 
-        void onStartCallFailed(final String errorMessage);
+        void onStartCallFailed(final String errorMessage, final MXCryptoError cryptoError);
     }
 }

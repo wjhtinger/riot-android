@@ -1359,11 +1359,11 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
             }
 
             @Override
-            public void onStartCallFailed(String errorMessage) {
+            public void onStartCallFailed(String errorMessage, MXCryptoError cryptoError) {
                 setProgressVisibility(View.GONE);
 
-                if (MXCryptoError.UNKNOWN_DEVICES_CODE.equals(errorMessage)) {
-                    onUnknownDevices(null, null);
+                if (cryptoError != null) {
+                    onUnknownDevices(null, cryptoError);
                 } else {
                     CommonActivityUtils.displayToastOnUiThread(VectorRoomActivity.this, getString(R.string.cannot_start_call) + " (" + errorMessage + ")");
                 }
