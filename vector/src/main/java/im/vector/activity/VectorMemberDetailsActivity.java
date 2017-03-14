@@ -61,6 +61,7 @@ import im.vector.R;
 import im.vector.VectorApp;
 import im.vector.adapters.VectorMemberDetailsAdapter;
 import im.vector.adapters.VectorMemberDetailsDevicesAdapter;
+import im.vector.fragments.VectorUnknownDevicesFragment;
 import im.vector.util.VectorCallManager;
 import im.vector.util.VectorUtils;
 
@@ -275,7 +276,13 @@ public class VectorMemberDetailsActivity extends MXCActionBarActivity implements
             public void onStartCallFailed(String errorMessage, MXCryptoError cryptoError) {
                 Log.e(LOG_TAG, "## startCall() failed " + errorMessage);
                 if (cryptoError != null) {
-                    // TODO handle the crypto error
+                    CommonActivityUtils.displayUnknownDevicesDialog(mSession, VectorMemberDetailsActivity.this,
+                            (MXUsersDevicesMap<MXDeviceInfo>)cryptoError.mExceptionData, new VectorUnknownDevicesFragment.IUnknownDevicesSendAnywayListener() {
+                        @Override
+                        public void onSendAnyway() {
+                            startCall(isVideo);
+                        }
+                    });
                 } else {
                     CommonActivityUtils.displayToast(VectorMemberDetailsActivity.this, errorMessage);
                 }
