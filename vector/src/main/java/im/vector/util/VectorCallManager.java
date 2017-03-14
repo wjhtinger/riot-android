@@ -26,6 +26,8 @@ import android.view.View;
 import org.matrix.androidsdk.call.IMXCall;
 import org.matrix.androidsdk.call.MXCallsManager;
 import org.matrix.androidsdk.crypto.MXCryptoError;
+import org.matrix.androidsdk.crypto.data.MXDeviceInfo;
+import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap;
 import org.matrix.androidsdk.rest.callback.ApiCallback;
 import org.matrix.androidsdk.rest.model.MatrixError;
 import org.matrix.androidsdk.util.Log;
@@ -215,7 +217,7 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
                 Log.e(LOG_TAG, "## startIpCall(): onMatrixError Msg=" + e.getLocalizedMessage());
 
                 if (e instanceof MXCryptoError) {
-                    MXCryptoError cryptoError = (MXCryptoError)e;
+                    MXCryptoError cryptoError = (MXCryptoError) e;
 
                     if (MXCryptoError.UNKNOWN_DEVICES_CODE.equals(cryptoError.errcode)) {
                         callback.onStartCallFailed(MXCryptoError.UNKNOWN_DEVICES_CODE);
@@ -273,9 +275,10 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
     /**
      * Handle the incoming call and display the appropriate screen to the user
      *
-     * @param call incoming call
+     * @param call           incoming call
+     * @param unknownDevices the unknown devices list
      */
-    private void handleIncomingCall(final IMXCall call) {
+    private void handleIncomingCall(final IMXCall call, final MXUsersDevicesMap<MXDeviceInfo> unknownDevices) {
         setCurrentCall(call);
         mIsAwaitingAnswer = true;
 
@@ -291,11 +294,14 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(VectorHomeActivity.EXTRA_CALL_SESSION_ID, call.getSession().getMyUserId());
             intent.putExtra(VectorHomeActivity.EXTRA_CALL_ID, call.getCallId());
+            if (null != unknownDevices) {
+                intent.putExtra(VectorHomeActivity.EXTRA_CALL_UNKNOWN_DEVICES, unknownDevices);
+            }
             context.startActivity(intent);
         } else {
             Log.d(LOG_TAG, "onIncomingCall : the home activity exists : but permissions have to be checked before");
             // check incoming call required permissions, before allowing the call..
-            homeActivity.startCall(call.getSession().getMyUserId(), call.getCallId());
+            homeActivity.startCall(call.getSession().getMyUserId(), call.getCallId(), unknownDevices);
         }
     }
 
@@ -306,12 +312,12 @@ public class VectorCallManager implements MXCallsManager.MXCallsManagerListener,
      */
 
     @Override
-    public void onIncomingCall(IMXCall call) {
+    public void onIncomingCall(IMXCall call, MXUsersDevicesMap<MXDeviceInfo> unknownDevices) {
         if (call != null) {
             Log.e(LOG_TAG, "onIncomingCall for " + call.getSession().getMyUserId());
             if (mCall == null) {
                 // Call can be taken
-                handleIncomingCall(call);
+                handleIncomingCall(call, unknownDevices);
             }
         }
     }

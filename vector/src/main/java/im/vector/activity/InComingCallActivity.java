@@ -1,5 +1,6 @@
 /*
  * Copyright 2015 OpenMarket Ltd
+ * Copyright 2017 Vector Creations Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +17,11 @@
 
 package im.vector.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -29,6 +30,8 @@ import android.widget.TextView;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
+import org.matrix.androidsdk.crypto.data.MXDeviceInfo;
+import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap;
 import org.matrix.androidsdk.util.Log;
 
 import im.vector.Matrix;
@@ -42,7 +45,7 @@ import im.vector.util.VectorUtils;
  * InComingCallActivity is Dialog Activity, displayed when an incoming call (audio or a video) over IP
  * is received by the user. The user is asked to accept or ignore.
  */
-public class InComingCallActivity extends Activity implements IMXCall.MXCallListener { // do NOT extend from UC*Activity, we do not want to login on this screen!
+public class InComingCallActivity extends AppCompatActivity implements IMXCall.MXCallListener { // do NOT extend from UC*Activity, we do not want to login on this screen!
     private static final String LOG_TAG = InComingCallActivity.class.getSimpleName();
 
     // only one instance of this class should be displayed
@@ -64,10 +67,14 @@ public class InComingCallActivity extends Activity implements IMXCall.MXCallList
      * *********************************************************************************************
      */
 
-    public static void start(final Context context, final String sessionId, final String callId) {
+    public static void start(final Context context, final String sessionId, final String callId,
+                             final MXUsersDevicesMap<MXDeviceInfo> unknownDevices) {
         final Intent intent = new Intent(context, InComingCallActivity.class);
         intent.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, sessionId);
         intent.putExtra(VectorCallViewActivity.EXTRA_CALL_ID, callId);
+        if (null != unknownDevices) {
+            intent.putExtra(VectorCallViewActivity.EXTRA_UNKNOWN_DEVICES, unknownDevices);
+        }
         context.startActivity(intent);
     }
 
@@ -157,6 +164,13 @@ public class InComingCallActivity extends Activity implements IMXCall.MXCallList
                     public void onClick(View v) {
                         finish();
                         VectorCallViewActivity.start(InComingCallActivity.this);
+                    }
+                });
+
+                this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        CommonActivityUtils.displayUnknownDevicesDialog(mSession, InComingCallActivity.this, (MXUsersDevicesMap<MXDeviceInfo>)intent.getSerializableExtra(VectorCallViewActivity.EXTRA_UNKNOWN_DEVICES), null);
                     }
                 });
             }

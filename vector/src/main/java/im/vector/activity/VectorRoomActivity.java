@@ -24,6 +24,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -1047,6 +1048,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
             mVectorOngoingConferenceCallView.onActivityResume();
         }
 
+        displayE2eRoomAlert();
+
         Log.d(LOG_TAG, "-- Resume the activity");
     }
 
@@ -1084,21 +1087,16 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
         refreshNotificationsArea();
     }
 
-    private static final String TAG_FRAGMENT_UNKNOWN_DEVICES_DIALOG_DIALOG = "ActionBarActivity.TAG_FRAGMENT_UNKNOWN_DEVICES_DIALOG_DIALOG";
-
     @Override
     public void onUnknownDevices(Event event, MXCryptoError error) {
         refreshNotificationsArea();
-
-        FragmentManager fm = this.getSupportFragmentManager();
-
-        VectorUnknownDevicesFragment fragment = (VectorUnknownDevicesFragment) fm.findFragmentByTag(TAG_FRAGMENT_UNKNOWN_DEVICES_DIALOG_DIALOG);
-        if (fragment != null) {
-            fragment.dismissAllowingStateLoss();
-        }
-
-        fragment = VectorUnknownDevicesFragment.newInstance(mSession.getMyUserId(), (MXUsersDevicesMap<MXDeviceInfo>) error.mExceptionData);
-        fragment.show(fm, TAG_FRAGMENT_UNKNOWN_DEVICES_DIALOG_DIALOG);
+        CommonActivityUtils.displayUnknownDevicesDialog(mSession, this, (MXUsersDevicesMap<MXDeviceInfo>) error.mExceptionData, new VectorUnknownDevicesFragment.IUnknownDevicesSendAnywayListener() {
+            @Override
+            public void onSendAnyway() {
+                mVectorMessageListFragment.resendUnsentMessages();
+                refreshNotificationsArea();
+            }
+        });
     }
 
     //================================================================================
@@ -2991,6 +2989,32 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
                     launchRoomDetails(VectorRoomDetailsActivity.PEOPLE_TAB_INDEX);
                 }
             });
+        }
+    }
+
+    private static final String E2E_WARNINGS_PREFERENCES = "E2E_WARNINGS_PREFERENCES";
+
+    /**
+     * Display an e2e alert for the first opened room.
+     */
+    private void displayE2eRoomAlert() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (!preferences.contains(E2E_WARNINGS_PREFERENCES) && (null != mRoom) && mRoom.isEncrypted()) {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean(E2E_WARNINGS_PREFERENCES, false);
+            editor.commit();
+
+            android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+            builder.setTitle(R.string.room_e2e_alert_title);
+            builder.setMessage(R.string.room_e2e_alert_message);
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // NOP
+                }
+            });
+            builder.create().show();
         }
     }
 }

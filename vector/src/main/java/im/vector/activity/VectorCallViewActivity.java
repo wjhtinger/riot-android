@@ -77,6 +77,7 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
 
     public static final String EXTRA_MATRIX_ID = "CallViewActivity.EXTRA_MATRIX_ID";
     public static final String EXTRA_CALL_ID = "CallViewActivity.EXTRA_CALL_ID";
+    public static final String EXTRA_UNKNOWN_DEVICES = "CallViewActivity.EXTRA_UNKNOWN_DEVICES";
 
     private static final String EXTRA_MIC_MUTE_STATUS = "EXTRA_MIC_MUTE_STATUS";
     private static final String EXTRA_SPEAKER_STATUS = "EXTRA_SPEAKER_STATUS";
