@@ -1363,7 +1363,13 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
                 setProgressVisibility(View.GONE);
 
                 if (cryptoError != null) {
-                    onUnknownDevices(null, cryptoError);
+                    CommonActivityUtils.displayUnknownDevicesDialog(mSession, VectorRoomActivity.this, (MXUsersDevicesMap<MXDeviceInfo>) cryptoError.mExceptionData,
+                            new VectorUnknownDevicesFragment.IUnknownDevicesSendAnywayListener() {
+                                @Override
+                                public void onSendAnyway() {
+                                    startIpCall(withVideo);
+                                }
+                            });
                 } else {
                     CommonActivityUtils.displayToastOnUiThread(VectorRoomActivity.this, getString(R.string.cannot_start_call) + " (" + errorMessage + ")");
                 }
