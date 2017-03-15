@@ -485,7 +485,7 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
         Log.d(LOG_TAG,"## refreshSpeakerButton(): isOn="+isOn);
 
         // update icon
-        int iconId = isOn?R.drawable.ic_material_speaker_phone_pink_red:R.drawable.ic_material_speaker_phone_grey;
+        int iconId = isOn ? R.drawable.ic_material_speaker_phone_pink_red : R.drawable.ic_material_speaker_phone_grey;
         mSpeakerSelectionView.setImageResource(iconId);
 
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);

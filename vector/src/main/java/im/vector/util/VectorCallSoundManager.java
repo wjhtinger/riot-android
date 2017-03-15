@@ -464,10 +464,8 @@ public class VectorCallSoundManager {
             audioManager.setMode(audioMode);
         }
 
-        if (isSpeakerOn != audioManager.isSpeakerphoneOn()) {
-            audioManager.setSpeakerphoneOn(isSpeakerOn);
-            sIsSpeakerOn = isSpeakerOn;
-        }
+        audioManager.setSpeakerphoneOn(isSpeakerOn);
+        sIsSpeakerOn = isSpeakerOn;
     }
 
     /**
