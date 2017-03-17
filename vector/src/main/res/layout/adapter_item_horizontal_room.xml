@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="60dp"
+    android:layout_height="80dp"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp">
+
+        <im.vector.view.VectorCircularImageView
+            android:id="@+id/horizontal_room_avatar_view"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"/>
+
+        <im.vector.view.UnreadCounterBadgeView
+            android:id="@+id/horizontal_room_unread_badge_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_alignTop="@+id/horizontal_room_avatar_view"
+            android:layout_alignLeft="@+id/horizontal_room_avatar_view"/>
+
+        <ImageView
+            android:id="@+id/horizontal_room_direct_chat_icon"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginLeft="30dp"
+            android:layout_alignBottom="@+id/horizontal_room_avatar_view"
+            android:layout_alignLeft="@+id/horizontal_room_avatar_view"
+            android:src="@drawable/icon_person"/>
+
+        <ImageView
+            android:id="@+id/horizontal_room_encrypted_icon"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginLeft="-5dp"
+            android:layout_alignBottom="@+id/horizontal_room_avatar_view"
+            android:layout_alignLeft="@+id/horizontal_room_avatar_view"
+            android:src="@drawable/e2e_verified"/>
+
+    </RelativeLayout>
+  
+    <TextView
+        android:id="@+id/horizontal_room_name_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="A room name very long"
+        android:textStyle="bold"
+        android:textSize="7sp"
+        android:lines="1"
+        android:ellipsize="end"/>
+
+</LinearLayout>
