@@ -2,12 +2,13 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="60dp"
-    android:layout_height="80dp"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <RelativeLayout
+        android:layout_marginTop="10dp"
         android:layout_width="60dp"
-        android:layout_height="60dp">
+        android:layout_height="40dp">
 
         <im.vector.view.VectorCircularImageView
             android:id="@+id/horizontal_room_avatar_view"
@@ -36,7 +37,7 @@
             android:id="@+id/horizontal_room_encrypted_icon"
             android:layout_width="15dp"
             android:layout_height="15dp"
-            android:layout_marginLeft="-5dp"
+            android:layout_marginLeft="-7dp"
             android:layout_alignBottom="@+id/horizontal_room_avatar_view"
             android:layout_alignLeft="@+id/horizontal_room_avatar_view"
             android:src="@drawable/e2e_verified"/>
@@ -45,11 +46,13 @@
   
     <TextView
         android:id="@+id/horizontal_room_name_text_view"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="A room name very long"
         android:textStyle="bold"
-        android:textSize="7sp"
+        android:textSize="8sp"
         android:lines="1"
         android:ellipsize="end"/>
 
