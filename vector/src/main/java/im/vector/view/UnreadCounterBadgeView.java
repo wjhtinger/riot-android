@@ -17,6 +17,7 @@ package im.vector.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.support.annotation.IntDef;
 import android.util.AttributeSet;
@@ -82,13 +83,17 @@ public class UnreadCounterBadgeView extends RelativeLayout {
             }
             setVisibility(View.VISIBLE);
 
+            GradientDrawable shape = new GradientDrawable();
+            shape.setShape(GradientDrawable.RECTANGLE);
+            shape.setCornerRadius(100);
             if (status == HIGHLIGHTED) {
-                mParentView.setBackgroundResource(R.drawable.unread_counter_badge_background_highlighted);
+                shape.setColor(getContext().getResources().getColor(R.color.vector_fuchsia_color));
             } else if (status == NOTIFIED) {
-                mParentView.setBackgroundResource(R.drawable.unread_counter_badge_background_notified);
+                shape.setColor(getContext().getResources().getColor(R.color.vector_green_color));
             } else { //if (status == DEFAULT)
-                mParentView.setBackgroundResource(R.drawable.unread_counter_badge_background_default);
+                shape.setColor(getContext().getResources().getColor(R.color.vector_silver_color));
             }
+            mParentView.setBackground(shape);
         } else {
             setVisibility(View.INVISIBLE);
         }
