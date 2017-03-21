@@ -43,6 +43,10 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -168,6 +172,15 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
 
     // manage the previous first displayed item
     private static int mScrollToIndex = -1;
+
+    private ImageView mImageView;
+    private ImageView mImageView2;
+    private ImageView mImageView3;
+    private TextView  mTextView2;
+    private TextView  mTextView3;
+    private TextView  mTextView4;
+    private WebView webView;
+
 
     private final ApiCallback<Void> mSendReceiptCallback = new ApiCallback<Void>() {
         @Override
@@ -483,6 +496,15 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
         // initialize the public rooms list
         PublicRoomsManager.setSession(mSession);
         PublicRoomsManager.refreshPublicRoomsCount(null);
+
+        mImageView  = (ImageView)findViewById(R.id.imageView);
+        mImageView2 = (ImageView)findViewById(R.id.imageView2);
+        mImageView3 = (ImageView)findViewById(R.id.imageView3);
+        mTextView2  = (TextView)findViewById(R.id.textView2);
+        mTextView3  = (TextView)findViewById(R.id.textView3);
+        mTextView4  = (TextView)findViewById(R.id.textView4);
+
+        initWebView();
     }
 
     @Override
@@ -1458,5 +1480,88 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
                         .show();
             }
         }
+    }
+
+    public void onClickBottomButton(View view) {
+        int id = view.getId();
+        switch(id){
+            case R.id.messageItem:
+                mImageView.setImageResource(R.drawable.message);
+                mTextView2.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
+                mImageView2.setImageResource(R.drawable.explore_noforcus);
+                mTextView3.setTextColor(getResources().getColor(R.color.vector_0_87_black_color));
+                mImageView3.setImageResource(R.drawable.space_noforcus);
+                mTextView4.setTextColor(getResources().getColor(R.color.vector_0_87_black_color));
+
+                findViewById(R.id.roomContent).setVisibility(View.VISIBLE);
+                findViewById(R.id.spaceContent).setVisibility(View.GONE);
+                //mRecentsListFragment.setIsRoomsDisplayed(true);
+                mRecentsListFragment.setIsDirectoryDisplayed(false);
+                //mRoomCreationFab.show();
+                break;
+            case R.id.messageItem2:
+                mImageView.setImageResource(R.drawable.message_noforcus);
+                mTextView2.setTextColor(getResources().getColor(R.color.vector_0_87_black_color));
+                mImageView2.setImageResource(R.drawable.explore);
+                mTextView3.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
+                mImageView3.setImageResource(R.drawable.space_noforcus);
+                mTextView4.setTextColor(getResources().getColor(R.color.vector_0_87_black_color));
+
+                findViewById(R.id.roomContent).setVisibility(View.VISIBLE);
+                findViewById(R.id.spaceContent).setVisibility(View.GONE);
+                mRecentsListFragment.setIsDirectoryDisplayed(true);
+                //mRecentsListFragment.setIsRoomsDisplayed(false);
+                //mRoomCreationFab.hide();
+                break;
+            case R.id.messageItem3:
+                mImageView.setImageResource(R.drawable.message_noforcus);
+                mTextView2.setTextColor(getResources().getColor(R.color.vector_0_87_black_color));
+                mImageView2.setImageResource(R.drawable.explore_noforcus);
+                mTextView3.setTextColor(getResources().getColor(R.color.vector_0_87_black_color));
+                mImageView3.setImageResource(R.drawable.space);
+                mTextView4.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
+
+                //mRecentsListFragment.setIsDirectoryDisplayed(false);
+                //mRecentsListFragment.setIsRoomsDisplayed(false);
+                //mRoomCreationFab.hide();
+                findViewById(R.id.roomContent).setVisibility(View.GONE);
+                findViewById(R.id.spaceContent).setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    public void initWebView() {
+        //findViewById(R.id.supervisory_view).setVisibility(View.VISIBLE);
+        //findViewById(R.id.main_content_view).setVisibility(View.GONE);
+        findViewById(R.id.webViewProgressBar).setVisibility(View.VISIBLE);
+
+        webView = (WebView) findViewById(R.id.webview);
+        webView.loadUrl(getResources().getString(R.string.wordpress_server_url));
+        WebSettings settings = webView.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                //返回值是true的时候控制去WebView打开，为false调用系统浏览器或第三方浏览器
+                view.loadUrl(url);
+                return true;
+            }
+        });
+
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                if (newProgress == 100) {
+                    // 网页加载完成
+                    findViewById(R.id.webViewProgressBar).setVisibility(View.GONE);
+
+                } else {
+                    // 加载中
+
+                }
+            }
+        });
     }
 }

@@ -964,4 +964,7 @@
 
     <string name="detect_dialog_start">Start</string>
     <string name="detect_dialog_stop">Stop</string>
+
+    <string name="wordpress_server_url">http://www.windsing.com.cn:8081/wordpress/</string>
+
 </resources>

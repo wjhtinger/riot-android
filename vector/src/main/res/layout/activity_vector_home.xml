@@ -27,9 +27,11 @@
 
         <!-- The main content view -->
         <RelativeLayout
+            android:id="@+id/roomContent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="org.matrix.vector.activity.VectorHomeActivity">
+            tools:context="org.matrix.vector.activity.VectorHomeActivity"
+            android:layout_weight="40">
 
             <ProgressBar
                 android:id="@+id/home_recents_sync_in_progress"
@@ -73,6 +75,119 @@
                     android:visibility="visible"/>
             </FrameLayout>
         </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/spaceContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="org.matrix.vector.activity.VectorHomeActivity"
+            android:visibility="gone"
+            android:layout_weight="40">
+
+            <WebView
+                android:id="@+id/webview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:requiresFadingEdge="horizontal|vertical"></WebView>
+
+            <ProgressBar
+                android:id="@+id/webViewProgressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/vector_light_gray_color"
+            android:gravity="bottom"
+            android:showDividers="middle|beginning|end"
+            android:layout_weight="0"
+            android:layout_marginTop="5dp">
+
+            <LinearLayout
+                android:id="@+id/messageItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/vector_light_gray_color"
+                android:layout_weight="1"
+                android:onClick="onClickBottomButton"
+                android:layout_marginLeft="40dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/message"
+                    android:id="@+id/imageView"/>
+
+                <TextView
+                    android:text="消息"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView2"
+                    android:textStyle="normal|bold"
+                    android:gravity="center"
+                    android:textSize="12sp"
+                    android:textColor="@color/vector_actionbar_background" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/messageItem2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@color/vector_light_gray_color"
+                android:layout_weight="2"
+                android:onClick="onClickBottomButton">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/explore_noforcus"
+                    android:id="@+id/imageView2"/>
+
+                <TextView
+                    android:text="发现"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView3"
+                    android:textStyle="normal|bold"
+                    android:gravity="center"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/messageItem3"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@color/vector_light_gray_color"
+                android:layout_weight="1"
+                android:onClick="onClickBottomButton"
+                android:layout_marginRight="40dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/space_noforcus"
+                    android:id="@+id/imageView3"/>
+
+                <TextView
+                    android:text="空间"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView4"
+                    android:textStyle="normal|bold"
+                    android:gravity="center"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
     </LinearLayout>
 
     <android.support.design.widget.NavigationView
