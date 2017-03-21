@@ -3,7 +3,7 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.3'
+    buildToolsVersion '25.0.0'
 
     packagingOptions {
         exclude 'META-INF/LICENSE'
@@ -11,7 +11,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "im.vector"
+        applicationId "im.windsing"
         minSdkVersion 16
         targetSdkVersion 23
         // use the version code
@@ -55,7 +55,7 @@ android {
 
     productFlavors {
         app {
-            applicationId "im.vector.alpha"
+            applicationId "im.windsing.alpha"
             // use the version name
             versionCode rootProject.ext.versionCodeProp
             versionName rootProject.ext.versionNameProp
@@ -65,7 +65,7 @@ android {
         }
 
         appfdroid {
-            applicationId "im.vector.alpha"
+            applicationId "im.windsing.alpha"
             // use the version name
             versionCode rootProject.ext.versionCodeProp
             versionName rootProject.ext.versionNameProp
