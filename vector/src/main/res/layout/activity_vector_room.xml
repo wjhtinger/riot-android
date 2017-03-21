@@ -116,18 +116,20 @@
         android:layout_height="wrap_content"
         android:visibility="gone"/>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/room_ongoing_conference_call_view">
+        android:layout_below="@+id/room_ongoing_conference_call_view"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/room_background"
             android:paddingTop="0dp"
-            android:paddingBottom="0dp">
+            android:paddingBottom="0dp"
+            android:layout_weight="20">
 
             <ImageView
                 android:id="@+id/search_background_imageview"
@@ -348,7 +350,282 @@
                 android:visibility="gone"
                 android:indeterminate="true" />
         </RelativeLayout>
-    </RelativeLayout>
+
+        <View
+            android:id="@+id/function_pad_separator"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentLeft="true"
+            android:layout_above="@id/room_bottom_layout"
+            android:background="@color/vector_light_gray_color"
+            android:visibility="gone"/>
+
+
+        <TableLayout
+            android:id="@+id/room_function_pad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_horizontal"
+            android:visibility="visible">
+
+            <TableRow android:layout_gravity="center_horizontal"
+                android:id="@+id/room_function_pad_general">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/room_function_files"
+                        android:id="@+id/room_function_pad_0"
+                        android:onClick="roomFunctionPadClick"
+                        style="@style/Widget.AppCompat.ImageButton" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/room_function_pad_file"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/room_function_camera"
+                        android:id="@+id/room_function_pad_1"
+                        android:onClick="roomFunctionPadClick"
+                        style="@style/Widget.AppCompat.ImageButton"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/room_function_pad_camera"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/room_function_audiocall"
+                        android:id="@+id/room_function_pad_2"
+                        android:onClick="roomFunctionPadClick"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/room_function_pad_audiocall"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/room_function_videocall"
+                        android:id="@+id/room_function_pad_3"
+                        android:onClick="roomFunctionPadClick"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_video_call"
+                        android:textSize="10sp" />
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow android:layout_gravity="center"
+                android:gravity="center">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/room_function_arrow"
+                    android:onClick="roomFunctionPadDetectShowClick"
+                    android:id="@+id/room_function_pad_arrow"
+                    android:paddingBottom="5dp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/room_function_pad_detect0">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/room_function_videodetect"
+                        android:id="@+id/room_function_pad_4"
+                        android:onClick="roomFunctionPadClick"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/room_function_pad_motiondetect"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/room_function_audiodetect"
+                        android:id="@+id/room_function_pad_5"
+                        android:onClick="roomFunctionPadClick"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/room_function_pad_audiodetect"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/room_function_timer"
+                        style="@style/Widget.AppCompat.ImageButton"
+                        android:id="@+id/room_function_pad_6"
+                        android:onClick="roomFunctionPadClick"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/room_function_pad_timerdetect"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/room_function_facedetect"
+                        android:id="@+id/room_function_pad_7"
+                        android:onClick="roomFunctionPadClick"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/room_function_pad_facedetect"
+                        android:textSize="10sp" />
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/room_function_pad_detect1"
+                android:layout_marginBottom="5dp">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/room_function_detectstatus"
+                        android:id="@+id/room_function_pad_9"
+                        android:onClick="roomFunctionPadClick"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/room_function_pad_detecttatus"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <!--
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true">
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true">
+                </LinearLayout>
+                -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/room_function_stopdetect"
+                        android:id="@+id/room_function_pad_8"
+                        android:onClick="roomFunctionPadClick"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/room_function_pad_stopdetect"
+                        android:textSize="10sp" />
+                </LinearLayout>
+            </TableRow>
+        </TableLayout>
+</LinearLayout>
 
     <RelativeLayout
         android:id="@+id/main_progress_layout"

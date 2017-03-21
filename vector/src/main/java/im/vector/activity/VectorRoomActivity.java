@@ -55,14 +55,20 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.windsing.DetectManager;
+import com.windsing.ui.CmdDialogFragment;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
@@ -3105,6 +3111,184 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
             });
             builder.create().show();
         }
+    }
+
+
+    private float x1 = 0;
+    private float x2 = 0;
+    private float y1 = 0;
+    private float y2 = 0;
+    private static boolean functionPadDetect = false;
+
+    public void roomFunctionPadClick(View view) {
+        Log.d(LOG_TAG, "roomFunctionPadClick");
+
+        if(mRoom == null){
+            return;
+        }
+
+        switch (view.getId()){
+            case R.id.room_function_pad_0:
+                VectorRoomActivity.this.launchFileSelectionIntent();
+                break;
+
+            case R.id.room_function_pad_1:
+                if(CommonActivityUtils.checkPermissions(CommonActivityUtils.REQUEST_CODE_PERMISSION_TAKE_PHOTO, VectorRoomActivity.this)){
+                    launchCamera();
+                }
+                break;
+            case R.id.room_function_pad_2:
+                lunchCall(1);
+                break;
+            case R.id.room_function_pad_3:
+                lunchCall(0);
+                break;
+            case R.id.room_function_pad_4:
+                detectOptionDialog(DetectManager.detectType.MOTION);
+                break;
+            case R.id.room_function_pad_5:
+                detectOptionDialog(DetectManager.detectType.AUDIO);
+                break;
+            case R.id.room_function_pad_6:
+                detectOptionDialog(DetectManager.detectType.TIMER);
+                break;
+            case R.id.room_function_pad_7:
+                detectOptionDialog(DetectManager.detectType.FACE);
+                break;
+            case R.id.room_function_pad_8:
+                sendMessage(DetectManager.instance(getApplicationContext()).sendStopDetectAll(mSession, mRoom), null, Message.FORMAT_MATRIX_HTML);
+                break;
+            case R.id.room_function_pad_9:
+                sendMessage(DetectManager.instance(getApplicationContext()).sendDetectStatus(mSession, mRoom), null, Message.FORMAT_MATRIX_HTML);
+            default:
+                break;
+        }
+    }
+
+    private void lunchCall(int type){
+        if ((null != mRoom) && mRoom.isEncrypted() && (mRoom.getActiveMembers().size() > 2))  {
+            // display the dialog with the info text
+            AlertDialog.Builder permissionsInfoDialog = new AlertDialog.Builder(VectorRoomActivity.this);
+            Resources resource = getResources();
+            permissionsInfoDialog.setMessage(resource.getString(R.string.room_no_conference_call_in_encrypted_rooms));
+            permissionsInfoDialog.setIcon(android.R.drawable.ic_dialog_alert);
+            permissionsInfoDialog.setPositiveButton(resource.getString(R.string.ok),null);
+            permissionsInfoDialog.show();
+
+        } else if(isUserAllowedToStartConfCall()) {
+            if(type == 0){
+                if(CommonActivityUtils.checkPermissions(CommonActivityUtils.REQUEST_CODE_PERMISSION_VIDEO_IP_CALL, VectorRoomActivity.this)){
+                    startIpCall(true);
+                }
+            }
+            if(type == 1){
+                if(CommonActivityUtils.checkPermissions(CommonActivityUtils.REQUEST_CODE_PERMISSION_AUDIO_IP_CALL, VectorRoomActivity.this)){
+                    startIpCall(false);
+                }
+            }
+        } else {
+            displayConfCallNotAllowed();
+        }
+    }
+
+    private void detectOptionDialog(final DetectManager.detectType type){
+        FragmentManager fm = getSupportFragmentManager();
+        CmdDialogFragment fragment = (CmdDialogFragment) fm.findFragmentByTag("TAG_FRAGMENT_ATTACHMENTS_DIALOG_TEST");
+        if (fragment != null) {
+            fragment.dismissAllowingStateLoss();
+        }
+
+        fragment = CmdDialogFragment.newInstance(type, null, ContextCompat.getColor(VectorRoomActivity.this, R.color.vector_text_black_color));
+        fragment.setOnClickListener(new CmdDialogFragment.OnItemClickListener() {
+            @Override
+            public void onItemClick(CmdDialogFragment dialogFragment, int sel, int[] param) {
+                Log.d(LOG_TAG, "detectOptionDialog onItemClick:" + param.toString());
+
+                DetectManager detectManager = DetectManager.instance(getApplicationContext());
+
+                String cmdStr = null;
+                if(sel == 0){
+                    switch (type){
+                        case MOTION:
+                            if(param[1] == 0){
+                                cmdStr = detectManager.sendStartMotionDetect(mSession, mRoom, DetectManager.detectContent_type.PICTURE, param[0]);
+                            }else{
+                                cmdStr = detectManager.sendStartMotionDetect(mSession, mRoom, DetectManager.detectContent_type.VIDEO, param[0]);
+                            }
+                            break;
+
+                        case AUDIO:
+                            if(param[1] == 0){
+                                cmdStr = detectManager.sendStartAudioDetect(mSession, mRoom, DetectManager.detectContent_type.AUDIO, param[0]);
+                            }else{
+                                cmdStr = detectManager.sendStartAudioDetect(mSession, mRoom, DetectManager.detectContent_type.VIDEO, param[0]);
+                            }
+                            break;
+
+                        case TIMER:
+                            if(param[1] == 0){
+                                cmdStr = detectManager.sendStartTimerDetect(mSession, mRoom, DetectManager.detectContent_type.PICTURE, param[0], param[2]);
+                            }else{
+                                cmdStr = detectManager.sendStartTimerDetect(mSession, mRoom, DetectManager.detectContent_type.VIDEO, param[0], param[2]);
+                            }
+                            break;
+
+                        case FACE:
+                            if(param[1] == 0){
+                                if(mRoom.getActiveMembers().size() > 2){
+                                    displayConfCallNotAllowed();
+                                }else{
+                                    cmdStr = detectManager.sendStartFaceDetect(mSession, mRoom, DetectManager.detectContent_type.VIDEO_CALL, param[0]);
+                                }
+                            }else{
+                                cmdStr = detectManager.sendStartFaceDetect(mSession, mRoom, DetectManager.detectContent_type.VIDEO, param[0]);
+                            }
+                            break;
+
+                        default:
+                            Log.e(LOG_TAG, "detectOptionDialog type error!");
+                            break;
+                    }
+                }else if (sel == 1){
+                    cmdStr = detectManager.sendStopDetect(mSession, mRoom, type, param[0]);
+                }
+
+                if(cmdStr != null){
+                    sendMessage(cmdStr, null, Message.FORMAT_MATRIX_HTML);
+                }
+            }
+        });
+
+        fragment.show(fm, TAG_FRAGMENT_ATTACHMENTS_DIALOG);
+    }
+
+    public void roomFunctionPadDetectShowClick(View view) {
+        TranslateAnimation mHiddenAction;
+        TableRow padDetectGeneral = (TableRow)findViewById(R.id.room_function_pad_general);
+        TableRow padDetect0 = (TableRow)findViewById(R.id.room_function_pad_detect0);
+        TableRow padDetect1 = (TableRow)findViewById(R.id.room_function_pad_detect1);
+        ImageView padArrow  = (ImageView)findViewById(R.id.room_function_pad_arrow);
+
+        functionPadDetect = !functionPadDetect;
+
+        if(functionPadDetect){
+            mHiddenAction = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                    Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
+            padDetect0.setVisibility(View.VISIBLE);
+            padDetect1.setVisibility(View.VISIBLE);
+            padArrow.setImageResource(R.drawable.room_function_arrow_reverse);
+        }else {
+            mHiddenAction = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                    Animation.RELATIVE_TO_SELF, -1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
+            padDetect0.setVisibility(View.GONE);
+            padDetect1.setVisibility(View.GONE);
+            padArrow.setImageResource(R.drawable.room_function_arrow);
+        }
+        mHiddenAction.setDuration(500);
+
+        padDetectGeneral.startAnimation(mHiddenAction);
+        padDetect0.startAnimation(mHiddenAction);
+        padDetect1.startAnimation(mHiddenAction);
     }
 }
 

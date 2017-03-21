@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:id="@+id/table_row0"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:text="选择摄像头"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView0" />
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radioGroup0"
+                android:orientation="vertical">
+                <RadioButton
+                    android:text="前置"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radioButton0"
+                    android:selectAllOnFocus="false"
+                    android:checked="false"
+                    android:textColor="@color/cardview_dark_background" />
+
+                <RadioButton
+                    android:text="后置"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radioButton1"
+                    android:textColor="@color/cardview_dark_background"
+                    android:checked="true" />
+            </RadioGroup>
+
+            <TextView
+                android:text="    "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:id="@+id/table_row1"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:text="监控结果"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView1" />
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radioGroup1"
+                android:orientation="vertical">
+                <RadioButton
+                    android:text="发送图片信息"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radioButton2"
+                    android:selectAllOnFocus="false"
+                    android:checked="true"
+                    android:textColor="@color/cardview_dark_background" />
+
+                <RadioButton
+                    android:text="发送视频信息"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radioButton3"
+                    android:textColor="@color/cardview_dark_background" />
+            </RadioGroup>
+            <TextView
+                android:text="    "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:id="@+id/table_row2"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:text="监控间隔(分钟)"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView3" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:id="@+id/editText"
+                android:width="8dp"
+                android:text="10"
+                android:gravity="center"
+                android:maxLength="8" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="单次"
+                android:id="@+id/checkBoxOnce"
+                android:freezesText="false"
+                android:textColor="?android:attr/textColorHint" />
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

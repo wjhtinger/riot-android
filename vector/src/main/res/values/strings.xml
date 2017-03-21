@@ -60,8 +60,8 @@
     <string name="or">or</string>
 
     <!-- server urls -->
-    <string name="vector_im_server_url">https://vector.im</string>
-    <string name="matrix_org_server_url">https://matrix.org</string>
+    <string name="vector_im_server_url">https://windsing.com.cn:8448</string>
+    <string name="matrix_org_server_url">https://windsing.com.cn:8448</string>
     <string name="default_hs_server_url">https://windsing.com.cn:8448</string>
     <string name="default_identity_server_url">https://windsing.com.cn:8448</string>
 
@@ -915,4 +915,53 @@
     <!-- unknown devices management -->
     <string name="unknown_devices_alert_title">Room contains unknown devices</string>
     <string name="unknown_devices_alert_message">This room contains unknown devices which have not been verified.\nThis means there is no guarantee that the devices belong to the users they claim to.\nWe recommend you go through the verification process for each device before continuing, but you can resend the message without verifying if you prefer.\n\nUnknown devices:</string>
+
+
+    <string name="room_function_pad_file">Send File</string>
+    <string name="room_function_pad_camera">Use Camera</string>
+    <string name="room_function_pad_audiocall">Audio Call</string>
+    <string name="room_function_pad_video">Video Call</string>
+    <string name="room_function_pad_motiondetect">Motion Detect</string>
+    <string name="room_function_pad_audiodetect">Audio Detect</string>
+    <string name="room_function_pad_timerdetect">Timer Detect</string>
+    <string name="room_function_pad_facedetect">Face Detect</string>
+    <string name="room_function_pad_stopdetect">Stop Detect</string>
+    <string name="room_function_pad_detecttatus">Detect Status</string>
+
+    <string name="room_function_pad_detectcontent_picture">Picture Mode</string>
+    <string name="room_function_pad_detectcontent_video">Video Mode</string>
+    <string name="room_function_pad_detectcontent_audio">Audio Mode</string>
+
+    <string name="tag_message_command">[-wscmd-]</string>
+    <string name="tag_message_command_detect">[-detect-]</string>
+    <string name="tag_message_command_detect_motion">[-motion-]</string>
+    <string name="tag_message_command_detect_audio">[-audio-]</string>
+    <string name="tag_message_command_detect_timer">[-timer-]</string>
+    <string name="tag_message_command_detect_face">[-face-]</string>
+    <string name="tag_message_command_detect_stop">[-stop-]</string>
+    <string name="tag_message_command_detect_status">[-status-]</string>
+    <string name="tag_message_command_detect_content_picture">[-picture-]</string>
+    <string name="tag_message_command_detect_content_video">[-video-]</string>
+    <string name="tag_message_command_detect_content_audio">[-audio-]</string>
+    <string name="tag_message_command_detect_content_videocall">[-videocall-]</string>
+
+    <string name="detect_motion">Motion</string>
+    <string name="detect_audio">Audio</string>
+    <string name="detect_timer">Timer</string>
+    <string name="detect_face">Face</string>
+
+    <string name="detect_echo_start">Start %s detecting successfully.</string>
+    <string name="detect_echo_restart">%s detecting is running.</string>
+    <string name="detect_echo_stop">Stop %s detecting successfully.</string>
+    <string name="detect_echo_stop_byother">%s detecting is stoped by other room.</string>
+    <string name="detect_echo_restop">%s detecting already stoped.</string>
+    <string name="detect_echo_exit">Exit %s detecting successfully.</string>
+    <string name="detect_echo_removed">%s detecting is robbed by other room.</string>
+    <string name="detect_echo_status_running">%s detecting is runing.</string>
+    <string name="detect_echo_status_notrunning">%s detecting is not runing.</string>
+    <string name="detect_echo_status_all_notrunning">No detecting is runing.</string>
+    <string name="detect_echo_status_running_forStart">%s detecting is runing now, please turnoff it firstly!</string>
+
+    <string name="detect_dialog_start">Start</string>
+    <string name="detect_dialog_stop">Stop</string>
 </resources>
