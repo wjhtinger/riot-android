@@ -226,6 +226,16 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
             mPushesRuleByResourceId.put(getString(R.string.settings_invited_to_room), BingRule.RULE_ID_INVITE_ME);
             mPushesRuleByResourceId.put(getString(R.string.settings_call_invitations), BingRule.RULE_ID_CALL);
             mPushesRuleByResourceId.put(getString(R.string.settings_messages_sent_by_bot), BingRule.RULE_ID_SUPPRESS_BOTS_NOTIFICATIONS);
+
+
+            mPushesRuleByResourceId.put(getString(R.string.settings_enable_notice_beep), DUMMY_RULE);
+            mPushesRuleByResourceId.put(getString(R.string.settings_enable_monitoring), DUMMY_RULE);
+            mPushesRuleByResourceId.put(getString(R.string.settings_enable_call_auto_answer), DUMMY_RULE);
+            mPushesRuleByResourceId.put(getString(R.string.settings_enable_motion_detecting), DUMMY_RULE);
+            mPushesRuleByResourceId.put(getString(R.string.settings_enable_audio_detecting), DUMMY_RULE);
+            mPushesRuleByResourceId.put(getString(R.string.settings_enable_timer_detecting), DUMMY_RULE);
+            mPushesRuleByResourceId.put(getString(R.string.settings_enable_face_detecting), DUMMY_RULE);
+            mPushesRuleByResourceId.put(getString(R.string.settings_enable_del_local_file), DUMMY_RULE);
         }
 
         UserAvatarPreference avatarPreference = (UserAvatarPreference) findPreference("matrixId");
@@ -456,13 +466,13 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
         });
 
         // Contacts
-        setContactsPreferences();
+        //setContactsPreferences();
 
         // background sync management
         mBackgroundSyncCategory = (PreferenceCategory) findPreference(getString(R.string.settings_background_sync));
         mSyncRequestTimeoutPreference = (EditTextPreference) findPreference(getString(R.string.settings_set_sync_timeout));
         mSyncRequestDelayPreference = (EditTextPreference) findPreference(getString(R.string.settings_set_sync_delay));
-
+        /*
         final CheckBoxPreference useCryptoPref = (CheckBoxPreference) findPreference(appContext.getString(R.string.room_settings_labs_end_to_end));
         final Preference cryptoIsEnabledPref = findPreference(appContext.getString(R.string.room_settings_labs_end_to_end_is_active));
 
@@ -556,13 +566,13 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
                 return true;
             }
         });
-
+        */
         addButtons();
         refreshPushersList();
         refreshEmailsList();
         refreshPhoneNumbersList();
         refreshIgnoredUsersList();
-        refreshDevicesList();
+        //refreshDevicesList();
     }
 
     @Override
@@ -731,7 +741,17 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
                     switchPreference.setChecked(gcmMgr.areDeviceNotificationsAllowed());
                 } else if (resourceText.equals(getString(R.string.settings_turn_screen_on))) {
                     switchPreference.setChecked(gcmMgr.isScreenTurnedOn());
-                } else {
+                } else if(resourceText.equals(getString(R.string.settings_enable_notice_beep)) ||
+                        resourceText.equals(getString(R.string.settings_enable_monitoring)) ||
+                        resourceText.equals(getString(R.string.settings_enable_call_auto_answer)) ||
+                        resourceText.equals(getString(R.string.settings_enable_motion_detecting)) ||
+                        resourceText.equals(getString(R.string.settings_enable_audio_detecting)) ||
+                        resourceText.equals(getString(R.string.settings_enable_timer_detecting)) ||
+                        resourceText.equals(getString(R.string.settings_enable_face_detecting)) ||
+                        resourceText.equals(getString(R.string.settings_enable_del_local_file))){
+                    switchPreference.setChecked(gcmMgr.isFunctionEnable(resourceText));
+                }
+                else {
                     switchPreference.setEnabled((null != rules) && isConnected);
                     switchPreference.setChecked(preferences.getBoolean(resourceText, false));
                 }
@@ -914,6 +934,17 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
         final GcmRegistrationManager gcmMgr = Matrix.getInstance(getActivity()).getSharedGCMRegistrationManager();
 
         Log.d(LOG_TAG, "onPushRuleClick " + fResourceText + " : set to " + newValue);
+
+        if(fResourceText.equals(getString(R.string.settings_enable_notice_beep)) ||
+            fResourceText.equals(getString(R.string.settings_enable_monitoring)) ||
+            fResourceText.equals(getString(R.string.settings_enable_call_auto_answer)) ||
+            fResourceText.equals(getString(R.string.settings_enable_motion_detecting)) ||
+            fResourceText.equals(getString(R.string.settings_enable_audio_detecting)) ||
+            fResourceText.equals(getString(R.string.settings_enable_timer_detecting)) ||
+            fResourceText.equals(getString(R.string.settings_enable_face_detecting)) ||
+            fResourceText.equals(getString(R.string.settings_enable_del_local_file))){
+            gcmMgr.setFunctionEnable(fResourceText, newValue);
+        }
 
         if (fResourceText.equals(getString(R.string.settings_turn_screen_on))) {
             if (gcmMgr.isScreenTurnedOn() != newValue) {

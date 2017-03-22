@@ -1124,4 +1124,22 @@ public final class GcmRegistrationManager {
             mThirdPartyRegistrationListeners.clear();
         }
     }
+
+
+    public boolean isFunctionEnable(String str){
+        boolean en;
+        if(str.equals(mContext.getString(R.string.settings_enable_monitoring))){
+            en = false;
+        }else{
+            en = true;
+        }
+
+        return getGcmSharedPreferences().getBoolean(str, en);
+    }
+
+    public void setFunctionEnable(String str, boolean flag){
+        if(isFunctionEnable(str) != flag){
+            getGcmSharedPreferences().edit().putBoolean(str, flag).apply();
+        }
+    }
 }

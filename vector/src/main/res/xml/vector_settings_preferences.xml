@@ -28,7 +28,7 @@
     <im.vector.preference.VectorDividerCategory
         android:key="settings_contact_divider"
         android:title="settings_contact_divider"/>
-
+    <!--
     <PreferenceCategory
         android:key="@string/settings_contact"
         android:title="@string/settings_contact" >
@@ -44,7 +44,7 @@
     </PreferenceCategory>
 
     <im.vector.preference.VectorDividerCategory />
-
+    -->
     <PreferenceCategory android:title="@string/settings_notifications">
 
         <im.vector.preference.VectorSwitchPreference
@@ -61,6 +61,12 @@
             android:key="@string/settings_turn_screen_on"
             android:dependency="@string/settings_enable_all_notif"/>
 
+        <im.vector.preference.VectorSwitchPreference
+            android:title="@string/settings_enable_notice_beep"
+            android:key="@string/settings_enable_notice_beep"
+            android:dependency="@string/settings_enable_all_notif"/>
+
+        <!--
         <im.vector.preference.VectorSwitchPreference
             android:title="@string/settings_containing_my_name"
             android:key="@string/settings_containing_my_name"
@@ -90,7 +96,7 @@
             android:title="@string/settings_messages_sent_by_bot"
             android:key="@string/settings_messages_sent_by_bot"
             android:dependency="@string/settings_enable_all_notif"/>
-
+        -->
     </PreferenceCategory>
 
     <im.vector.preference.VectorDividerCategory
@@ -112,7 +118,7 @@
     </PreferenceCategory>
 
     <im.vector.preference.VectorDividerCategory />
-
+    <!--
     <im.vector.preference.VectorPreferenceCategory
         android:key="labs"
         android:title="@string/room_settings_labs_pref_title">
@@ -132,10 +138,11 @@
             android:title="@string/room_settings_labs_end_to_end_is_active" />
 
     </im.vector.preference.VectorPreferenceCategory>
-    
-    <im.vector.preference.VectorDividerCategory />
 
+    <im.vector.preference.VectorDividerCategory />
+    -->
     <!-- ************ Cryptography section ************ -->
+    <!--
     <PreferenceCategory android:title="@string/settings_cryptography"
         android:key="@string/settings_cryptography">
         <im.vector.preference.VectorCustomActionEditTextPreference
@@ -168,9 +175,11 @@
     </PreferenceCategory>
 
     <im.vector.preference.VectorDividerCategory android:key="@string/cryptography_divider" />
+    -->
     <!-- ************************************************ -->
 
     <!-- devices list: device ids + device names -->
+    <!--
     <PreferenceCategory
         android:title="@string/settings_devices_list"
         android:key="@string/settings_devices_list">
@@ -196,6 +205,47 @@
             android:title="@string/settings_identity_server"
             android:summary="1.2.3"
             android:key="@string/settings_identity_server"/>
+    </PreferenceCategory>
+
+    <im.vector.preference.VectorDividerCategory />
+    -->
+
+    <PreferenceCategory android:title="@string/settings_monitoring" >
+        <im.vector.preference.VectorSwitchPreference
+            android:title="@string/settings_enable_monitoring"
+            android:key="@string/settings_enable_monitoring"
+            android:dependency="@string/settings_enable_all_notif"/>
+
+        <im.vector.preference.VectorSwitchPreference
+            android:title="@string/settings_enable_call_auto_answer"
+            android:key="@string/settings_enable_call_auto_answer"
+            android:dependency="@string/settings_enable_monitoring"/>
+
+        <im.vector.preference.VectorSwitchPreference
+            android:title="@string/settings_enable_motion_detecting"
+            android:key="@string/settings_enable_motion_detecting"
+            android:dependency="@string/settings_enable_monitoring"/>
+
+        <im.vector.preference.VectorSwitchPreference
+            android:title="@string/settings_enable_audio_detecting"
+            android:key="@string/settings_enable_audio_detecting"
+            android:dependency="@string/settings_enable_monitoring"/>
+
+        <im.vector.preference.VectorSwitchPreference
+            android:title="@string/settings_enable_timer_detecting"
+            android:key="@string/settings_enable_timer_detecting"
+            android:dependency="@string/settings_enable_monitoring"/>
+
+        <im.vector.preference.VectorSwitchPreference
+            android:title="@string/settings_enable_face_detecting"
+            android:key="@string/settings_enable_face_detecting"
+            android:dependency="@string/settings_enable_monitoring"/>
+
+        <im.vector.preference.VectorSwitchPreference
+            android:title="@string/settings_enable_del_local_file"
+            android:key="@string/settings_enable_del_local_file"
+            android:dependency="@string/settings_enable_monitoring"/>
+
     </PreferenceCategory>
 
     <im.vector.preference.VectorDividerCategory />
@@ -241,7 +291,7 @@
             android:title="@string/settings_version"
             android:summary="1.2.3"
             android:key="@string/settings_version"/>
-
+        <!--
         <im.vector.preference.VectorCustomActionEditTextPreference
             android:title="@string/settings_olm_version"
             android:summary="1.2.3"
@@ -262,7 +312,7 @@
         <im.vector.preference.VectorCustomActionEditTextPreference
             android:title="@string/settings_third_party_notices"
             android:key="@string/settings_third_party_notices"/>
-
+        -->
         <im.vector.preference.VectorCustomActionEditTextPreference
             android:title="@string/settings_clear_cache"
             android:key="@string/settings_clear_cache"/>
