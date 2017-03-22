@@ -2,10 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:id="@+id/account_group">
+        <!--
         <item
             android:id="@+id/sliding_menu_messages"
             android:icon="@drawable/logo_transparent"
             android:title="@string/room_sliding_menu_messages"/>
+        -->
 
         <item
             android:id="@+id/sliding_menu_settings"
@@ -27,7 +29,7 @@
         <item
             android:id="@+id/sliding_menu_version"
             android:title="@string/room_sliding_menu_version"/>
-
+        <!--
         <item
             android:id="@+id/sliding_copyright_terms"
             android:title="@string/room_sliding_menu_copyright"/>
@@ -43,5 +45,6 @@
         <item
             android:id="@+id/sliding_menu_third_party_notices"
             android:title="@string/room_sliding_menu_third_party_notices"/>
+        -->
     </group>
 </menu>
