@@ -17,7 +17,9 @@
 package im.vector.adapters;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -57,6 +59,7 @@ import java.util.List;
 import im.vector.Matrix;
 import im.vector.PublicRoomsManager;
 import im.vector.R;
+import im.vector.activity.VectorRoomDetailsActivity;
 import im.vector.util.VectorUtils;
 
 /**
@@ -916,18 +919,18 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
             item.setIcon(null);
         }
 
-        if (!isFavorite) {
-            item = popup.getMenu().getItem(1);
-            item.setIcon(null);
-        }
-
-        if (!isLowPrior) {
-            item = popup.getMenu().getItem(2);
-            item.setIcon(null);
-        }
+//        if (!isFavorite) {
+//            item = popup.getMenu().getItem(1);
+//            item.setIcon(null);
+//        }
+//
+//        if (!isLowPrior) {
+//            item = popup.getMenu().getItem(2);
+//            item.setIcon(null);
+//        }
 
         if (mMxSession.getDirectChatRoomIdsList().indexOf(childRoom.getRoomId()) < 0) {
-            item = popup.getMenu().getItem(3);
+            item = popup.getMenu().getItem(1);
             item.setIcon(null);
         }
 
@@ -957,28 +960,37 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
                         mListener.onToggleRoomNotifications(mMxSession, childRoom.getRoomId());
                         break;
                     }
-                    case R.id.ic_action_select_fav: {
-                        if (isFavorite) {
-                            mListener.moveToConversations(mMxSession, childRoom.getRoomId());
-                        } else {
-                            mListener.moveToFavorites(mMxSession, childRoom.getRoomId());
-                        }
-                        break;
-                    }
-                    case R.id.ic_action_select_deprioritize: {
-                        if (isLowPrior) {
-                            mListener.moveToConversations(mMxSession, childRoom.getRoomId());
-                        } else {
-                            mListener.moveToLowPriority(mMxSession, childRoom.getRoomId());
-                        }
-                        break;
-                    }
+//                    case R.id.ic_action_select_fav: {
+//                        if (isFavorite) {
+//                            mListener.moveToConversations(mMxSession, childRoom.getRoomId());
+//                        } else {
+//                            mListener.moveToFavorites(mMxSession, childRoom.getRoomId());
+//                        }
+//                        break;
+//                    }
+//                    case R.id.ic_action_select_deprioritize: {
+//                        if (isLowPrior) {
+//                            mListener.moveToConversations(mMxSession, childRoom.getRoomId());
+//                        } else {
+//                            mListener.moveToLowPriority(mMxSession, childRoom.getRoomId());
+//                        }
+//                        break;
+//                    }
                     case R.id.ic_action_select_remove: {
                         mListener.onLeaveRoom(mMxSession, childRoom.getRoomId());
                         break;
                     }
                     case R.id.ic_action_select_direct_chat : {
                         mListener.onToggleDirectChat(mMxSession, childRoom.getRoomId());
+                        break;
+                    }
+
+                    case R.id.ic_action_select_room_detail : {
+                        Intent intent = new Intent(mContext, VectorRoomDetailsActivity.class);
+                        intent.putExtra(VectorRoomDetailsActivity.EXTRA_ROOM_ID, childRoom.getRoomId());
+                        intent.putExtra(VectorRoomDetailsActivity.EXTRA_MATRIX_ID, mMxSession.getCredentials().userId);
+                        intent.putExtra(VectorRoomDetailsActivity.EXTRA_SELECTED_TAB_ID, 0);
+                        ((Activity)mContext).startActivity(intent);
                         break;
                     }
                 }

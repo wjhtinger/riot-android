@@ -6,6 +6,7 @@
         android:icon="@drawable/ic_material_done"
         android:title="@string/room_settings_notifications"/>
 
+    <!--
     <item
         android:id="@+id/ic_action_select_fav"
         android:icon="@drawable/ic_material_done"
@@ -15,11 +16,16 @@
         android:id="@+id/ic_action_select_deprioritize"
         android:icon="@drawable/ic_material_done"
         android:title="@string/room_settings_de_prioritize"/>
-
+    -->
     <item
         android:id="@+id/ic_action_select_direct_chat"
         android:icon="@drawable/ic_material_done"
         android:title="@string/room_settings_direct_chat"/>
+
+    <item
+        android:id="@+id/ic_action_select_room_detail"
+        android:icon="@drawable/vector_actions_9b"
+        android:title="@string/room_details_title"/>
 
     <item
         android:id="@+id/ic_action_select_remove"
