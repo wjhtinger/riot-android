@@ -426,7 +426,7 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
             }
 
             // no tag
-            if (0 != noTagRoomSummaryList.size()) {
+            if (0 != noTagRoomSummaryList.size() && mForceNoTagGroupDisplay) {
                 summaryListByGroupsRetValue.add(noTagRoomSummaryList);
                 mNoTagGroupPosition = groupIndex; // save section index
                 groupIndex++;
@@ -1190,4 +1190,16 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
     public boolean isLowPriorityRoomPosition(int groupPos) {
         return mLowPriorGroupPosition == groupPos;
     }
+
+
+    private boolean mForceNoTagGroupDisplay = true;
+
+    public int getNoTagGroupPosition() {
+        return mNoTagGroupPosition;
+    }
+
+    public void setForceNoTagGroupDisplay(boolean forceDirectoryGroupDisplay) {
+        mForceNoTagGroupDisplay = forceDirectoryGroupDisplay;
+    }
+
 }

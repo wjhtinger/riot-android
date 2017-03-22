@@ -173,7 +173,7 @@ public class VectorRecentsListFragment extends Fragment implements VectorRoomSum
         // the chevron is managed in the header view
         mRecentsListView.setGroupIndicator(null);
         // create the adapter
-        mAdapter = new VectorRoomSummaryAdapter(getActivity(), mSession, false, true, R.layout.adapter_item_vector_recent_room, R.layout.adapter_item_vector_recent_header, this);
+        mAdapter = new VectorRoomSummaryAdapter(getActivity(), mSession, false, false, R.layout.adapter_item_vector_recent_room, R.layout.adapter_item_vector_recent_header, this);
 
         mRecentsListView.setAdapter(mAdapter);
 
@@ -1187,5 +1187,21 @@ public class VectorRecentsListFragment extends Fragment implements VectorRoomSum
      */
     public void setFirstVisiblePosition(final int position) {
         mScrollToIndex = position;
+    }
+
+    public void setIsNoTagDisplayed(boolean isDisplayed) {
+        mAdapter.setForceNoTagGroupDisplay(isDisplayed);
+        mAdapter.notifyDataSetChanged();
+
+        if (isDisplayed) {
+            mRecentsListView.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (-1 != mAdapter.getNoTagGroupPosition()) {
+                        mRecentsListView.expandGroup(mAdapter.getNoTagGroupPosition());
+                    }
+                }
+            });
+        }
     }
 }

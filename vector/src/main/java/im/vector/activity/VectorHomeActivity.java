@@ -573,7 +573,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
             }
         }
 
-        mRecentsListFragment.setIsDirectoryDisplayed(false);
+        //mRecentsListFragment.setIsDirectoryDisplayed(false);
     }
 
     @Override
@@ -1346,6 +1346,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
     // display the directory group if the user overscrolls for about 0.5 s
     @Override
     public void onRecentsListOverScrollUp() {
+        /*
         if (!mRecentsListFragment.isDirectoryGroupDisplayed()) {
             if (-1 == mOverscrollStartTime) {
                 mOverscrollStartTime = System.currentTimeMillis();
@@ -1353,6 +1354,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
                 mRecentsListFragment.setIsDirectoryDisplayed(true);
             }
         }
+        */
     }
 
     // warn the user scrolls up
@@ -1495,7 +1497,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
 
                 findViewById(R.id.roomContent).setVisibility(View.VISIBLE);
                 findViewById(R.id.spaceContent).setVisibility(View.GONE);
-                //mRecentsListFragment.setIsRoomsDisplayed(true);
+                mRecentsListFragment.setIsNoTagDisplayed(true);
                 mRecentsListFragment.setIsDirectoryDisplayed(false);
                 //mRoomCreationFab.show();
                 break;
@@ -1510,7 +1512,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
                 findViewById(R.id.roomContent).setVisibility(View.VISIBLE);
                 findViewById(R.id.spaceContent).setVisibility(View.GONE);
                 mRecentsListFragment.setIsDirectoryDisplayed(true);
-                //mRecentsListFragment.setIsRoomsDisplayed(false);
+                mRecentsListFragment.setIsNoTagDisplayed(false);
                 //mRoomCreationFab.hide();
                 break;
             case R.id.messageItem3:
