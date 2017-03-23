@@ -50,12 +50,12 @@
         <im.vector.preference.VectorSwitchPreference
             android:title="@string/settings_enable_all_notif"
             android:key="@string/settings_enable_all_notif"/>
-
+        <!--
         <im.vector.preference.VectorSwitchPreference
             android:title="@string/settings_enable_this_device"
             android:key="@string/settings_enable_this_device"
             android:dependency="@string/settings_enable_all_notif"/>
-
+        -->
         <im.vector.preference.VectorSwitchPreference
             android:title="@string/settings_turn_screen_on"
             android:key="@string/settings_turn_screen_on"
@@ -213,13 +213,7 @@
     <PreferenceCategory android:title="@string/settings_monitoring" >
         <im.vector.preference.VectorSwitchPreference
             android:title="@string/settings_enable_monitoring"
-            android:key="@string/settings_enable_monitoring"
-            android:dependency="@string/settings_enable_all_notif"/>
-
-        <im.vector.preference.VectorSwitchPreference
-            android:title="@string/settings_enable_call_auto_answer"
-            android:key="@string/settings_enable_call_auto_answer"
-            android:dependency="@string/settings_enable_monitoring"/>
+            android:key="@string/settings_enable_monitoring"/>
 
         <im.vector.preference.VectorSwitchPreference
             android:title="@string/settings_enable_motion_detecting"
@@ -242,6 +236,11 @@
             android:dependency="@string/settings_enable_monitoring"/>
 
         <im.vector.preference.VectorSwitchPreference
+            android:title="@string/settings_enable_call_auto_answer"
+            android:key="@string/settings_enable_call_auto_answer"
+            android:dependency="@string/settings_enable_monitoring"/>
+
+        <im.vector.preference.VectorSwitchPreference
             android:title="@string/settings_enable_del_local_file"
             android:key="@string/settings_enable_del_local_file"
             android:dependency="@string/settings_enable_monitoring"/>
@@ -249,7 +248,7 @@
     </PreferenceCategory>
 
     <im.vector.preference.VectorDividerCategory />
-
+    <!--
     <PreferenceCategory
         android:key="@string/settings_background_sync"
         android:title="@string/settings_background_sync" >
@@ -273,14 +272,15 @@
     </PreferenceCategory>
 
     <im.vector.preference.VectorDividerCategory/>
-
+    -->
     <PreferenceCategory
         android:title="@string/settings_other"
         android:key="@string/settings_other" >
 
         <im.vector.preference.VectorSwitchPreference
             android:title="@string/ga_use_settings"
-            android:key="@string/ga_use_settings"/>
+            android:key="@string/ga_use_settings"
+            android:summary="@string/settings_summary_ga_use_settings"/>
 
         <Preference
             android:key="application_info_link"

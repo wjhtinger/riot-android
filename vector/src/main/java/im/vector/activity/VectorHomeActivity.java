@@ -1178,18 +1178,19 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
 
                     case R.id.sliding_menu_sign_out: {
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VectorHomeActivity.this);
-                        alertDialogBuilder.setMessage(getString(R.string.action_sign_out_confirmation));
-
+                        //alertDialogBuilder.setMessage(getString(R.string.action_sign_out_confirmation));
+                        alertDialogBuilder.setTitle(getString(R.string.action_sign_out_title));
                         // set dialog message
                         alertDialogBuilder
                                 .setCancelable(false)
-                                .setPositiveButton(R.string.action_sign_out,
+                                .setPositiveButton(R.string.ok,
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
                                                 VectorHomeActivity.this.showWaitingView();
                                                 CommonActivityUtils.logout(VectorHomeActivity.this);
                                             }
                                         })
+                                /*
                                 .setNeutralButton(R.string.encryption_export_export, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -1203,6 +1204,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
                                         });
                                     }
                                 })
+                                */
                                 .setNegativeButton(R.string.cancel,
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {

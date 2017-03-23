@@ -3,6 +3,7 @@
     android:orientation="vertical"
     android:layout_height="wrap_content">
 
+    <!--
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
@@ -17,4 +18,11 @@
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:background="@drawable/shadow_top"/>
+
+     -->
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="#d0d0d0"/>
 </LinearLayout>
