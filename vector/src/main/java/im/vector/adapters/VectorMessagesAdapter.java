@@ -660,8 +660,8 @@ public class VectorMessagesAdapter extends MessagesAdapter {
             menu.getItem(i).setVisible(false);
         }
 
-        menu.findItem(R.id.ic_action_view_source).setVisible(true);
-        menu.findItem(R.id.ic_action_vector_permalink).setVisible(true);
+//        menu.findItem(R.id.ic_action_view_source).setVisible(true);
+//        menu.findItem(R.id.ic_action_vector_permalink).setVisible(true);
 
         if (!TextUtils.isEmpty(textMsg)) {
             menu.findItem(R.id.ic_action_vector_copy).setVisible(true);
@@ -717,13 +717,13 @@ public class VectorMessagesAdapter extends MessagesAdapter {
                 }
 
                 // offer to report a message content
-                menu.findItem(R.id.ic_action_vector_report).setVisible(!mIsPreviewMode && !TextUtils.equals(event.sender, mSession.getMyUserId()));
+//                menu.findItem(R.id.ic_action_vector_report).setVisible(!mIsPreviewMode && !TextUtils.equals(event.sender, mSession.getMyUserId()));
             }
 
         }
 
         // e2e
-        menu.findItem(R.id.ic_action_device_verification).setVisible(mE2eIconByEventId.containsKey(event.eventId));
+//        menu.findItem(R.id.ic_action_device_verification).setVisible(mE2eIconByEventId.containsKey(event.eventId));
 
         // display the menu
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {

@@ -221,11 +221,11 @@ public class VectorMemberDetailsAdapter extends BaseExpandableListAdapter {
             groupPos++;
         }
 
-        if (0 != mDevicesList.size()) {
-            mActionsList.add(mDevicesList);
-            mDevicesGroupPosition = groupPos;
-            groupPos++;
-        }
+//        if (0 != mDevicesList.size()) {
+//            mActionsList.add(mDevicesList);
+//            mDevicesGroupPosition = groupPos;
+//            groupPos++;
+//        }
 
         if (0 != mDirectCallsList.size()) {
             mActionsList.add(mDirectCallsList);

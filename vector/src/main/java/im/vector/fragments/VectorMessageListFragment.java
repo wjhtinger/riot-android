@@ -588,35 +588,36 @@ public class VectorMessageListFragment extends MatrixMessageListFragment impleme
                     startActivity(sendIntent);
                 }
             }
-        } else if (action == R.id.ic_action_vector_permalink) {
-            VectorUtils.copyToClipboard(getActivity(), VectorUtils.getPermalink(event.roomId, event.eventId));
-        } else if (action == R.id.ic_action_vector_report) {
-            onMessageReport(event);
-        } else if (action == R.id.ic_action_view_source) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-                    View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_event_content, null);
-                    TextView textview = (TextView) view.findViewById(R.id.event_content_text_view);
-
-                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    textview.setText(gson.toJson(JsonUtils.toJson(event)));
-                    builder.setView(view);
-
-                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-
-                    builder.create().show();
-                }
-            });
-        } else if (action == R.id.ic_action_device_verification) {
-            onE2eIconClick(event, ((VectorMessagesAdapter) mAdapter).getDeviceInfo(event.eventId));
         }
+//        else if (action == R.id.ic_action_vector_permalink) {
+//            VectorUtils.copyToClipboard(getActivity(), VectorUtils.getPermalink(event.roomId, event.eventId));
+//        } else if (action == R.id.ic_action_vector_report) {
+//            onMessageReport(event);
+//        } else if (action == R.id.ic_action_view_source) {
+//            getActivity().runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//
+//                    View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_event_content, null);
+//                    TextView textview = (TextView) view.findViewById(R.id.event_content_text_view);
+//
+//                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//                    textview.setText(gson.toJson(JsonUtils.toJson(event)));
+//                    builder.setView(view);
+//
+//                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int id) {
+//                            dialog.cancel();
+//                        }
+//                    });
+//
+//                    builder.create().show();
+//                }
+//            });
+//        } else if (action == R.id.ic_action_device_verification) {
+//            onE2eIconClick(event, ((VectorMessagesAdapter) mAdapter).getDeviceInfo(event.eventId));
+//        }
     }
 
     /**

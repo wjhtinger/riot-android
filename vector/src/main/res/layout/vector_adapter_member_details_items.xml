@@ -47,5 +47,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:paddingLeft="32dp"
+		android:textSize="16sp"
         android:text="actions.." />
 </LinearLayout>

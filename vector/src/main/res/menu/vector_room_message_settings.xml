@@ -55,7 +55,7 @@
         android:icon="@drawable/ic_material_save"
         android:title="@string/save"
         app:showAsAction="never" />
-
+    <!--
     <item
         android:id="@+id/ic_action_view_source"
         android:icon="@drawable/ic_material_message_black"
@@ -79,5 +79,5 @@
         android:icon="@drawable/ic_perm_device_information_black"
         android:title="@string/device_information"
         app:showAsAction="never" />
-
+    -->
 </menu>
