@@ -12,27 +12,27 @@
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_notification_settings">Notification Settings</string>
     <string name="title_activity_member_details">Member Details</string>
-    <string name="title_activity_invite_user">Invite Users</string>
+    <string name="title_activity_invite_user">邀请朋友加入房间</string>
     <string name="title_activity_medias_picker">Select Medias</string>
 
     <!-- button names -->
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
-    <string name="save">Save</string>
+    <string name="ok">确认</string>
+    <string name="cancel">取消</string>
+    <string name="save">保存</string>
     <string name="stay">Stay</string>
-    <string name="leave">Leave</string>
-    <string name="send">Send</string>
-    <string name="copy">Copy</string>
-    <string name="resend">Resend</string>
-    <string name="redact">Redact</string>
-    <string name="quote">Quote</string>
-    <string name="share">Share</string>
+    <string name="leave">退出</string>
+    <string name="send">发送</string>
+    <string name="copy">复制</string>
+    <string name="resend">重新发送</string>
+    <string name="redact">删除</string>
+    <string name="quote">引用</string>
+    <string name="share">分享</string>
     <string name="later">Later</string>
     <string name="paste_username">Paste username</string>
     <string name="view_profile">View profile</string>
     <string name="direct_message">Direct message</string>
-    <string name="forward">Forward</string>
-    <string name="permalink">Permalink</string>
+    <string name="forward">转发</string>
+    <string name="permalink">拷贝</string>
     <string name="message_details">Message details</string>
     <string name="view_source">View Source</string>
     <string name="view">View</string>
@@ -60,13 +60,13 @@
     <string name="or">or</string>
 
     <!-- server urls -->
-    <string name="vector_im_server_url">https://windsing.com.cn:8448</string>
-    <string name="matrix_org_server_url">https://windsing.com.cn:8448</string>
+    <string name="vector_im_server_url">https://vector.im</string>
+    <string name="matrix_org_server_url">https://matrix.org</string>
     <string name="default_hs_server_url">https://windsing.com.cn:8448</string>
-    <string name="default_identity_server_url">https://windsing.com.cn:8448</string>
+    <string name="default_identity_server_url">https://vector.im</string>
 
     <!-- actions -->
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">设置</string>
     <string name="action_members">Members list</string>
     <string name="action_public_rooms">Public Rooms</string>
     <string name="action_my_rooms">My Rooms</string>
@@ -86,7 +86,7 @@
     <string name="action_video_call">Video Call</string>
     <string name="action_search_room">Search room</string>
     <string name="action_search_contact">Search contact</string>
-    <string name="action_mark_all_as_read">Mark all as read</string>
+    <string name="action_mark_all_as_read">清除所有新信息提示</string>
     <string name="action_quick_reply">Quick reply</string>
     <string name="action_open">Open</string>
     <string name="action_close">Close</string>
@@ -100,7 +100,7 @@
     <string name="disable">Disable</string>
 
     <!-- dialog titles -->
-    <string name="dialog_title_confirmation">Confirmation</string>
+    <string name="dialog_title_confirmation">提醒</string>
     <string name="dialog_title_warning">Warning</string>
 
     <string name="send_bug_report_include_logs">Send logs</string>
@@ -126,7 +126,7 @@
 
     <string name="my_rooms">My rooms</string>
     <string name="create_room">Create Room</string>
-    <string name="join_room">Join Room</string>
+    <string name="join_room">同意加入</string>
     <string name="create">Create:</string>
     <string name="sign_in">Sign in</string>
     <string name="username">Username</string>
@@ -147,15 +147,15 @@
     <string name="join_room_title">Join Room</string>
     <string name="join_room_hint">(e.g. #foo:example.org)</string>
 
-    <string name="membership_invite">Invited</string>
-    <string name="membership_join">Joined</string>
-    <string name="membership_leave">Left</string>
-    <string name="membership_kick">Kicked</string>
-    <string name="membership_ban">Banned</string>
+    <string name="membership_invite">已邀请</string>
+    <string name="membership_join">已加入</string>
+    <string name="membership_leave">离开</string>
+    <string name="membership_kick">被踢出</string>
+    <string name="membership_ban">被禁止</string>
     <string name="start_chat">Start chat</string>
-    <string name="start_new_chat">Start New Chat</string>
-    <string name="start_voice_call">Start Voice Call</string>
-    <string name="start_video_call">Start Video Call</string>
+    <string name="start_new_chat">发起新聊天</string>
+    <string name="start_voice_call">语音通话</string>0
+    <string name="start_video_call">视频通话</string>
 
     <plurals name="num_members">
         <item quantity="one">%1$s user</item>
@@ -179,17 +179,17 @@
     <string name="auth_register">注册</string>
     <string name="auth_submit">Submit</string>
     <string name="auth_skip">Skip</string>
-    <string name="auth_send_reset_email">Send Reset Email</string>
+    <string name="auth_send_reset_email">发送密码重置邮件</string>
     <string name="auth_return_to_login">Return to login screen</string>
     <string name="auth_user_id_placeholder">账号</string>
     <string name="auth_password_placeholder">密码</string>
     <string name="auth_new_password_placeholder">新密码</string>
-    <string name="auth_user_name_placeholder">账号名</string>
+    <string name="auth_user_name_placeholder">账号</string>
     <string name="auth_add_email_message">"Add an email address to your account to let users discover you, and let you reset password."</string>
     <string name="auth_add_phone_message">"Add a phone number to your account to let users discover you."</string>
     <string name="auth_add_email_phone_message">"Add an email address and/or a phone number to your account to let users discover you.\n\nEmail address will also let you reset your password."</string>
     <string name="auth_add_email_and_phone_message">"Add an email address and a phone number to your account to let users discover you.\n\nEmail address will also let you reset your password."</string>
-    <string name="auth_email_placeholder">Email address</string>
+    <string name="auth_email_placeholder">邮箱</string>
     <string name="auth_opt_email_placeholder">Email address (optional)</string>
     <string name="auth_phone_number_placeholder">Phone number</string>
     <string name="auth_opt_phone_number_placeholder">Phone number (optional)</string>
@@ -219,7 +219,7 @@
     <string name="auth_home_server">Home Server:</string>
     <string name="auth_identity_server">Identity Server:</string>
     <string name="auth_reset_password_next_step_button">I have verified my email address</string>
-    <string name="auth_reset_password_message">To reset your password, enter the email address linked to your account:</string>
+    <string name="auth_reset_password_message">请输入你账号的关联邮箱，以重置密码:</string>
     <string name="auth_reset_password_missing_email">The email address linked to your account must be entered.</string>
     <string name="auth_reset_password_missing_password">A new password must be entered.</string>
     <string name="auth_reset_password_email_validation_message">An email has been sent to %s. Once you\'ve followed the link it contains, click below.</string>
@@ -252,7 +252,7 @@
     <!-- universal link receiver -->
     <string name="universal_link_join_alert_title">You are trying to access a room.</string>
     <string name="universal_link_join_alert_body">Would you like to join in order to participate in the discussion?</string>
-    <string name="universal_link_email_invitation_body_1">You have been invited to join this room by %s</string>
+    <string name="universal_link_email_invitation_body_1">%s邀请你加入该房间</string>
     <string name="universal_link_email_invitation_body_2">Would you like to accept or decline this invitation?</string>
     <string name="universal_link_email_invitation_body_3">This invitation was sent to %s which is not associated with this account.\nYou may wish to login with a different account, or add this email to your this account.</string>
 
@@ -386,7 +386,7 @@
     <string name="call_connecting">Call connecting...</string>
     <string name="call_ended">Call ended</string>
     <string name="call_ring">Calling...</string>
-    <string name="incoming_call">Incoming Call</string>
+    <string name="incoming_call">来电</string>
     <string name="incoming_video_call">Incoming Video Call</string>
     <string name="incoming_voice_call">Incoming Voice Call</string>
     <string name="call_invite_expired">Call Invite Expired</string>
@@ -400,8 +400,8 @@
     <string name="call_error_peer_hangup_elsewhere">call hung up elsewhere</string>
     <string name="call_error_peer_cancelled_call">call cancelled</string>
 
-    <string name="action_accept">ACCEPT</string>
-    <string name="action_ignore">IGNORE</string>
+    <string name="action_accept">接听</string>
+    <string name="action_ignore">拒绝</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_hangup">Hang up</string>
 
@@ -432,8 +432,8 @@
     <!-- medias slider string -->
     <string name="media_slider_saved">Saved</string>
     <string name="media_slider_saved_message">Save to downloads</string>
-    <string name="yes">YES</string>
-    <string name="no">NO</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
     <string name="_continue">Continue</string>
 
     <!-- Actions -->
@@ -442,8 +442,8 @@
     <string name="back">Back</string>
     <string name="remove">Remove</string>
     <string name="join">Join</string>
-    <string name="preview">Preview</string>
-    <string name="reject">Reject</string>
+    <string name="preview">查看</string>
+    <string name="reject">拒绝</string>
 
     <!-- Room Preview -->
     <string name="room_preview_invitation_format">You have been invited to join this room by %s</string>
@@ -487,8 +487,8 @@
     <string name="room_participants_add_participant">Add participant</string>
     <string name="room_participants_one_participant">1 participant</string>
     <string name="room_participants_multi_participants">%s participants</string>
-    <string name="room_participants_leave_prompt_title">Leave room</string>
-    <string name="room_participants_leave_prompt_msg">Are you sure you want to leave the room?</string>
+    <string name="room_participants_leave_prompt_title">退出房间</string>
+    <string name="room_participants_leave_prompt_msg">确认退出该房间?</string>
     <string name="room_participants_remove_prompt_msg">Are you sure you want to remove %s from this chat?</string>
     <string name="room_participants_admin_name">%s (admin)</string>
     <string name="room_participants_create">Create</string>
@@ -507,30 +507,30 @@
 
     <string name="you">You</string>
 
-    <string name="room_participants_header_admin_tools">ADMIN TOOLS</string>
-    <string name="room_participants_header_call">CALL</string>
-    <string name="room_participants_header_direct_chats">DIRECT CHATS</string>
+    <string name="room_participants_header_admin_tools">管理员功能</string>
+    <string name="room_participants_header_call">通话</string>
+    <string name="room_participants_header_direct_chats">直接联系</string>
     <string name="room_participants_header_devices">DEVICES</string>
 
-    <string name="room_participants_action_invite">Invite</string>
-    <string name="room_participants_action_leave">Leave this room</string>
-    <string name="room_participants_action_remove">Remove from this room</string>
-    <string name="room_participants_action_ban">Ban</string>
-    <string name="room_participants_action_unban">Unban</string>
-    <string name="room_participants_action_set_default_power_level">Reset to normal user</string>
-    <string name="room_participants_action_set_moderator">Make moderator</string>
-    <string name="room_participants_action_set_admin">Make admin</string>
+    <string name="room_participants_action_invite">邀请</string>
+    <string name="room_participants_action_leave">退出房间</string>
+    <string name="room_participants_action_remove">踢出房间</string>
+    <string name="room_participants_action_ban">屏蔽</string>
+    <string name="room_participants_action_unban">取消屏蔽</string>
+    <string name="room_participants_action_set_default_power_level">设置为普通成员</string>
+    <string name="room_participants_action_set_moderator">设置为主持人</string>
+    <string name="room_participants_action_set_admin">设置为管理员</string>
     <string name="room_participants_action_start_chat">Start chat</string>
-    <string name="room_participants_action_start_voice_call">Start voice call</string>
-    <string name="room_participants_action_start_video_call">Start video call</string>
-    <string name="room_participants_action_ignore">Hide all messages from this user</string>
-    <string name="room_participants_action_unignore">Show all messages from this user</string>
+    <string name="room_participants_action_start_voice_call">语音通话</string>
+    <string name="room_participants_action_start_video_call">视频通话</string>
+    <string name="room_participants_action_ignore">屏蔽该成员所有信息</string>
+    <string name="room_participants_action_unignore">取消屏蔽信息</string>
     <string name="room_participants_invite_search_another_user">User ID, Name or email</string>
-    <string name="room_participants_action_mention">Mention</string>
+    <string name="room_participants_action_mention">引用</string>
     <string name="room_participants_action_devices_list">Show Device List</string>
-    <string name="room_participants_power_level_prompt">You will not be able to undo this change as you are promoting the user to have the same power level as yourself.\nAre you sure?</string>
+    <string name="room_participants_power_level_prompt">这将设置该成员和你一样高的权限，该操作不可逆。\n确认这么做吗?</string>
 
-    <string name="room_participants_invite_prompt_msg">"Are you sure you want to invite %s to this chat?"</string>
+    <string name="room_participants_invite_prompt_msg">"确定邀请%s吗?"</string>
 
     <!-- invitation -->
     <string name="people_search_local_contacts">LOCAL CONTACTS (%d)</string>
@@ -559,12 +559,12 @@
     <string name="room_option_start_group_video">Start group video chat</string>
     <string name="room_option_share_location">Share location</string>
     <string name="room_option_share_contact">Share contact</string>
-    <string name="room_one_user_is_typing">%s is typing...</string>
+    <string name="room_one_user_is_typing">%s正在输入...</string>
     <string name="room_two_users_are_typing">%1$s &#038; %2$s are typing...</string>
     <string name="room_many_users_are_typing">%1$s &#038; %2$s &#038; others are typing...</string>
-    <string name="room_message_placeholder_encrypted">Send an encrypted message...</string>
-    <string name="room_message_placeholder_not_encrypted">Send a message (unencrypted)...</string>
-    <string name="room_offline_notification">Connectivity to the server has been lost.</string>
+    <string name="room_message_placeholder_encrypted">输入信息...</string>
+    <string name="room_message_placeholder_not_encrypted">输入信息...</string>
+    <string name="room_offline_notification">连接丢失，请检查网络！</string>
     <string name="room_unsent_messages_notification">Messages not sent. %1$s or %2$s now?</string>
     <string name="room_unknown_devices_messages_notification">Messages not sent due to unknown devices being present. %1$s or %2$s now?</string>
     <string name="room_prompt_resend">Resend all</string>
@@ -591,10 +591,10 @@
     <string name="ssl_fingerprint_example">00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00</string>
 
     <!-- Room Details -->
-    <string name="room_details_title">Room Details</string>
-    <string name="room_details_people">People</string>
-    <string name="room_details_files">Files</string>
-    <string name="room_details_settings">Settings</string>
+    <string name="room_details_title">房间信息</string>
+    <string name="room_details_people">成员</string>
+    <string name="room_details_files">文件</string>
+    <string name="room_details_settings">设置</string>
     <string name="room_details_fail_to_update_topic">Fail to update the topic</string>
     <string name="room_details_fail_to_update_room_name">Fail to update the room name</string>
     <string name="room_details_with_updates">The updates will be lost : are you sure to leave ?</string>
@@ -602,8 +602,8 @@
     <string name="room_details_room_not_listed_in_directory">room not listed</string>
     <string name="room_details_selected">selected</string>
     <string name="malformed_id">Malformed ID. Should be an email address or a Matrix ID like \'@localpart:domain\'</string>
-    <string name="room_details_people_invited_group_name">INVITED</string>
-    <string name="room_details_people_present_group_name">JOINED</string>
+    <string name="room_details_people_invited_group_name">已邀请</string>
+    <string name="room_details_people_present_group_name">已加入</string>
 
     <!-- Room events -->
     <string name="room_event_action_report_prompt_reason">Reason for reporting this content</string>
@@ -612,34 +612,34 @@
     <string name="room_event_action_cancel_download">Cancel Download</string>
 
     <!-- Room display name -->
-    <string name="room_displayname_invite_from">Invite from %s</string>
+    <string name="room_displayname_invite_from">收到%s发来的邀请</string>
     <string name="room_displayname_room_invite">Room Invite</string>
-    <string name="room_displayname_two_members">%1$s and %2$s</string>
-    <string name="room_displayname_more_than_two_members">%1$s and %2$d others</string>
-    <string name="room_displayname_no_title">Empty room</string>
+    <string name="room_displayname_two_members">%1$s和%2$s</string>
+    <string name="room_displayname_more_than_two_members">%1$s和其他%2$d个</string>
+    <string name="room_displayname_no_title">空房间</string>
 
     <!-- Search -->
     <string name="search_hint">Search</string>
     <string name="search_members_hint">Filter room members</string>
     <string name="search_no_results">No results</string>
-    <string name="tab_title_search_rooms">ROOMS</string>
-    <string name="tab_title_search_messages">MESSAGES</string>
-    <string name="tab_title_search_people">PEOPLE</string>
-    <string name="tab_title_search_files">FILES</string>
+    <string name="tab_title_search_rooms">房间</string>
+    <string name="tab_title_search_messages">消息</string>
+    <string name="tab_title_search_people">成员</string>
+    <string name="tab_title_search_files">文件</string>
 
     <!-- Room recents -->
     <string name="room_recents_join">JOIN</string>
-    <string name="room_recents_directory">DIRECTORY</string>
+    <string name="room_recents_directory">发现</string>
     <string name="room_recents_favourites">FAVORITES</string>
     <string name="room_recents_pepole">PEOPLE</string>
-    <string name="room_recents_conversations">ROOMS</string>
+    <string name="room_recents_conversations">房间</string>
     <string name="room_recents_low_priority">LOW PRIORITY</string>
     <string name="room_recents_invites">INVITES</string>
-    <string name="room_recents_start_chat">Start chat</string>
-    <string name="room_recents_create_room">Create room</string>
+    <string name="room_recents_start_chat">查找朋友</string>
+    <string name="room_recents_create_room">创建房间</string>
 
     <!-- Directory -->
-    <string name="directory_search_results_title">Browse directory</string>
+    <string name="directory_search_results_title">查找公共房间</string>
     <string name="directory_search_room">%1$d room</string>
     <string name="directory_search_rooms">%1$d rooms</string>
     <string name="directory_search_room_for">%1$d room found for %2$s</string>
@@ -682,9 +682,9 @@
     <string name="settings_summary_app_info_link"></string>
     <string name="settings_title_app_info_link">程序信息</string>
 
-    <string name="settings_enable_all_notif">允许新消息提醒</string>
-    <string name="settings_enable_this_device">Enable notifications for this device</string>
-    <string name="settings_turn_screen_on">允许新消息提醒点亮屏幕</string>
+    <string name="settings_enable_all_notif">新消息提醒</string>
+    <string name="settings_enable_this_device">新消息提醒</string>
+    <string name="settings_turn_screen_on">新消息点亮屏幕</string>
 
     <string name="settings_containing_my_name">Msgs containing my name</string>
     <string name="settings_messages_in_one_to_one">Msgs in one-to-one chats</string>
@@ -770,13 +770,13 @@
     <!-- Room Settings -->
 
     <!-- room global settings-->
-    <string name="room_settings_room_photo">Room Photo</string>
-    <string name="room_settings_photo">Room Photo</string>
-    <string name="room_settings_room_name">Room Name</string>
-    <string name="room_settings_topic">Topic</string>
+    <string name="room_settings_room_photo">房间头像</string>
+    <string name="room_settings_photo">房间头像</string>
+    <string name="room_settings_room_name">房间名</string>
+    <string name="room_settings_topic">房间主题</string>
     <string name="room_settings_room_tag">Room Tag</string>
     <string name="room_settings_tag_pref_dialog_title">Tagged as:</string>
-    <string name="room_settings_mute_notifs">Mute Notifications</string>
+    <string name="room_settings_mute_notifs">房间消息提醒</string>
 
     <!-- Room settings: Room tag -->
     <string name="room_settings_tag_pref_entry_favourite">Favourite</string>
@@ -788,18 +788,18 @@
     <string name="room_settings_tag_pref_entry_value_none">none</string>
 
     <!-- room settings : access and visibility -->
-    <string name="room_settings_category_access_visibility_title">Access and visibility</string>
-    <string name="room_settings_directory_visibility">List this room in room directory</string>
-    <string name="room_settings_room_access_rules_pref_title">Room Access</string>
-    <string name="room_settings_room_read_history_rules_pref_title">Room History Readability</string>
-    <string name="room_settings_room_read_history_rules_pref_dialog_title">Who can read history?</string>
-    <string name="room_settings_room_access_rules_pref_dialog_title">Who can access this room?</string>
+    <string name="room_settings_category_access_visibility_title">访问权限</string>
+    <string name="room_settings_directory_visibility">公开该房间</string>
+    <string name="room_settings_room_access_rules_pref_title">加入许可</string>
+    <string name="room_settings_room_read_history_rules_pref_title">房间历史信息阅读权限</string>
+    <string name="room_settings_room_read_history_rules_pref_dialog_title">谁可以阅读房间历史消息?</string>
+    <string name="room_settings_room_access_rules_pref_dialog_title">谁可以加入该房间?</string>
 
     <!-- Room settings, access and visibility : WHO CAN READ HISTORY? (read rule) -->
-    <string name="room_settings_read_history_entry_anyone">Anyone</string>
-    <string name="room_settings_read_history_entry_members_only_option_time_shared">Members only (since the point in time of selecting this option)</string>
-    <string name="room_settings_read_history_entry_members_only_invited">Members only (since they were invited)</string>
-    <string name="room_settings_read_history_entry_members_only_joined">Members only (since they joined)</string>
+    <string name="room_settings_read_history_entry_anyone">任何人</string>
+    <string name="room_settings_read_history_entry_members_only_option_time_shared">房间成员</string>
+    <string name="room_settings_read_history_entry_members_only_invited">房间成员（已被邀请）</string>
+    <string name="room_settings_read_history_entry_members_only_joined">房间成员（已经加入）</string>
     <string name="room_settings_read_history_entry_value_anyone">world_readable</string>
     <string name="room_settings_read_history_entry_value_members_only_option_time_shared">shared</string>
     <string name="room_settings_read_history_entry_value_members_only_invited">invited</string>
@@ -807,9 +807,9 @@
 
     <!-- Room settings: "Who can access this room?" (access rule) -->
     <string name="room_settings_room_access_warning">To link to a room it must have an address.</string>
-    <string name="room_settings_room_access_entry_only_invited">Only people who have been invited</string>
-    <string name="room_settings_room_access_entry_anyone_with_link_apart_guest">Anyone who knows the room\'s link, apart from guests</string>
-    <string name="room_settings_room_access_entry_anyone_with_link_including_guest">Anyone who knows the room\'s link, including guests</string>
+    <string name="room_settings_room_access_entry_only_invited">只有收到邀请的人才能加入</string>
+    <string name="room_settings_room_access_entry_anyone_with_link_apart_guest">任何登陆用户均可加入</string>
+    <string name="room_settings_room_access_entry_anyone_with_link_including_guest">任何人均可加入，包括访客</string>
 
     <!-- Room settings: banned users -->
     <string name="room_settings_banned_users_title">Banned users</string>
@@ -848,7 +848,7 @@
     <string name="room_settings_addresses_e2e_prompt_message">End-to-end encryption is in beta and may not be reliable.\n\nYou should not yet trust it to secure data.\n\nDevices will not yet be able to decrypt history from before they joined the room.\n\nOnce encryption is enabled for a room it cannot be turned off again (for now).\n\nEncrypted messages will not be visible on clients that do not yet implement encryption.</string>
 
     <!-- Directory -->
-    <string name="directory_title">Directory</string>
+    <string name="directory_title">发现</string>
 
     <!-- GA use -->
     <string name="ga_use_alert_message">Do you accept to help us to improve the application behaviour and to send crash reports ?</string>
@@ -917,20 +917,16 @@
     <string name="unknown_devices_alert_message">This room contains unknown devices which have not been verified.\nThis means there is no guarantee that the devices belong to the users they claim to.\nWe recommend you go through the verification process for each device before continuing, but you can resend the message without verifying if you prefer.\n\nUnknown devices:</string>
 
 
-    <string name="room_function_pad_file">Send File</string>
-    <string name="room_function_pad_camera">Use Camera</string>
-    <string name="room_function_pad_audiocall">Audio Call</string>
-    <string name="room_function_pad_video">Video Call</string>
-    <string name="room_function_pad_motiondetect">Motion Detect</string>
-    <string name="room_function_pad_audiodetect">Audio Detect</string>
-    <string name="room_function_pad_timerdetect">Timer Detect</string>
-    <string name="room_function_pad_facedetect">Face Detect</string>
-    <string name="room_function_pad_stopdetect">Stop Detect</string>
-    <string name="room_function_pad_detecttatus">Detect Status</string>
-
-    <string name="room_function_pad_detectcontent_picture">Picture Mode</string>
-    <string name="room_function_pad_detectcontent_video">Video Mode</string>
-    <string name="room_function_pad_detectcontent_audio">Audio Mode</string>
+    <string name="room_function_pad_file">发送文件</string>
+    <string name="room_function_pad_camera">使用相机</string>
+    <string name="room_function_pad_audiocall">语音通话</string>
+    <string name="room_function_pad_videocall">视频通话</string>
+    <string name="room_function_pad_motiondetect">动作监控</string>
+    <string name="room_function_pad_audiodetect">声音监控</string>
+    <string name="room_function_pad_timerdetect">定时监控</string>
+    <string name="room_function_pad_facedetect">人脸识别</string>
+    <string name="room_function_pad_stopdetect">停止监控</string>
+    <string name="room_function_pad_detecttatus">监控状态</string>
 
     <string name="tag_message_command">[-wscmd-]</string>
     <string name="tag_message_command_detect">[-detect-]</string>
@@ -953,14 +949,14 @@
     <string name="detect_echo_start">%s启动成功.</string>
     <string name="detect_echo_restart">%s正在运行中.</string>
     <string name="detect_echo_stop">成功停止%s.</string>
-    <string name="detect_echo_stop_byother">%s被其他房间停止.</string>
+    <string name="detect_echo_stop_byother">注意：%s被其他房间停止.</string>
     <string name="detect_echo_restop">%s未启动.</string>
-    <string name="detect_echo_exit">成功退出%s.</string>
-    <string name="detect_echo_removed">%s被其他房间抢走.</string>
+    <string name="detect_echo_exit">退出%s.</string>
+    <string name="detect_echo_removed">注意：%s功能被其他房间抢走.</string>
     <string name="detect_echo_status_running">%s已启动.</string>
     <string name="detect_echo_status_notrunning">%s未启动.</string>
-    <string name="detect_echo_status_all_notrunning">没有监控功能在运行.</string>
-    <string name="detect_echo_status_running_forStart">%s已经在运行,请先停止!</string>
+    <string name="detect_echo_status_all_notrunning">当前没有监控功能在运行.</string>
+    <string name="detect_echo_status_running_forStart">%s已经在运行,请先停止才能启动其他监控功能!</string>
 
     <string name="detect_dialog_start">启动</string>
     <string name="detect_dialog_stop">停止</string>
@@ -968,14 +964,22 @@
     <string name="wordpress_server_url">http://www.windsing.com.cn:8081/wordpress/</string>
 
 
-    <string name="settings_enable_notice_beep">允许消息提示音</string>
+    <string name="settings_enable_notice_beep">消息提示音</string>
     <string name="settings_monitoring">监控功能</string>
     <string name="settings_enable_monitoring">开启监控功能</string>
-    <string name="settings_enable_call_auto_answer">允许语音通话自动应答</string>
-    <string name="settings_enable_motion_detecting">开启动作监控</string>
-    <string name="settings_enable_audio_detecting">开启声音监控</string>
-    <string name="settings_enable_timer_detecting">开启定时监控</string>
-    <string name="settings_enable_face_detecting">开启人脸识别</string>
-    <string name="settings_enable_del_local_file">删除本地监控文件（图片、视频、音频）</string>
+    <string name="settings_enable_call_auto_answer">语音通话自动应答</string>
+    <string name="settings_enable_motion_detecting">动作监控</string>
+    <string name="settings_enable_audio_detecting">声音监控</string>
+    <string name="settings_enable_timer_detecting">定时监控</string>
+    <string name="settings_enable_face_detecting">人脸识别</string>
+    <string name="settings_enable_del_local_file">不保存监控本地数据（图片、视频、音频）</string>
 
+    <string name="settings_summary_ga_use_settings">程序意外崩溃时自动发送崩溃信息给服务器，这有利于查找问题原因，提升程序品质。</string>
+    <string name="room_settings_summary_directory_visibility">网络上任何用户都可以发现这个房间。</string>
+
+    <string name="action_sign_out_title">确认退出？</string>
+
+    <string name="home_buttom_bar_message">消息</string>
+    <string name="home_buttom_bar_discovery">发现</string>
+    <string name="home_buttom_bar_space">空间</string>
 </resources>

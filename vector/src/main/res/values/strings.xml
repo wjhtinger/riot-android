@@ -928,10 +928,6 @@
     <string name="room_function_pad_stopdetect">Stop Detect</string>
     <string name="room_function_pad_detecttatus">Detect Status</string>
 
-    <string name="room_function_pad_detectcontent_picture">Picture Mode</string>
-    <string name="room_function_pad_detectcontent_video">Video Mode</string>
-    <string name="room_function_pad_detectcontent_audio">Audio Mode</string>
-
     <string name="tag_message_command">[-wscmd-]</string>
     <string name="tag_message_command_detect">[-detect-]</string>
     <string name="tag_message_command_detect_motion">[-motion-]</string>
@@ -976,6 +972,15 @@
     <string name="settings_enable_audio_detecting">Enable audion detecting</string>
     <string name="settings_enable_timer_detecting">Enable timer detecting</string>
     <string name="settings_enable_face_detecting">Enable face detecting</string>
-    <string name="settings_enable_del_local_file">Enable del local file</string>
+    <string name="settings_enable_del_local_file">Not save local detecting file</string>
+
+    <string name="settings_summary_ga_use_settings">Automatically send crash report to server.</string>
+    <string name="room_settings_summary_directory_visibility">Anyone can find this room.</string>
+
+    <string name="action_sign_out_title">Sure to Logout？</string>
+
+    <string name="home_buttom_bar_message">Message</string>
+    <string name="home_buttom_bar_discovery">Discovery</string>
+    <string name="home_buttom_bar_space">Space</string>
 
 </resources>
