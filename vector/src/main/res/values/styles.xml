@@ -123,6 +123,7 @@
     <!-- tabbar text color -->
     <style name="Vector.TabText" parent="@style/Widget.AppCompat.ActionBar.TabText">
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <!--  -->
@@ -171,7 +172,7 @@
     <!-- home scroller menu -->
     <style name="NavigationViewStyle">
         <item name="android:textColor">@color/vector_4d_gray</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <!-- login & registration activities -->
