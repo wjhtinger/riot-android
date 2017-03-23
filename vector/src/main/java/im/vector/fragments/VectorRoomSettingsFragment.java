@@ -240,7 +240,7 @@ public class VectorRoomSettingsFragment extends PreferenceFragment implements Sh
                     }
 
                     if (Event.EVENT_TYPE_MESSAGE_ENCRYPTION.equals(eventType)) {
-                        refreshEndToEnd();
+                        //refreshEndToEnd();
                     }
 
                     // aliases
@@ -516,7 +516,7 @@ public class VectorRoomSettingsFragment extends PreferenceFragment implements Sh
 
             refreshAddresses();
             refreshBannedMembersList();
-            refreshEndToEnd();
+            //refreshEndToEnd();
         }
     }
 
