@@ -682,6 +682,7 @@ public class CommonActivityUtils {
                                     explanationMessage += "\n\n";
                                 }
                                 explanationMessage += resource.getString(R.string.permissions_rationale_msg_contacts);
+                                return false;
                             } else {
                                 Log.d(LOG_TAG, "## checkPermissions(): already denied permission not supported");
                             }
@@ -723,34 +724,34 @@ public class CommonActivityUtils {
 
                     // for android < M, we use a custom dialog to request the contacts book access.
                     if (permissionsListToBeGranted.contains(Manifest.permission.READ_CONTACTS) && (Build.VERSION.SDK_INT < 23)) {
-                        AlertDialog.Builder permissionsInfoDialog = new AlertDialog.Builder(aCallingActivity);
-                        permissionsInfoDialog.setIcon(android.R.drawable.ic_dialog_info);
-
-                        if (null != resource) {
-                            permissionsInfoDialog.setTitle(resource.getString(R.string.permissions_rationale_popup_title));
-                        }
-
-                        permissionsInfoDialog.setMessage(resource.getString(R.string.permissions_msg_contacts_warning_other_androids));
-
-                        // gives the contacts book access
-                        permissionsInfoDialog.setPositiveButton(aCallingActivity.getString(R.string.yes), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ContactsManager.getInstance().setIsContactBookAccessAllowed(true);
-                                ActivityCompat.requestPermissions(aCallingActivity, fPermissionsArrayToBeGranted, aPermissionsToBeGrantedBitMap);
-                            }
-                        });
-
-                        // or reject it
-                        permissionsInfoDialog.setNegativeButton(aCallingActivity.getString(R.string.no), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ContactsManager.getInstance().setIsContactBookAccessAllowed(false);
-                                ActivityCompat.requestPermissions(aCallingActivity, fPermissionsArrayToBeGranted, aPermissionsToBeGrantedBitMap);
-                            }
-                        });
-
-                        permissionsInfoDialog.show();
+//                        AlertDialog.Builder permissionsInfoDialog = new AlertDialog.Builder(aCallingActivity);
+//                        permissionsInfoDialog.setIcon(android.R.drawable.ic_dialog_info);
+//
+//                        if (null != resource) {
+//                            permissionsInfoDialog.setTitle(resource.getString(R.string.permissions_rationale_popup_title));
+//                        }
+//
+//                        permissionsInfoDialog.setMessage(resource.getString(R.string.permissions_msg_contacts_warning_other_androids));
+//
+//                        // gives the contacts book access
+//                        permissionsInfoDialog.setPositiveButton(aCallingActivity.getString(R.string.yes), new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                ContactsManager.getInstance().setIsContactBookAccessAllowed(true);
+//                                ActivityCompat.requestPermissions(aCallingActivity, fPermissionsArrayToBeGranted, aPermissionsToBeGrantedBitMap);
+//                            }
+//                        });
+//
+//                        // or reject it
+//                        permissionsInfoDialog.setNegativeButton(aCallingActivity.getString(R.string.no), new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                ContactsManager.getInstance().setIsContactBookAccessAllowed(false);
+//                                ActivityCompat.requestPermissions(aCallingActivity, fPermissionsArrayToBeGranted, aPermissionsToBeGrantedBitMap);
+//                            }
+//                        });
+//
+//                        permissionsInfoDialog.show();
 
                     } else {
                         ActivityCompat.requestPermissions(aCallingActivity, fPermissionsArrayToBeGranted, aPermissionsToBeGrantedBitMap);
