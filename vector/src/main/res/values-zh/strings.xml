@@ -60,10 +60,10 @@
     <string name="or">or</string>
 
     <!-- server urls -->
-    <string name="vector_im_server_url">https://vector.im</string>
-    <string name="matrix_org_server_url">https://matrix.org</string>
+    <string name="vector_im_server_url">https://vector.im</string>    <!--必须和default_hs_server_url不一样，避免输入错误账号&密码时长时间不反馈的错误（临时） -->
+    <string name="matrix_org_server_url">https://windsing.com.cn:8448</string>
     <string name="default_hs_server_url">https://windsing.com.cn:8448</string>
-    <string name="default_identity_server_url">https://vector.im</string>
+    <string name="default_identity_server_url">https://windsing.com.cn:8448</string>
 
     <!-- actions -->
     <string name="action_settings">设置</string>
@@ -86,7 +86,7 @@
     <string name="action_video_call">Video Call</string>
     <string name="action_search_room">Search room</string>
     <string name="action_search_contact">Search contact</string>
-    <string name="action_mark_all_as_read">清除所有新信息提示</string>
+    <string name="action_mark_all_as_read">清除所有新信息标志</string>
     <string name="action_quick_reply">Quick reply</string>
     <string name="action_open">Open</string>
     <string name="action_close">Close</string>
@@ -103,16 +103,16 @@
     <string name="dialog_title_confirmation">提醒</string>
     <string name="dialog_title_warning">Warning</string>
 
-    <string name="send_bug_report_include_logs">Send logs</string>
-    <string name="send_bug_report_include_crash_logs">Send crash logs</string>
+    <string name="send_bug_report_include_logs">发送日志</string>
+    <string name="send_bug_report_include_crash_logs">发送崩溃点记录</string>
     <string name="send_bug_report">发送出错报告</string>
-    <string name="send_bug_report_description">Please describe the bug. What did you do? What did you expect to happen? What actually happened?</string>
-    <string name="send_bug_report_placeholder">Describe your problem here</string>
-    <string name="send_bug_report_logs_description">In order to diagnose problems, logs from this client will be sent with this bug report. If you would prefer to only send the text above, please untick:</string>
-    <string name="send_bug_report_alert_message">You seem to be shaking the phone in frustration. Would you like to submit a bug report?</string>
-    <string name="send_bug_report_sent">The bug report has been successfully sent</string>
-    <string name="send_bug_report_failed">The bug report failed to be sent (%s)</string>
-    <string name="send_bug_report_progress">Progress (%s%%)</string>
+    <string name="send_bug_report_description">请简要描述一下您遇到的问题：比如你怎么操作的，出现了什么情况，你期待的正确结果是什么样等?</string>
+    <string name="send_bug_report_placeholder">问题描述填写在这儿:）</string>
+    <string name="send_bug_report_logs_description">为了更好的分析问题，一些程序运行时产生的记录和日志会一并发送。你也可以选择不发送它们:</string>
+    <string name="send_bug_report_alert_message">程序运行似乎出了点内部问题，你愿意发送一份问题报告给我们吗?</string>
+    <string name="send_bug_report_sent">发送成功</string>
+    <string name="send_bug_report_failed">发送失败(%s)</string>
+    <string name="send_bug_report_progress">发送进度(%s%%)</string>
 
     <string name="send_files_in">Send into</string>
     <string name="save_files_in">Save into</string>
@@ -972,7 +972,7 @@
     <string name="settings_enable_audio_detecting">声音监控</string>
     <string name="settings_enable_timer_detecting">定时监控</string>
     <string name="settings_enable_face_detecting">人脸识别</string>
-    <string name="settings_enable_del_local_file">不保存监控本地数据（图片、视频、音频）</string>
+    <string name="settings_enable_del_local_file">不保存本地监控数据（图片、视频、音频）</string>
 
     <string name="settings_summary_ga_use_settings">程序意外崩溃时自动发送崩溃信息给服务器，这有利于查找问题原因，提升程序品质。</string>
     <string name="room_settings_summary_directory_visibility">网络上任何用户都可以发现这个房间。</string>
@@ -982,4 +982,9 @@
     <string name="home_buttom_bar_message">消息</string>
     <string name="home_buttom_bar_discovery">发现</string>
     <string name="home_buttom_bar_space">空间</string>
+    <string name="home_supervisory_notice1">现在程序处于监控模式，所有IM功能停止使用。</string>
+    <string name="home_supervisory_notice2">要关闭监控模式请进入左上角菜单设置。</string>
+    <string name="home_supervisory_textshow">互联网上，没人知道你是一个摄像头...</string>
+    <string name="home_webview_onerror_textshow">数据加载中，请稍后...</string>
+
 </resources>

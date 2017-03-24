@@ -982,5 +982,9 @@
     <string name="home_buttom_bar_message">Message</string>
     <string name="home_buttom_bar_discovery">Discovery</string>
     <string name="home_buttom_bar_space">Space</string>
+    <string name="home_supervisory_notice1">Now in supervisory mode，all IM functions are forbiden.</string>
+    <string name="home_supervisory_notice2">Please enter setting menu to turn off supervisory mode.</string>
+    <string name="home_supervisory_textshow">On Intenet, no one know you are a webcam...</string>
+    <string name="home_webview_onerror_textshow">Data on loading...</string>
 
 </resources>

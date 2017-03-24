@@ -18,6 +18,7 @@
 package im.vector.activity;
 
 import android.app.AlertDialog;
+import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,6 +27,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -38,11 +40,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -51,6 +55,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.windsing.DetectManager;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
@@ -179,7 +185,16 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
     private TextView  mTextView2;
     private TextView  mTextView3;
     private TextView  mTextView4;
-    private WebView webView;
+    private WebView mWebView;
+    private View mMainContent;
+    private View mRoomContent;
+    private View mSpaceContent;
+    private View mButtomPad;
+    private View mSupervisoryView;
+    private Menu mMenu;
+    private boolean mWebViewOK = false;
+    private int mContentType = 0;
+
 
 
     private final ApiCallback<Void> mSendReceiptCallback = new ApiCallback<Void>() {
@@ -504,6 +519,12 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
         mTextView3  = (TextView)findViewById(R.id.textView3);
         mTextView4  = (TextView)findViewById(R.id.textView4);
 
+        mMainContent = findViewById(R.id.home_main_content);
+        mRoomContent = findViewById(R.id.home_room_content);
+        mSpaceContent = findViewById(R.id.home_space_content);
+        mWebView = (WebView) findViewById(R.id.webview);
+        mButtomPad = findViewById(R.id.home_buttom_pad);
+        mSupervisoryView = findViewById(R.id.home_supervisory_view);
         initWebView();
     }
 
@@ -690,6 +711,8 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
         mSyncInProgressView.setVisibility(VectorApp.isSessionSyncing(mSession) ? View.VISIBLE : View.GONE);
 
         displayCryptoCorruption();
+
+        initSupervisoryView();
     }
 
     /**
@@ -761,7 +784,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
         if (CommonActivityUtils.shouldRestartApp(this)) {
             return false;
         }
-
+        mMenu = menu;
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.vector_home, menu);
         return true;
@@ -797,6 +820,12 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
                 }
                 break;
 
+            //back in web
+            case R.id.ic_action_web_back:
+                if(mWebView.canGoBack()){
+                    mWebView.goBack();
+                }
+                break;
             default:
                 // not handled item, return the super class implementation value
                 retCode = super.onOptionsItemSelected(item);
@@ -1396,7 +1425,13 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
      * @param unknownDevices the unknown e2e devices
      */
     public void startCall(String sessionId, String callId, MXUsersDevicesMap<MXDeviceInfo> unknownDevices) {
-        // sanity checks
+        if (Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_monitoring))
+            && Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_call_auto_answer))){
+            autoStartCall(sessionId, callId);
+            return;
+        }
+
+            // sanity checks
         if ((null != sessionId) && (null != callId)) {
             final Intent intent = new Intent(VectorHomeActivity.this, InComingCallActivity.class);
 
@@ -1487,6 +1522,8 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
     }
 
     public void onClickBottomButton(View view) {
+        mMenu.clear();
+
         int id = view.getId();
         switch(id){
             case R.id.messageItem:
@@ -1497,10 +1534,12 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
                 mImageView3.setImageResource(R.drawable.space_noforcus);
                 mTextView4.setTextColor(getResources().getColor(R.color.vector_0_87_black_color));
 
-                findViewById(R.id.roomContent).setVisibility(View.VISIBLE);
-                findViewById(R.id.spaceContent).setVisibility(View.GONE);
+                mRoomContent.setVisibility(View.VISIBLE);
+                mSpaceContent.setVisibility(View.GONE);
                 mRecentsListFragment.setIsNoTagDisplayed(true);
                 mRecentsListFragment.setIsDirectoryDisplayed(false);
+                mContentType = 0;
+                getMenuInflater().inflate(R.menu.vector_home, mMenu);
                 //mRoomCreationFab.show();
                 break;
             case R.id.messageItem2:
@@ -1511,10 +1550,12 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
                 mImageView3.setImageResource(R.drawable.space_noforcus);
                 mTextView4.setTextColor(getResources().getColor(R.color.vector_0_87_black_color));
 
-                findViewById(R.id.roomContent).setVisibility(View.VISIBLE);
-                findViewById(R.id.spaceContent).setVisibility(View.GONE);
+                mRoomContent.setVisibility(View.VISIBLE);
+                mSpaceContent.setVisibility(View.GONE);
                 mRecentsListFragment.setIsDirectoryDisplayed(true);
                 mRecentsListFragment.setIsNoTagDisplayed(false);
+                mContentType = 1;
+                getMenuInflater().inflate(R.menu.vector_home, mMenu);
                 //mRoomCreationFab.hide();
                 break;
             case R.id.messageItem3:
@@ -1525,27 +1566,29 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
                 mImageView3.setImageResource(R.drawable.space);
                 mTextView4.setTextColor(getResources().getColor(android.R.color.holo_blue_dark));
 
-                //mRecentsListFragment.setIsDirectoryDisplayed(false);
-                //mRecentsListFragment.setIsRoomsDisplayed(false);
+                mRoomContent.setVisibility(View.GONE);
+                mSpaceContent.setVisibility(View.VISIBLE);
+                mContentType = 2;
+
+                getMenuInflater().inflate(R.menu.vector_home_web, mMenu);
+                if(!mWebViewOK){
+                    findViewById(R.id.webViewProgressBar).setVisibility(View.GONE);
+                    mWebView.reload();
+                }
                 //mRoomCreationFab.hide();
-                findViewById(R.id.roomContent).setVisibility(View.GONE);
-                findViewById(R.id.spaceContent).setVisibility(View.VISIBLE);
                 break;
         }
     }
 
-    public void initWebView() {
-        //findViewById(R.id.supervisory_view).setVisibility(View.VISIBLE);
-        //findViewById(R.id.main_content_view).setVisibility(View.GONE);
-        findViewById(R.id.webViewProgressBar).setVisibility(View.VISIBLE);
-
-        webView = (WebView) findViewById(R.id.webview);
-        webView.loadUrl(getResources().getString(R.string.wordpress_server_url));
-        WebSettings settings = webView.getSettings();
+    private void initWebView() {
+        final View webViewProgressBar = findViewById(R.id.webViewProgressBar);
+        webViewProgressBar.setVisibility(View.VISIBLE);
+        mWebView.loadUrl(getResources().getString(R.string.wordpress_server_url));
+        WebSettings settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
 
-        webView.setWebViewClient(new WebViewClient() {
+        mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 //返回值是true的时候控制去WebView打开，为false调用系统浏览器或第三方浏览器
@@ -1554,18 +1597,96 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
             }
         });
 
-        webView.setWebChromeClient(new WebChromeClient() {
+        mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 if (newProgress == 100) {
                     // 网页加载完成
-                    findViewById(R.id.webViewProgressBar).setVisibility(View.GONE);
+                    webViewProgressBar.setVisibility(View.GONE);
+                    if(mWebViewOK){
+                        findViewById(R.id.webview_onerror_button).setVisibility(View.GONE);
+                    }else{
+                        findViewById(R.id.webview_onerror_button).setVisibility(View.VISIBLE);
+                    }
 
                 } else {
                     // 加载中
 
                 }
             }
+            @Override
+            public void onReceivedTitle(WebView view, String title){
+                Log.e(LOG_TAG, "onReceivedTitle Title:" + title);
+                if(title.equals("找不到网页")){
+                    view.stopLoading();
+                    mWebViewOK = false;
+                }else{
+                    mWebViewOK = true;
+                }
+
+            }
         });
+    }
+
+    private void initSupervisoryView(){
+        if (Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_monitoring))) {
+            mMainContent.setVisibility(View.GONE);
+            mButtomPad.setVisibility(View.GONE);
+            mSupervisoryView.setVisibility(View.VISIBLE);
+        }else{
+            mMainContent.setVisibility(View.VISIBLE);
+            mButtomPad.setVisibility(View.VISIBLE);
+            mSupervisoryView.setVisibility(View.GONE);
+        }
+    }
+
+    private void autoStartCall(final String sessionId, final String callId) {
+        // sanity checks
+        if ((null != sessionId) && (null != callId)) {
+            KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+            KeyguardManager.KeyguardLock kl = km.newKeyguardLock("unLock");
+            kl.disableKeyguard();
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "bright");
+            wl.acquire(5000);
+            wl.release();
+
+            VectorHomeActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    DetectManager.instance(getApplicationContext()).clearDetect();
+                    try {
+                        Thread.sleep(500);      //防止屏幕解锁后，有其他应用到前台，导致VectorCallViewActivity触发onPause
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Context context = VectorHomeActivity.this;
+                    Intent intent = new Intent(context, VectorCallViewActivity.class);
+                    intent.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, sessionId);
+                    intent.putExtra(VectorCallViewActivity.EXTRA_CALL_ID, callId);
+                    intent.putExtra(VectorCallViewActivity.EXTRA_AUTO_ACCEPT, true);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
+            });
+        }
+    }
+
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        /**
+         * 在onCreateOptionsMenu执行后，菜单被显示前调用；如果菜单已经被创建，则在菜单显示前被调用。 同样的，
+         * 返回true则显示该menu,false 则不显示; （可以通过此方法动态的改变菜单的状态，比如加载不同的菜单等）
+         * Auto-generated method stub
+         */
+        super.onPrepareOptionsMenu(menu);
+        if (Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_monitoring))) {
+            return false;
+        }
+
+        return true;
     }
 }
