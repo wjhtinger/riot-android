@@ -972,13 +972,14 @@
     <string name="settings_enable_audio_detecting">声音监控</string>
     <string name="settings_enable_timer_detecting">定时监控</string>
     <string name="settings_enable_face_detecting">人脸识别</string>
-    <string name="settings_enable_del_local_file">不保存本地监控数据（图片、视频、音频）</string>
+    <string name="settings_enable_del_local_file">本机不保存监控数据（图片、视频、音频）</string>
 
     <string name="settings_summary_ga_use_settings">程序意外崩溃时自动发送崩溃信息给服务器，这有利于查找问题原因，提升程序品质。</string>
     <string name="room_settings_summary_directory_visibility">网络上任何用户都可以发现这个房间。</string>
 
     <string name="action_sign_out_title">确认退出？</string>
 
+    <!--for bug supervisory mode-->
     <string name="home_buttom_bar_message">消息</string>
     <string name="home_buttom_bar_discovery">发现</string>
     <string name="home_buttom_bar_space">空间</string>
@@ -986,5 +987,15 @@
     <string name="home_supervisory_notice2">要关闭监控模式请进入左上角菜单设置。</string>
     <string name="home_supervisory_textshow">互联网上，没人知道你是一个摄像头...</string>
     <string name="home_webview_onerror_textshow">数据加载中，请稍后...</string>
+
+    <!--for upgrade-->
+    <string name="upgrade_yes">升级</string>
+    <string name="upgrade_No">取消</string>
+    <string name="upgrade_nonotify">忽略这个版本</string>
+    <string name="upgrade_newversion">最新版本</string>
+    <string name="upgrade_url">https://windsing.com.cn/upgrade/update.json</string>
+    <string name="upgrade_downlaod_file">下载升级包</string>
+    <string name="upgrade_downlaod_fail">下载升级包失败!</string>
+    <string name="upgrade_nofind_sdcard">没找到SDCard!</string>
 
 </resources>

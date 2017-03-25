@@ -18,6 +18,9 @@ package im.vector.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.windsing.upgrade.Upgrader;
+
 import org.matrix.androidsdk.util.Log;
 
 import org.matrix.androidsdk.MXSession;
@@ -292,6 +295,8 @@ public class SplashActivity extends MXCActionBarActivity {
             Log.e(LOG_TAG, "nothing to do");
             onFinish();
         }
+
+        new Upgrader(getApplicationContext()).checkVerson();
     }
 
     @Override
