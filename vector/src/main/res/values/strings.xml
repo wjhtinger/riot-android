@@ -930,6 +930,7 @@
 
     <string name="tag_message_command">[-wscmd-]</string>
     <string name="tag_message_command_call">[-call-]</string>
+
     <string name="tag_message_command_detect">[-detect-]</string>
     <string name="tag_message_command_detect_motion">[-motion-]</string>
     <string name="tag_message_command_detect_audio">[-audio-]</string>
@@ -941,6 +942,8 @@
     <string name="tag_message_command_detect_content_video">[-video-]</string>
     <string name="tag_message_command_detect_content_audio">[-audio-]</string>
     <string name="tag_message_command_detect_content_videocall">[-videocall-]</string>
+    <string name="tag_message_command_call_switch_camera">[-switchcam-]</string>
+    <string name="tag_message_command_call_control_flash">[-controlflash-]</string>
 
     <string name="detect_motion">Motion</string>
     <string name="detect_audio">Audio</string>

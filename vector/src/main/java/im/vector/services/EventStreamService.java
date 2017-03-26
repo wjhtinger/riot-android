@@ -736,10 +736,10 @@ public class EventStreamService extends Service {
 
         // build the notification builder
         NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(this);
-        notifBuilder.setSmallIcon(R.drawable.permanent_notification_transparent);
+        //notifBuilder.setSmallIcon(R.drawable.permanent_notification_transparent);
         notifBuilder.setWhen(System.currentTimeMillis());
-        notifBuilder.setContentTitle(getString(R.string.app_name));
-        notifBuilder.setContentText(NOTIFICATION_SUB_TITLE);
+        //notifBuilder.setContentTitle(getString(R.string.app_name));
+        //notifBuilder.setContentText(NOTIFICATION_SUB_TITLE);
         notifBuilder.setContentIntent(pi);
 
         // hide the notification from the status bar
@@ -1242,6 +1242,17 @@ public class EventStreamService extends Service {
             DetectManager.instance(getApplicationContext()).detectHandle(session, session.getDataHandler().getRoom(event.roomId), cmd);
         }
 
+        String[] cmdSplit = cmd.split("-]");
+        if((cmdSplit[1] + "-]").equals(this.getResources().getString(R.string.tag_message_command_call))){
+            IMXCall call = VectorCallViewActivity.getActiveCall();
+            if((call != null) && call.getCallState().equals(IMXCall.CALL_STATE_CONNECTED) && call.isVideo()) {
+                if((cmdSplit[2] + "-]").equals(this.getResources().getString(R.string.tag_message_command_call_switch_camera))){
+                    call.switchRearFrontCamera();
+                }else if((cmdSplit[2] + "-]").equals(this.getResources().getString(R.string.tag_message_command_call_control_flash))){
 
+                }
+
+            }
+        }
     }
 }
