@@ -929,6 +929,7 @@
     <string name="room_function_pad_detecttatus">监控状态</string>
 
     <string name="tag_message_command">[-wscmd-]</string>
+    <string name="tag_message_command_call">[-call-]</string>
     <string name="tag_message_command_detect">[-detect-]</string>
     <string name="tag_message_command_detect_motion">[-motion-]</string>
     <string name="tag_message_command_detect_audio">[-audio-]</string>
@@ -957,6 +958,9 @@
     <string name="detect_echo_status_notrunning">%s未启动.</string>
     <string name="detect_echo_status_all_notrunning">当前没有监控功能在运行.</string>
     <string name="detect_echo_status_running_forStart">%s已经在运行,请先停止才能启动其他监控功能!</string>
+    <string name="detect_echo_notenable">%s功能被设置为禁制使用.</string>
+    <string name="detect_echo_call_ison">正在语音通话中，禁制所有监控功能！</string>
+
 
     <string name="detect_dialog_start">启动</string>
     <string name="detect_dialog_stop">停止</string>

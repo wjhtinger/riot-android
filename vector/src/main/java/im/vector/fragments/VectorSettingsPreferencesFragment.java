@@ -54,6 +54,7 @@ import com.google.gson.JsonElement;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import com.windsing.DetectManager;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo;
@@ -945,6 +946,26 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
             fResourceText.equals(getString(R.string.settings_enable_del_local_file))){
             gcmMgr.setFunctionEnable(fResourceText, newValue);
         }
+
+        if(!newValue){
+            DetectManager detect = DetectManager.instance(null);
+            if(detect != null) {
+                if (fResourceText.equals(getString(R.string.settings_enable_monitoring))) {
+                    detect.stop(DetectManager.detectType.ALL);
+                } else if (fResourceText.equals(getString(R.string.settings_enable_motion_detecting))) {
+                    detect.stop(DetectManager.detectType.MOTION);
+                } else if (fResourceText.equals(getString(R.string.settings_enable_audio_detecting))) {
+                    detect.stop(DetectManager.detectType.AUDIO);
+                } else if (fResourceText.equals(getString(R.string.settings_enable_timer_detecting))) {
+                    detect.stop(DetectManager.detectType.TIMER);
+                } else if (fResourceText.equals(getString(R.string.settings_enable_face_detecting))) {
+                    detect.stop(DetectManager.detectType.FACE);
+                }
+            }
+        }
+
+
+
 
         if (fResourceText.equals(getString(R.string.settings_turn_screen_on))) {
             if (gcmMgr.isScreenTurnedOn() != newValue) {

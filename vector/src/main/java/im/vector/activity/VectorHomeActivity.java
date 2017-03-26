@@ -1656,7 +1656,8 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
             VectorHomeActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    DetectManager.instance(getApplicationContext()).clearDetect();
+                    if(DetectManager.instance(null) != null)
+                        DetectManager.instance(null).suspendDetect();
                     try {
                         Thread.sleep(500);      //防止屏幕解锁后，有其他应用到前台，导致VectorCallViewActivity触发onPause
                     } catch (InterruptedException e) {

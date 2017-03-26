@@ -17,6 +17,7 @@ import org.matrix.androidsdk.crypto.MXEncryptedAttachments;
 import org.matrix.androidsdk.data.Room;
 import org.matrix.androidsdk.listeners.MXMediaUploadListener;
 import org.matrix.androidsdk.rest.callback.ApiCallback;
+import org.matrix.androidsdk.rest.model.AudioMessage;
 import org.matrix.androidsdk.rest.model.Event;
 import org.matrix.androidsdk.rest.model.FileMessage;
 import org.matrix.androidsdk.rest.model.ImageMessage;
@@ -112,7 +113,7 @@ public class MediaUploader {
         }
         final String fileName= file.substring(file.lastIndexOf("/") + 1);
         final String url = " file://" + file;
-        session.getMediasCache().uploadContent(audioStream, fileName, "audio/wav", url, new MXMediaUploadListener() {
+        session.getMediasCache().uploadContent(audioStream, fileName, "audio/x-wav", url, new MXMediaUploadListener() {
             @Override
             public void onUploadStart(String uploadId) {
             }
@@ -127,28 +128,14 @@ public class MediaUploader {
 
             @Override
             public void onUploadComplete(final String uploadId, final String contentUri) {
-                //暂时采用file发送模式
-                FileMessage fileMessage = new FileMessage();
-                fileMessage.url = contentUri;
-                fileMessage.body = fileName;
-                Room.fillFileInfo(context, fileMessage, Uri.parse(uploadId), "audio/wav");
-                //fileMessage.msgtype = "m.audio";
-                Event newEvent = new Event(fileMessage, session.getCredentials().userId, room.getRoomId());
-                Log.d(LOG_TAG, "#########################1：" + newEvent.content.toString());
+                AudioMessage audioMessage = new AudioMessage();
+                audioMessage.url = contentUri;
+                audioMessage.body = fileName;
+                Room.fillFileInfo(context, audioMessage, Uri.parse(uploadId), "audio/x-wav");
 
-                fileMessage.msgtype = "m.audio";
-                Event newEvent2 = new Event(fileMessage, session.getCredentials().userId, room.getRoomId());
-                Log.d(LOG_TAG, "#########################2：" + newEvent2.content.toString());
-
-
-//                String contentString = newEvent.content.toString();
-//                String contentAudio  = contentString.replaceAll("file", "audio");
-//                Gson gson = new Gson();
-//                JsonParser jsonParser = new JsonParser();
-//                JsonElement jsonElement = jsonParser.parse(contentAudio);
-//                newEvent.content = jsonElement;
-                newEvent2.mSentState = Event.SentState.SENDING;
-                roomSendEvent(room, newEvent2);
+                Event newEvent = new Event(audioMessage, session.getCredentials().userId, room.getRoomId());
+                newEvent.mSentState = Event.SentState.SENDING;
+                roomSendEvent(room, newEvent);
             }
         });
     }

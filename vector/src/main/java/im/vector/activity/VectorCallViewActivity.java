@@ -50,6 +50,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.windsing.DetectManager;
+
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
 
@@ -1405,6 +1407,9 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
         }
 
         super.onDestroy();
+
+        if(DetectManager.instance(null) != null)
+            DetectManager.instance(null).restoreDetect();
     }
 
     // ************* SensorEventListener *************

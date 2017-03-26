@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import im.vector.Matrix;
 import im.vector.R;
 import im.vector.VectorApp;
 import im.vector.activity.CommonActivityUtils;
@@ -78,6 +79,7 @@ public class DetectManager {
         AUDIO,
         TIMER,
         FACE,
+        ALL,
         INVALID
     }
     public enum detectContent_type{
@@ -221,6 +223,36 @@ public class DetectManager {
         return true;
     }
 
+    private boolean getDetectEnable(detectType type){
+        boolean en = false;
+        String str = "";
+
+        switch (type){
+            case MOTION:
+                str = mContext.getString(R.string.settings_enable_motion_detecting);
+                break;
+
+            case AUDIO:
+                str = mContext.getString(R.string.settings_enable_audio_detecting);
+                break;
+
+            case TIMER:
+                str = mContext.getString(R.string.settings_enable_timer_detecting);
+                break;
+
+            case FACE:
+                str = mContext.getString(R.string.settings_enable_face_detecting);
+                break;
+
+            default:
+                en =  false;
+                break;
+        }
+
+        en = Matrix.getInstance(mContext).getSharedGCMRegistrationManager().isFunctionEnable(str);
+        return en;
+    }
+
     private void sendMsg(MXSession session, Room room, String bodyString){
         Log.d(LOG_TAG, "sendMsg:" + bodyString);
 
@@ -255,6 +287,11 @@ public class DetectManager {
 
     private void detectMotionStart(final MXSession session, final Room room, detectContent_type content, int cameraId){
         Log.d(LOG_TAG, "detectMotionStart:" + content + cameraId);
+        if(!getDetectEnable(detectType.MOTION)){
+            sendMsg(session, room, mContext.getResources().getString(R.string.detect_echo_notenable, mContext.getResources().getString(R.string.detect_motion)));
+            return;
+        }
+
         if(checkStatusforStart(session, room, detectType.MOTION)){
             return;
         }
@@ -330,6 +367,11 @@ public class DetectManager {
 
     private void detectAudioStart(final MXSession session, final Room room, detectContent_type content, int cameraId){
         Log.d(LOG_TAG, "detectAudioStart:" + content);
+        if(!getDetectEnable(detectType.AUDIO)){
+            sendMsg(session, room, mContext.getResources().getString(R.string.detect_echo_notenable, mContext.getResources().getString(R.string.detect_audio)));
+            return;
+        }
+
         if(checkStatusforStart(session, room, detectType.AUDIO)){
             return;
         }
@@ -396,6 +438,11 @@ public class DetectManager {
 
     private void detectTimerStart(final MXSession session, final Room room, detectContent_type content, int cameraID, int interval){
         Log.d(LOG_TAG, "detectTimerStart:" + content);
+        if(!getDetectEnable(detectType.TIMER)){
+            sendMsg(session, room, mContext.getResources().getString(R.string.detect_echo_notenable, mContext.getResources().getString(R.string.detect_timer)));
+            return;
+        }
+
         if(checkStatusforStart(session, room, detectType.TIMER)){
             return;
         }
@@ -468,6 +515,11 @@ public class DetectManager {
 
     private void detectFaceStart(final MXSession session, final Room room, detectContent_type content, int cameraID) {
         Log.d(LOG_TAG, "detectFaceStart:" + content);
+        if(!getDetectEnable(detectType.FACE)){
+            sendMsg(session, room, mContext.getResources().getString(R.string.detect_echo_notenable, mContext.getResources().getString(R.string.detect_face)));
+            return;
+        }
+
         if(checkStatusforStart(session, room, detectType.FACE)){
             return;
         }
@@ -510,7 +562,7 @@ public class DetectManager {
 
                 @Override
                 public void onVideoCall() {
-                    clearDetect();
+                    suspendDetect();
                     mDetectEnvFace.envHandle(detectContent_type.VIDEO_CALL, null);
                 }
             });
@@ -657,7 +709,6 @@ public class DetectManager {
 
         cmdString += "[-" + String.valueOf(cameraID)  + "-]";
 
-        //sendMsg(session, room, cmdString);
         return cmdString;
     }
 
@@ -680,7 +731,6 @@ public class DetectManager {
 
         cmdString += "[-" + String.valueOf(cameraID)  + "-]";
 
-        //sendMsg(session, room, cmdString);
         return cmdString;
     }
 
@@ -704,7 +754,6 @@ public class DetectManager {
         cmdString += "[-" + String.valueOf(cameraID)  + "-]";
         cmdString += "[-" + String.valueOf(interval)  + "-]";
 
-        //sendMsg(session, room, cmdString);
         return cmdString;
     }
 
@@ -727,7 +776,6 @@ public class DetectManager {
 
         cmdString += "[-" + String.valueOf(cameraID)  + "-]";
 
-        //sendMsg(session, room, cmdString);
         return cmdString;
     }
 
@@ -736,7 +784,6 @@ public class DetectManager {
         cmdString += mContext.getResources().getString(R.string.tag_message_command_detect);
         cmdString += mContext.getResources().getString(R.string.tag_message_command_detect_stop);
 
-        //sendMsg(session, room, cmdString);
         return cmdString;
     }
 
@@ -764,7 +811,6 @@ public class DetectManager {
         cmdString += mContext.getResources().getString(R.string.tag_message_command_detect_stop);
         cmdString += "[-" + String.valueOf(cameraID)  + "-]";
 
-        //sendMsg(session, room, cmdString);
         return cmdString;
     }
 
@@ -773,7 +819,6 @@ public class DetectManager {
         cmdString += mContext.getResources().getString(R.string.tag_message_command_detect);
         cmdString += mContext.getResources().getString(R.string.tag_message_command_detect_status);
 
-        //sendMsg(session, room, cmdString);
         return cmdString;
     }
 
@@ -782,6 +827,12 @@ public class DetectManager {
 
         String[] cmdSplit = cmdString.split("-]");
         if(!(cmdSplit[1] + "-]").equals(mContext.getResources().getString(R.string.tag_message_command_detect))){
+            return;
+        }
+
+        IMXCall call = VectorCallViewActivity.getActiveCall();
+        if(call != null) {
+            sendMsg(session, room, mContext.getResources().getString(R.string.detect_echo_call_ison));
             return;
         }
 
@@ -846,14 +897,14 @@ public class DetectManager {
     }
 
     public static DetectManager instance(Context context){
-        if(mDetectManager == null) {
+        if(mDetectManager == null && context != null) {
             mDetectManager = new DetectManager(context);
         }
 
         return mDetectManager;
     }
 
-    public void clearDetect(){
+    public void suspendDetect(){
         if(mMotionDetector != null){
             if(mMotionDetector.getStatus()){
                 mMotionDetector.stop();
@@ -884,18 +935,94 @@ public class DetectManager {
         if(mDetectMotionRunFlg){
             mysleep(500);
             mMotionDetector.start();
+            mDetectMotionRunFlg = false;
         }
         if(mDetectSoundRunFlg){
             mysleep(500);
             mSoundDetector.start();
+            mDetectSoundRunFlg = false;
         }
         if(mDetectTimerRunFlg){
             mysleep(500);
             mTimerDetector.start();
+            mDetectTimerRunFlg = false;
         }
         if(mDetectFaceRunFlg){
             mysleep(500);
             mFaceDetector.start();
+            mDetectFaceRunFlg = false;
+        }
+    }
+
+    public void stop(detectType type){
+        switch (type){
+            case MOTION:
+                if(mMotionDetector != null) {
+                    if(mMotionDetector.getStatus()) {
+                        mMotionDetector.stop();
+                        mMotionDetector= null;
+                    }
+                }
+                break;
+
+            case AUDIO:
+                if(mSoundDetector != null) {
+                    if(mSoundDetector.getStatus()) {
+                        mSoundDetector.stop();
+                        mSoundDetector = null;
+                    }
+                }
+                break;
+
+            case TIMER:
+                if(mTimerDetector != null){
+                    if(mTimerDetector.getStatus()){
+                        mTimerDetector.stop();
+                        mTimerDetector = null;
+                    }
+                }
+                break;
+
+            case FACE:
+                if(mFaceDetector != null){
+                    if(mFaceDetector.getStatus()){
+                        mFaceDetector.stop();
+                        mFaceDetector = null;
+                    }
+                }
+                break;
+
+            case ALL:
+                if(mMotionDetector != null) {
+                    if(mMotionDetector.getStatus()) {
+                        mMotionDetector.stop();
+                        mMotionDetector = null;
+                    }
+                }
+                if(mSoundDetector != null) {
+                    if(mSoundDetector.getStatus()) {
+                        mSoundDetector.stop();
+                        mSoundDetector = null;
+                    }
+                }
+                if(mTimerDetector != null){
+                    if(mTimerDetector.getStatus()){
+                        mTimerDetector.stop();
+                        mTimerDetector = null;
+                    }
+                }
+                if(mFaceDetector != null){
+                    if(mFaceDetector.getStatus()){
+                        mFaceDetector.stop();
+                        mFaceDetector = null;
+                    }
+                }
+
+                mDetectManager= null;
+                break;
+
+            default:
+                break;
         }
     }
 }

@@ -929,6 +929,7 @@
     <string name="room_function_pad_detecttatus">Detect Status</string>
 
     <string name="tag_message_command">[-wscmd-]</string>
+    <string name="tag_message_command_call">[-call-]</string>
     <string name="tag_message_command_detect">[-detect-]</string>
     <string name="tag_message_command_detect_motion">[-motion-]</string>
     <string name="tag_message_command_detect_audio">[-audio-]</string>
@@ -957,6 +958,8 @@
     <string name="detect_echo_status_notrunning">%s detecting is not runing.</string>
     <string name="detect_echo_status_all_notrunning">No detecting is runing.</string>
     <string name="detect_echo_status_running_forStart">%s detecting is runing now, please turnoff it firstly!</string>
+    <string name="detect_echo_notenable">%s is forbiden in setting.</string>
+    <string name="detect_echo_call_ison">in calling, all detecting is forbiden！</string>
 
     <string name="detect_dialog_start">Start</string>
     <string name="detect_dialog_stop">Stop</string>

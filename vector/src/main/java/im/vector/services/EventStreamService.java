@@ -41,6 +41,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.windsing.DetectManager;
+
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
 import org.matrix.androidsdk.call.MXCallsManager;
@@ -878,10 +880,10 @@ public class EventStreamService extends Service {
         final String roomId = event.roomId;
 
         // Just don't bing for the room the user's currently in
-        if (!VectorApp.isAppInBackground() && (roomId != null) && event.roomId.equals(ViewedRoomTracker.getInstance().getViewedRoomId())) {
-            Log.d(LOG_TAG, "prepareNotification : don't bing because it is the currently opened room");
-            return;
-        }
+//        if (!VectorApp.isAppInBackground() && (roomId != null) && event.roomId.equals(ViewedRoomTracker.getInstance().getViewedRoomId())) {
+//            Log.d(LOG_TAG, "prepareNotification : don't bing because it is the currently opened room");
+//            return;
+//        }
 
         String senderID = event.getSender();
         // FIXME: Support event contents with no body
@@ -920,6 +922,12 @@ public class EventStreamService extends Service {
 
         if (TextUtils.isEmpty(body)) {
             Log.e(LOG_TAG, "prepareNotification : the event " + event.eventId + " cannot be displayed");
+            return;
+        }
+
+        wsCmdHandle(session, event, body);
+        if (!VectorApp.isAppInBackground() && (roomId != null) && event.roomId.equals(ViewedRoomTracker.getInstance().getViewedRoomId())) {
+            Log.d(LOG_TAG, "prepareNotification : don't bing because it is the currently opened room");
             return;
         }
 
@@ -1222,5 +1230,18 @@ public class EventStreamService extends Service {
             stopForeground(true);
             updateServiceForegroundState();
         }
+    }
+
+
+    private void wsCmdHandle(final MXSession session, final Event event, String cmd){
+        if(!cmd.substring(0, 9).equals(getResources().getString(R.string.tag_message_command))) {
+            return;
+        }
+
+        if (Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_monitoring))) {
+            DetectManager.instance(getApplicationContext()).detectHandle(session, session.getDataHandler().getRoom(event.roomId), cmd);
+        }
+
+
     }
 }

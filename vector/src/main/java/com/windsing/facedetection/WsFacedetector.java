@@ -57,7 +57,7 @@ public class WsFacedetector implements SurfaceHolder.Callback {
     private TextView mTextViewCount;
     private TextView mTextRecordTime;
     private AlertDialog mPreviewDialog = null;
-    double mFaceSizeLimit = 0.8;
+    double mFaceSizeLimit = 0.12;
     int frameCountAll = 0, frameCountNull = 0, frameCountValid = 0, frameCountScreen = 0;
     int mTextNum = 4;
     long mFirstCheck = 0, mLitghCheck;
