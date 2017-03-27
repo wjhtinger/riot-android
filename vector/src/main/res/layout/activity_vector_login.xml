@@ -145,8 +145,10 @@
                         android:id="@+id/login_user_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:hint="@string/auth_user_id_placeholder"/>
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginRight="40dp"
+                        android:hint="@string/auth_user_id_placeholder"
+                        android:singleLine="true" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -189,11 +191,13 @@
                         android:id="@+id/login_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:inputType="textPassword"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginRight="40dp"
+                        android:layout_marginTop="10dp"
                         android:ems="10"
                         android:hint="@string/auth_password_placeholder"
-                        android:layout_marginTop="10dp" />
+                        android:inputType="textPassword"
+                        android:singleLine="true" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -389,11 +393,12 @@
                     android:id="@+id/login_forgot_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:layout_marginLeft="5dp"
-                    android:textSize="14sp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/auth_forgot_password"
                     android:textColor="@color/vector_green_color"
-                    android:text="@string/auth_forgot_password"/>
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <TextView

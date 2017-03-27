@@ -1359,7 +1359,7 @@ public class LoginActivity extends MXCActionBarActivity implements RegistrationM
                             addNetworkStateNotificationListener();
                             if (mMode == MODE_ACCOUNT_CREATION) {
                                 Log.e(LOG_TAG, "Network Error: " + e.getMessage(), e);
-                                onError(getString(R.string.login_error_registration_network_error) + " : " + e.getLocalizedMessage());
+                                onError(getString(R.string.login_error_registration_network_error) + " : ");
                             }
                         }
 
@@ -1701,12 +1701,12 @@ public class LoginActivity extends MXCActionBarActivity implements RegistrationM
                         Log.e(LOG_TAG, "Network Error: " + e.getMessage(), e);
                         // listen to network state, to resume processing as soon as the network is back
                         addNetworkStateNotificationListener();
-                        onError(getString(R.string.login_error_unable_login) + " : " + e.getLocalizedMessage());
+                        onError(getString(R.string.login_error_unable_login));
                     }
 
                     @Override
                     public void onUnexpectedError(Exception e) {
-                        onError(getString(R.string.login_error_unable_login) + " : " + e.getLocalizedMessage());
+                        onError(getString(R.string.login_error_unable_login));
                     }
 
                     @Override
