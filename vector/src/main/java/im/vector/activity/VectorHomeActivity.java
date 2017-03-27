@@ -1426,7 +1426,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
      */
     public void startCall(String sessionId, String callId, MXUsersDevicesMap<MXDeviceInfo> unknownDevices) {
         if (Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_monitoring))
-            && Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_call_auto_answer))){
+            || Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_call_auto_answer))){
             autoStartCall(sessionId, callId);
             return;
         }

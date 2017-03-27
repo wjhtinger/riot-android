@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import im.vector.Matrix;
 import im.vector.R;
 import im.vector.VectorApp;
 import im.vector.receiver.HeadsetConnectionReceiver;
@@ -361,6 +362,10 @@ public class VectorCallSoundManager {
     public static void startRinging() {
         Log.d(LOG_TAG, "startRinging");
 
+        if (Matrix.getInstance(VectorApp.getInstance()).getSharedGCMRegistrationManager().isFunctionEnable(VectorApp.getInstance().getString(R.string.settings_enable_monitoring))){
+            return;
+        }
+
         if (null != mRingTone) {
             Log.d(LOG_TAG, "ring tone already ringing");
             return;
@@ -451,6 +456,10 @@ public class VectorCallSoundManager {
      */
     public static void startEndCallSound() {
         Log.d(LOG_TAG, "startEndCallSound");
+
+        if (Matrix.getInstance(VectorApp.getInstance()).getSharedGCMRegistrationManager().isFunctionEnable(VectorApp.getInstance().getString(R.string.settings_enable_monitoring))){
+            return;
+        }
 
         if (null != mCallEndPlayer) {
             Log.d(LOG_TAG, "ringtone already ringing");

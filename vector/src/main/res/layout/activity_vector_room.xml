@@ -221,8 +221,8 @@
 
                         <ImageView
                             android:id="@+id/room_send_image_view"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
                             android:src="@drawable/ic_material_file"/>
 
@@ -370,7 +370,7 @@
             android:layout_marginTop="10dp"
             android:layout_alignParentBottom="true"
             android:gravity="center_horizontal"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <TableRow android:layout_gravity="center_horizontal"
                 android:id="@+id/room_function_pad_general">
@@ -463,17 +463,22 @@
 
             <TableRow android:layout_gravity="center"
                 android:gravity="center">
+
                 <ImageView
+                    android:id="@+id/room_function_pad_arrow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/room_function_arrow"
+                    android:layout_gravity="center_horizontal"
                     android:onClick="roomFunctionPadDetectShowClick"
-                    android:id="@+id/room_function_pad_arrow"
-                    android:paddingBottom="5dp" />
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:src="@drawable/room_function_arrow" />
             </TableRow>
 
             <TableRow
-                android:id="@+id/room_function_pad_detect0">
+                android:id="@+id/room_function_pad_detect0"
+                android:visibility="gone">
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_weight="1"
@@ -562,7 +567,8 @@
 
             <TableRow
                 android:id="@+id/room_function_pad_detect1"
-                android:layout_marginBottom="5dp">
+                android:layout_marginBottom="5dp"
+                android:visibility="gone">
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_weight="1"
