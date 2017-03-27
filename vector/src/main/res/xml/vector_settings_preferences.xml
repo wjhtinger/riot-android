@@ -210,6 +210,19 @@
     <im.vector.preference.VectorDividerCategory />
     -->
 
+    <PreferenceCategory android:title="@string/settings_ipcall" >
+        <im.vector.preference.VectorSwitchPreference
+            android:title="@string/settings_enable_call_auto_answer"
+            android:key="@string/settings_enable_call_auto_answer"/>
+
+        <im.vector.preference.VectorSwitchPreference
+            android:title="@string/settings_enable_call_switch_camera"
+            android:key="@string/settings_enable_call_switch_camera"/>
+
+    </PreferenceCategory>
+
+    <im.vector.preference.VectorDividerCategory />
+
     <PreferenceCategory android:title="@string/settings_monitoring" >
         <im.vector.preference.VectorSwitchPreference
             android:title="@string/settings_enable_monitoring"
@@ -233,11 +246,6 @@
         <im.vector.preference.VectorSwitchPreference
             android:title="@string/settings_enable_face_detecting"
             android:key="@string/settings_enable_face_detecting"
-            android:dependency="@string/settings_enable_monitoring"/>
-
-        <im.vector.preference.VectorSwitchPreference
-            android:title="@string/settings_enable_call_auto_answer"
-            android:key="@string/settings_enable_call_auto_answer"
             android:dependency="@string/settings_enable_monitoring"/>
 
         <im.vector.preference.VectorSwitchPreference

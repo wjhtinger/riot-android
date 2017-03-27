@@ -1127,11 +1127,10 @@ public final class GcmRegistrationManager {
 
 
     public boolean isFunctionEnable(String str){
-        boolean en;
-        if(str.equals(mContext.getString(R.string.settings_enable_monitoring))){
+        boolean en = true;
+        if(str.equals(mContext.getString(R.string.settings_enable_monitoring))
+            || str.equals(mContext.getString(R.string.settings_enable_call_auto_answer))){
             en = false;
-        }else{
-            en = true;
         }
 
         return getGcmSharedPreferences().getBoolean(str, en);

@@ -230,8 +230,9 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
 
 
             mPushesRuleByResourceId.put(getString(R.string.settings_enable_notice_beep), DUMMY_RULE);
-            mPushesRuleByResourceId.put(getString(R.string.settings_enable_monitoring), DUMMY_RULE);
             mPushesRuleByResourceId.put(getString(R.string.settings_enable_call_auto_answer), DUMMY_RULE);
+            mPushesRuleByResourceId.put(getString(R.string.settings_enable_call_switch_camera), DUMMY_RULE);
+            mPushesRuleByResourceId.put(getString(R.string.settings_enable_monitoring), DUMMY_RULE);
             mPushesRuleByResourceId.put(getString(R.string.settings_enable_motion_detecting), DUMMY_RULE);
             mPushesRuleByResourceId.put(getString(R.string.settings_enable_audio_detecting), DUMMY_RULE);
             mPushesRuleByResourceId.put(getString(R.string.settings_enable_timer_detecting), DUMMY_RULE);
@@ -743,8 +744,9 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
                 } else if (resourceText.equals(getString(R.string.settings_turn_screen_on))) {
                     switchPreference.setChecked(gcmMgr.isScreenTurnedOn());
                 } else if(resourceText.equals(getString(R.string.settings_enable_notice_beep)) ||
-                        resourceText.equals(getString(R.string.settings_enable_monitoring)) ||
                         resourceText.equals(getString(R.string.settings_enable_call_auto_answer)) ||
+                        resourceText.equals(getString(R.string.settings_enable_call_switch_camera)) ||
+                        resourceText.equals(getString(R.string.settings_enable_monitoring)) ||
                         resourceText.equals(getString(R.string.settings_enable_motion_detecting)) ||
                         resourceText.equals(getString(R.string.settings_enable_audio_detecting)) ||
                         resourceText.equals(getString(R.string.settings_enable_timer_detecting)) ||
@@ -937,8 +939,9 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
         Log.d(LOG_TAG, "onPushRuleClick " + fResourceText + " : set to " + newValue);
 
         if(fResourceText.equals(getString(R.string.settings_enable_notice_beep)) ||
-            fResourceText.equals(getString(R.string.settings_enable_monitoring)) ||
             fResourceText.equals(getString(R.string.settings_enable_call_auto_answer)) ||
+            fResourceText.equals(getString(R.string.settings_enable_call_switch_camera)) ||
+            fResourceText.equals(getString(R.string.settings_enable_monitoring)) ||
             fResourceText.equals(getString(R.string.settings_enable_motion_detecting)) ||
             fResourceText.equals(getString(R.string.settings_enable_audio_detecting)) ||
             fResourceText.equals(getString(R.string.settings_enable_timer_detecting)) ||
