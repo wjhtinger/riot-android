@@ -24,6 +24,75 @@
         </RelativeLayout>
 
         <!-- container layout for the action buttons -->
+        <!--
+        <LinearLayout
+            android:id="@+id/call_remote_menu_buttons_layout_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/white"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="对方摄像头控制：" />
+
+            <ImageView
+                android:id="@+id/call_menu_remote_switch_camera"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="center"
+                android:onClick="onClickMenuRemote"
+                android:src="@drawable/ic_material_switch_video_grey" />
+
+            <ImageView
+                android:id="@+id/call_menu_remote_control_flash"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:onClick="onClickMenuRemote"
+                android:src="@drawable/ic_material_switch_video_grey" />
+
+        </LinearLayout>
+         -->
+        <LinearLayout
+            android:id="@+id/call_remote_menu_buttons_layout_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="60dp"
+            android:background="@android:color/white"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="控制对方摄像头："
+                android:textColor="@color/cardview_dark_background" />
+
+            <ImageView
+                android:id="@+id/call_remote_menu_switch_camera"
+                android:layout_width="0dp"
+                android:layout_height="24dp"
+                android:layout_weight="14"
+                android:src="@drawable/ic_material_message_grey"
+                android:onClick="onClickMenuRemote"/>
+
+            <ImageView
+                android:id="@+id/call_remote_menu_control_flash"
+                android:layout_width="0dp"
+                android:layout_height="24dp"
+                android:layout_weight="14"
+                android:src="@drawable/ic_material_speaker_phone_grey"
+                android:onClick="onClickMenuRemote"/>
+
+         </LinearLayout>
+
+
+
         <LinearLayout
             android:id="@+id/call_menu_buttons_layout_container"
             android:layout_width="match_parent"

@@ -969,11 +969,13 @@
 
     <string name="wordpress_server_url">http://www.windsing.com.cn:8081/wordpress/</string>
 
-
     <string name="settings_enable_notice_beep">Enable notice beep </string>
+
+    <string name="settings_ipcall">IP Call</string>
+    <string name="settings_enable_call_auto_answer">Enable auto answer</string>
+    <string name="settings_enable_call_switch_camera">switch remote camera</string>
     <string name="settings_monitoring">Monitoring</string>
     <string name="settings_enable_monitoring">Enable monitoring function</string>
-    <string name="settings_enable_call_auto_answer">Enable auto answer call</string>
     <string name="settings_enable_motion_detecting">Enable motion detecting</string>
     <string name="settings_enable_audio_detecting">Enable audion detecting</string>
     <string name="settings_enable_timer_detecting">Enable timer detecting</string>

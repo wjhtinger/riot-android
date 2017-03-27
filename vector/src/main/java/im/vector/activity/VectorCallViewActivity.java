@@ -34,6 +34,12 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+
+import org.matrix.androidsdk.data.Room;
+import org.matrix.androidsdk.rest.callback.ApiCallback;
+import org.matrix.androidsdk.rest.model.Event;
+import org.matrix.androidsdk.rest.model.MatrixError;
+import org.matrix.androidsdk.rest.model.Message;
 import org.matrix.androidsdk.util.Log;
 
 import android.util.TypedValue;
@@ -547,6 +553,7 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
         mSwitchRearFrontCameraImageView = (ImageView) findViewById(R.id.call_switch_camera_view);
         mMuteLocalCameraView = (ImageView) findViewById(R.id.mute_local_camera);
         mButtonsContainerView =  findViewById(R.id.call_menu_buttons_layout_container);
+        mRemoteButtonsContainerView =  findViewById(R.id.call_remote_menu_buttons_layout_container);
         View mainContainerLayoutView =  findViewById(R.id.call_layout);
 
         // when video is in full screen, touching the screen restore the edges (fade in)
@@ -1031,6 +1038,24 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
                 });
             }
         }
+
+        if(null != mRemoteButtonsContainerView) {
+            if (aOpacity != mRemoteButtonsContainerView.getAlpha()) {
+                mRemoteButtonsContainerView.animate().alpha(aOpacity).setDuration(aAnimDuration).setInterpolator(new AccelerateInterpolator()).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        // set to GONE after the fade out, so buttons can not not be accessed by the user
+                        if (CommonActivityUtils.UTILS_OPACITY_FULL == aOpacity) {
+                            mRemoteButtonsContainerView.setVisibility(View.GONE);
+                        } else {
+                            // restore visibility after fade in
+                            mRemoteButtonsContainerView.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+            }
+        }
     }
 
     /**
@@ -1509,5 +1534,55 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         Log.d(LOG_TAG,"## onAccuracyChanged(): accuracy="+accuracy);
     }
-    // ***********************************************
+
+
+    private View mRemoteButtonsContainerView;
+
+    public void onClickMenuRemote(View view) {
+        fadeInVideoEdge();
+        startVideoFadingEdgesScreenTimer();
+
+        if((null != mCall) && mCall.getCallState().equals(IMXCall.CALL_STATE_CONNECTED) && mCall.isVideo()) {
+            Message message = new Message();
+            message.msgtype = Message.MSGTYPE_TEXT;
+            message.body = getResources().getString(R.string.tag_message_command) + getResources().getString(R.string.tag_message_command_call);
+            switch(view.getId()){
+                case R.id.call_remote_menu_switch_camera:
+                    message.body += getResources().getString(R.string.tag_message_command_call_switch_camera);
+                    break;
+                case R.id.call_remote_menu_control_flash:
+                    message.body += getResources().getString(R.string.tag_message_command_call_control_flash);
+                    break;
+                default:
+                    return;
+            }
+
+            String roomId = mCall.getRoom().getRoomId();
+            Room room = mSession.getDataHandler().getRoom(roomId);
+            final Event event = new Event(message, mSession.getCredentials().userId, roomId);
+            room.storeOutgoingEvent(event);
+            room.sendEvent(event, new ApiCallback<Void>() {
+                @Override
+                public void onSuccess(Void info) {
+                    Log.d(LOG_TAG, "Send message : onSuccess ");
+                }
+
+                @Override
+                public void onNetworkError(Exception e) {
+                    Log.d(LOG_TAG, "Send message : onNetworkError " + e.getLocalizedMessage());
+                }
+
+                @Override
+                public void onMatrixError(MatrixError e) {
+                    Log.d(LOG_TAG, "Send message : onMatrixError " + e.getLocalizedMessage());
+                }
+
+                @Override
+                public void onUnexpectedError(Exception e) {
+                    Log.d(LOG_TAG, "Send message : onUnexpectedError " + e.getLocalizedMessage());
+                }
+            });
+        }
+    }
+
 }
