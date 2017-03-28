@@ -1247,11 +1247,14 @@ public class EventStreamService extends Service {
             IMXCall call = VectorCallViewActivity.getActiveCall();
             if((call != null) && call.getCallState().equals(IMXCall.CALL_STATE_CONNECTED) && call.isVideo()) {
                 if((cmdSplit[2] + "-]").equals(this.getResources().getString(R.string.tag_message_command_call_switch_camera))){
-                    call.switchRearFrontCamera();
+                    if (Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_monitoring))
+                        || Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_call_switch_camera)))
+                    {
+                        call.switchRearFrontCamera();
+                    }
                 }else if((cmdSplit[2] + "-]").equals(this.getResources().getString(R.string.tag_message_command_call_control_flash))){
 
                 }
-
             }
         }
     }

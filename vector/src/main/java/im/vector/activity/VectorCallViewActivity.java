@@ -951,6 +951,12 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
         } else {
             this.finish();
         }
+
+        if ((null != mCall) && mCall.isVideo()){
+            mRemoteButtonsContainerView.setVisibility(View.VISIBLE);
+        }else{
+            mRemoteButtonsContainerView.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
@@ -1537,10 +1543,11 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
 
 
     private View mRemoteButtonsContainerView;
-
+    private Boolean mSwitchflg = false;
     public void onClickMenuRemote(View view) {
         fadeInVideoEdge();
         startVideoFadingEdgesScreenTimer();
+        mSwitchflg = !mSwitchflg;
 
         if((null != mCall) && mCall.getCallState().equals(IMXCall.CALL_STATE_CONNECTED) && mCall.isVideo()) {
             Message message = new Message();
@@ -1549,6 +1556,13 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
             switch(view.getId()){
                 case R.id.call_remote_menu_switch_camera:
                     message.body += getResources().getString(R.string.tag_message_command_call_switch_camera);
+
+                    ImageView viewSc = (ImageView)findViewById(R.id.call_remote_menu_switch_camera);
+                    if(mSwitchflg){
+                        viewSc.setImageResource(R.drawable.ic_material_switch_video_pink_red);
+                    }else{
+                        viewSc.setImageResource(R.drawable.ic_material_switch_video_grey);
+                    }
                     break;
                 case R.id.call_remote_menu_control_flash:
                     message.body += getResources().getString(R.string.tag_message_command_call_control_flash);
