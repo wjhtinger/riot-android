@@ -35,13 +35,13 @@ public class FileControl {
         return fileName;
     }
 
-    public void mediaScanBc(Context context, String fileString){
+    public static void mediaScanBc(Context context, String fileString){
         Intent mediaScanIntent = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         mediaScanIntent.setData(Uri.fromFile(new File(fileString)));
         context.sendBroadcast(mediaScanIntent);
     }
 
-    public void delFile(String path){
+    public static void delFile(String path){
         File file = new File(path);
         if (!file.exists()) {
             return;
@@ -49,7 +49,6 @@ public class FileControl {
 
         if (file.isFile()) {
             file.delete();
-        } else {
         }
     }
 }

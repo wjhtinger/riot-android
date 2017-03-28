@@ -249,8 +249,8 @@
             android:dependency="@string/settings_enable_monitoring"/>
 
         <im.vector.preference.VectorSwitchPreference
-            android:title="@string/settings_enable_del_local_file"
-            android:key="@string/settings_enable_del_local_file"
+            android:title="@string/settings_enable_save_local_file"
+            android:key="@string/settings_enable_save_local_file"
             android:dependency="@string/settings_enable_monitoring"/>
 
     </PreferenceCategory>

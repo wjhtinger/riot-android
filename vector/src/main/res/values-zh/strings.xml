@@ -975,14 +975,14 @@
 
     <string name="settings_ipcall">语音通话功能</string>
     <string name="settings_enable_call_auto_answer">自动应答</string>
-    <string name="settings_enable_call_switch_camera">切换对方摄像头</string>
+    <string name="settings_enable_call_switch_camera">允许对方切换本机摄像头</string>
     <string name="settings_monitoring">监控功能</string>
     <string name="settings_enable_monitoring">开启监控功能</string>
     <string name="settings_enable_motion_detecting">动作监控</string>
     <string name="settings_enable_audio_detecting">声音监控</string>
     <string name="settings_enable_timer_detecting">定时监控</string>
     <string name="settings_enable_face_detecting">人脸识别</string>
-    <string name="settings_enable_del_local_file">本机不保存监控数据（图片、视频、音频）</string>
+    <string name="settings_enable_save_local_file">保存监控数据（图片、视频、音频）在手机</string>
 
     <string name="settings_summary_ga_use_settings">程序意外崩溃时自动发送崩溃信息给服务器，这有利于查找问题原因，提升程序品质。</string>
     <string name="room_settings_summary_directory_visibility">网络上任何用户都可以发现这个房间。</string>

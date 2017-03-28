@@ -1129,7 +1129,8 @@ public final class GcmRegistrationManager {
     public boolean isFunctionEnable(String str){
         boolean en = true;
         if(str.equals(mContext.getString(R.string.settings_enable_monitoring))
-            || str.equals(mContext.getString(R.string.settings_enable_call_auto_answer))){
+            || str.equals(mContext.getString(R.string.settings_enable_call_auto_answer))
+            || str.equals(mContext.getString(R.string.settings_enable_save_local_file))){
             en = false;
         }
 
