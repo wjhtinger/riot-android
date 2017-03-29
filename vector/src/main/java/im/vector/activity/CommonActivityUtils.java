@@ -122,7 +122,7 @@ public class CommonActivityUtils {
     /**
      * The view is half dimmed
      **/
-    public static final float UTILS_OPACITY_HALF = 0.5f;
+    public static final float UTILS_OPACITY_HALF = 0.2f;
     /**
      * The view is hidden
      **/
