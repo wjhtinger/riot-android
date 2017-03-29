@@ -467,7 +467,7 @@
     <string name="room_creation_make_public_prompt_msg">Are you sure you want to make this chat public? Anyone can read your messages and join the chat.</string>
     <string name="room_creation_keep_private">Keep private</string>
     <string name="room_creation_make_private">Make private</string>
-    <string name="room_creation_add_member">Add member</string>
+    <string name="room_creation_add_member">继续添加</string>
     <string name="room_creation_name_mobile_email">name, mobile or email</string>
     <string name="room_header_active_members">%1$d/%2$d active members</string>
     <string name="room_header_invite_members">Invite members</string>
@@ -534,7 +534,7 @@
 
     <!-- invitation -->
     <string name="people_search_local_contacts">LOCAL CONTACTS (%d)</string>
-    <string name="people_search_known_contacts">KNOWN CONTACTS (%s)</string>
+    <string name="people_search_known_contacts">已知好友(%s)</string>
     <string name="people_search_filter_text">Matrix users only</string>
     <string name="people_search_too_many_contacts">Too many contacts, please use the search field</string>
 

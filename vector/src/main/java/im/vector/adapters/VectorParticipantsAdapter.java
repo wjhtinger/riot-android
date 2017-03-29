@@ -496,7 +496,8 @@ public class VectorParticipantsAdapter extends BaseExpandableListAdapter {
         List<ParticipantAdapterItem> participantItemList = new ArrayList<>();
 
         // displays something only if there is a pattern
-        if (!TextUtils.isEmpty(mPattern)) {
+//        if (!TextUtils.isEmpty(mPattern)) {
+            if(true){
             // the list members are refreshed in background to avoid UI locks
             if (null == mUnusedParticipants) {
                 Thread t = new Thread(new Runnable() {
@@ -530,7 +531,7 @@ public class VectorParticipantsAdapter extends BaseExpandableListAdapter {
             }
 
             for (ParticipantAdapterItem item : unusedParticipants) {
-                if (match(item, mPattern)) {
+                if (match(item, mPattern) || TextUtils.isEmpty(mPattern)) {
                     participantItemList.add(item);
                 }
             }

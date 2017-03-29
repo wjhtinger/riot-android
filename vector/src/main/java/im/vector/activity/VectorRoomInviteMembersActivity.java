@@ -194,8 +194,13 @@ public class VectorRoomInviteMembersActivity extends VectorBaseSearchActivity {
                         displaySelectionConfirmationDialog(participantAdapterItem);
                     } else {
                         // returns the selected user
+                        String userID = participantAdapterItem.mUserId;
+                        if(!userID.startsWith("@")){
+                            userID = "@"+ userID + ":" + mSession.getCredentials().homeServer;
+                        }
+
                         Intent intent = new Intent();
-                        intent.putExtra(EXTRA_SELECTED_USER_ID, participantAdapterItem.mUserId);
+                        intent.putExtra(EXTRA_SELECTED_USER_ID, userID);
                         intent.putExtra(EXTRA_SELECTED_PARTICIPANT_ITEM, participantAdapterItem);
 
                         setResult(RESULT_OK, intent);
@@ -258,6 +263,7 @@ public class VectorRoomInviteMembersActivity extends VectorBaseSearchActivity {
             // test if the pattern is a valid email or matrix id
             boolean isValid = android.util.Patterns.EMAIL_ADDRESS.matcher(pattern).matches() ||
                     MXSession.isUserId(pattern);
+            isValid = true;
             firstEntry = new ParticipantAdapterItem(pattern, null, pattern, isValid);
         }
 
@@ -312,8 +318,13 @@ public class VectorRoomInviteMembersActivity extends VectorBaseSearchActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // returns the selected user
+                String userID = participantAdapterItem.mUserId;
+                if(!userID.startsWith("@")){
+                    userID = "@"+ userID + ":" + mSession.getCredentials().homeServer;
+                }
+
                 Intent intent = new Intent();
-                intent.putExtra(EXTRA_SELECTED_USER_ID, participantAdapterItem.mUserId);
+                intent.putExtra(EXTRA_SELECTED_USER_ID, userID);
                 intent.putExtra(EXTRA_SELECTED_PARTICIPANT_ITEM, participantAdapterItem);
 
                 setResult(RESULT_OK, intent);

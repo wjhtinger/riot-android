@@ -286,20 +286,25 @@ public class VectorRoomCreationActivity extends MXCActionBarActivity {
                 // the first entry is self so ignore
                 mParticipants.remove(0);
 
+                String userID = mParticipants.get(0).mUserId;
+                if(!userID.startsWith("@")){
+                    userID = "@"+ userID + ":" + mSession.getCredentials().homeServer;
+                }
+
                 // standalone case : should be accepted ?
                 if (0 == mParticipants.size()) {
                     createRoom(mParticipants);
                 } else if (mParticipants.size() > 1) {
                     createRoom(mParticipants);
-                } else if (null != (existingRoomId = isDirectChatRoomAlreadyExist(mParticipants.get(0).mUserId))) {
+                } else if (null != (existingRoomId = isDirectChatRoomAlreadyExist(userID))) {
                     HashMap<String, Object> params = new HashMap<>();
-                    params.put(VectorRoomActivity.EXTRA_MATRIX_ID, mParticipants.get(0).mUserId);
+                    params.put(VectorRoomActivity.EXTRA_MATRIX_ID, userID);
                     params.put(VectorRoomActivity.EXTRA_ROOM_ID, existingRoomId);
                     CommonActivityUtils.goToRoomPage(this, mSession, params);
                 } else {
                     // direct message flow
                     mSpinnerView.setVisibility(View.VISIBLE);
-                    mSession.createRoomDirectMessage(mParticipants.get(0).mUserId, mCreateDirectMessageCallBack);
+                    mSession.createRoomDirectMessage(userID, mCreateDirectMessageCallBack);
                 }
             }
             return true;
