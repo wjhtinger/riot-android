@@ -454,7 +454,7 @@
     <string name="room_preview_room_interactions_disabled">This is a preview of this room. Room interactions have been disabled.</string>
 
     <!-- Chat creation -->
-    <string name="room_creation_title">New Chat</string>
+    <string name="room_creation_title"></string>
     <string name="room_creation_account">Account</string>
     <string name="room_creation_appearance">Appearance</string>
     <string name="room_creation_appearance_name">Name</string>
