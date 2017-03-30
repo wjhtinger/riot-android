@@ -67,7 +67,7 @@
             android:entries="@array/room_read_history_rules_entries"
             android:entryValues="@array/room_read_history_rules_values" />
     </im.vector.preference.VectorPreferenceCategory>
-
+    <!--
     <im.vector.preference.VectorDividerCategory />
 
     <im.vector.preference.VectorPreferenceCategory
@@ -84,6 +84,7 @@
         android:key="banned"
         android:title="@string/room_settings_banned_users_title" >
     </im.vector.preference.VectorPreferenceCategory>
+    -->
     <!--
     <im.vector.preference.VectorDividerCategory />
 

@@ -249,12 +249,12 @@ public class VectorRoomSettingsFragment extends PreferenceFragment implements Sh
                             || Event.EVENT_TYPE_STATE_ROOM_POWER_LEVELS.equals(eventType)
                             ) {
                         Log.d(LOG_TAG, "## onLiveEvent() refresh the addresses list");
-                        refreshAddresses();
+                        //refreshAddresses();
                     }
 
                     if (Event.EVENT_TYPE_STATE_ROOM_MEMBER.equals(eventType)) {
                         Log.d(LOG_TAG, "## onLiveEvent() refresh the banned members list");
-                        refreshBannedMembersList();
+                        //refreshBannedMembersList();
                     }
                 }
             });
@@ -514,8 +514,8 @@ public class VectorRoomSettingsFragment extends PreferenceFragment implements Sh
 
             updateRoomDirectoryVisibilityAsync();
 
-            refreshAddresses();
-            refreshBannedMembersList();
+            //refreshAddresses();
+            //refreshBannedMembersList();
             //refreshEndToEnd();
         }
     }
@@ -1061,6 +1061,9 @@ public class VectorRoomSettingsFragment extends PreferenceFragment implements Sh
             Log.d(LOG_TAG, "## onRoomDirectoryVisibilityPreferenceChanged(): directory visibility set to "+visibility);
             displayLoadingView();
             mRoom.updateDirectoryVisibility(visibility, mUpdateCallback);
+            //同时设置成任何人都能访问，才能被发现
+            mRoomAccessRulesListPreference.setValue(ACCESS_RULES_ANYONE_WITH_LINK_APART_GUEST);
+            mRoomAccessRulesListPreference.setSummary(getResources().getString(R.string.room_settings_room_access_entry_anyone_with_link_apart_guest));
         }
     }
 
@@ -1341,7 +1344,7 @@ public class VectorRoomSettingsFragment extends PreferenceFragment implements Sh
                 @Override
                 public void run() {
                     hideLoadingView(false);
-                    refreshAddresses();
+                    //refreshAddresses();
                 }
             });
         }
@@ -1356,7 +1359,7 @@ public class VectorRoomSettingsFragment extends PreferenceFragment implements Sh
                 public void run() {
                     Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
                     hideLoadingView(false);
-                    refreshAddresses();
+                    //refreshAddresses();
                 }
             });
         }
