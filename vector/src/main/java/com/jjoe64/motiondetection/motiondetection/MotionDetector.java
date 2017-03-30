@@ -22,6 +22,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
 
+import com.windsing.common.FileControl;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -424,7 +426,7 @@ public class MotionDetector {
 
         @Override
         public void onPictureTaken(byte[] data, android.hardware.Camera camera) {
-            String fileSrting = getFileString() + ".jpg";
+            String fileSrting = FileControl.getFileString("Motiondetector", "Motion") + ".jpg";
             try {
                 File outFile = new File(fileSrting);
                 FileOutputStream outStream = new FileOutputStream(outFile);
@@ -462,7 +464,7 @@ public class MotionDetector {
         m.setRotate(-90, (float) bitmap.getWidth(), (float) bitmap.getHeight());
         Bitmap bitmapR = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, true);
 
-        final String fileSrting = getFileString() + ".jpg";
+        final String fileSrting = FileControl.getFileString("Motiondetector", "Motion") + ".jpg";
         File outFile = new File(fileSrting);
         try {
             FileOutputStream fos = new FileOutputStream(outFile);
@@ -526,7 +528,7 @@ public class MotionDetector {
         recorder.setAudioEncodingBitRate(16);
 
         // Step 4: Set output file
-        final String fileSrting = getFileString() + ".mp4";
+        final String fileSrting = FileControl.getFileString("Motiondetector", "Motion") + ".mp4";
         recorder.setOutputFile(fileSrting);
 
         try {
@@ -601,7 +603,7 @@ public class MotionDetector {
         }
         Log.d("MotionDetector", "################################################FFFFF003");
         //mRecorder.setOutputFile(sender.getFileDescriptor());
-        final String fileSrting = getFileString() + ".mp4";
+        final String fileSrting = FileControl.getFileString("Motiondetector", "Motion") + ".mp4";
         mRecorder.setOutputFile(fileSrting);
 
         recdorderByteBuffer = new byte[1024*1024];
@@ -626,7 +628,7 @@ public class MotionDetector {
                 Log.d("MotionDetector", "################################################FFFFF22");
 
                 try {
-                    FileOutputStream fos = new FileOutputStream(getFileString() + ".mp4");
+                    FileOutputStream fos = new FileOutputStream(FileControl.getFileString("Motiondetector", "Motion") + ".mp4");
                     fos.write(recdorderByteBuffer);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -649,24 +651,6 @@ public class MotionDetector {
             mRecorder.release();
             mRecorder = null;
         }
-    }
-
-    private String getFileString(){
-        if(dirString == null){
-            File sdCard = Environment.getExternalStorageDirectory();
-            dirString = sdCard.getAbsolutePath() + "/MotionDetector";
-        }
-        File dir = new File(dirString);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        Date date = new Date(System.currentTimeMillis());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("'Motion'_yyyyMMdd_HHmmss");
-        String fileName = dir + "/" + dateFormat.format(date);
-        Log.d("MotionDetector", "###############:" + fileName);
-
-        return fileName;
     }
 
     private void mediaScanBc(String fileString){

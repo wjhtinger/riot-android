@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.jjoe64.motiondetection.motiondetection.MotionDetector;
+import com.windsing.common.FileControl;
 import com.windsing.mediarecorder.ImMediaRecorderCallback;
 
 import java.io.File;
@@ -117,24 +118,6 @@ public class TimerDetector {
         }
     }
 
-    private String getFileString(){
-        if(dirString == null){
-            File sdCard = Environment.getExternalStorageDirectory();
-            dirString = sdCard.getAbsolutePath() + "/TimerDetector";
-        }
-        File dir = new File(dirString);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        Date date = new Date(System.currentTimeMillis());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("'Timer'_yyyyMMdd_HHmmss");
-        String fileName = dir + "/" + dateFormat.format(date);
-        Log.d(LOG_TAG, "getFileString:" + fileName);
-
-        return fileName;
-    }
-
     private boolean checkCameraHardware() {
         if (mContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
             return true;
@@ -187,7 +170,7 @@ public class TimerDetector {
     private void takePicture(){
         safeToTakePicture = false;
         initCamera();
-        fileString = getFileString() + ".jpg";
+        fileString = FileControl.getFileString("Timerdetector", "Timer") + ".jpg";
         mCamera.startPreview();
         mCamera.takePicture(null, null, new TimerDetector.PhotoHandler());
     }
@@ -208,7 +191,7 @@ public class TimerDetector {
         mRecorder.setOrientationHint(270);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
         //mRecorder.setMaxDuration(1000 * 5);  //8MB大小
-        fileString = getFileString() + ".mp4";
+        fileString = FileControl.getFileString("Timerdetector", "Timer") + ".mp4";
         mRecorder.setOutputFile(fileString);
         try {
             mRecorder.prepare();
