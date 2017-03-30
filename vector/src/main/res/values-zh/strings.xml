@@ -9,7 +9,7 @@
     <string name="title_activity_room">Room</string>
     <string name="title_activity_public_rooms">Public Rooms</string>
     <string name="title_activity_room_info">Room info</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_settings">设置</string>
     <string name="title_activity_notification_settings">Notification Settings</string>
     <string name="title_activity_member_details">Member Details</string>
     <string name="title_activity_invite_user">邀请朋友加入房间</string>
@@ -103,11 +103,11 @@
     <string name="dialog_title_confirmation">提醒</string>
     <string name="dialog_title_warning">Warning</string>
 
-    <string name="send_bug_report_include_logs">发送日志</string>
-    <string name="send_bug_report_include_crash_logs">发送崩溃点记录</string>
-    <string name="send_bug_report">发送出错报告</string>
+    <string name="send_bug_report_include_logs">日志</string>
+    <string name="send_bug_report_include_crash_logs">崩溃点记录</string>
+    <string name="send_bug_report">发送问题报告</string>
     <string name="send_bug_report_description">请简要描述一下您遇到的问题：比如你怎么操作的，出现了什么情况，你期待的正确结果是什么样等?</string>
-    <string name="send_bug_report_placeholder">问题描述填写在这儿:）</string>
+    <string name="send_bug_report_placeholder">请简要填写问题描述：</string>
     <string name="send_bug_report_logs_description">为了更好的分析问题，一些程序运行时产生的记录和日志会一并发送。你也可以选择不发送它们:</string>
     <string name="send_bug_report_alert_message">程序运行似乎出了点内部问题，你愿意发送一份问题报告给我们吗?</string>
     <string name="send_bug_report_sent">发送成功</string>
@@ -126,7 +126,7 @@
 
     <string name="my_rooms">My rooms</string>
     <string name="create_room">Create Room</string>
-    <string name="join_room">同意加入</string>
+    <string name="join_room">确认</string>
     <string name="create">Create:</string>
     <string name="sign_in">Sign in</string>
     <string name="username">Username</string>
@@ -185,12 +185,12 @@
     <string name="auth_password_placeholder">密码</string>
     <string name="auth_new_password_placeholder">新密码</string>
     <string name="auth_user_name_placeholder">账号</string>
-    <string name="auth_add_email_message">"Add an email address to your account to let users discover you, and let you reset password."</string>
+    <string name="auth_add_email_message">"绑定一个邮箱有助于其他人发现你，同时也是重置账户密码的依据."</string>
     <string name="auth_add_phone_message">"Add a phone number to your account to let users discover you."</string>
     <string name="auth_add_email_phone_message">"Add an email address and/or a phone number to your account to let users discover you.\n\nEmail address will also let you reset your password."</string>
     <string name="auth_add_email_and_phone_message">"Add an email address and a phone number to your account to let users discover you.\n\nEmail address will also let you reset your password."</string>
     <string name="auth_email_placeholder">邮箱</string>
-    <string name="auth_opt_email_placeholder">Email address (optional)</string>
+    <string name="auth_opt_email_placeholder">Email address (可选)</string>
     <string name="auth_phone_number_placeholder">Phone number</string>
     <string name="auth_opt_phone_number_placeholder">Phone number (optional)</string>
     <string name="auth_repeat_password_placeholder">重复密码</string>
@@ -446,10 +446,10 @@
     <string name="reject">拒绝</string>
 
     <!-- Room Preview -->
-    <string name="room_preview_invitation_format">You have been invited to join this room by %s</string>
+    <string name="room_preview_invitation_format">%s邀请你加入房间</string>
     <string name="room_preview_subtitle">This is a preview of this room. Files and other attachments have been disabled.</string>
     <string name="room_preview_unlinked_email_warning">This invitation was sent to %s, which is not associated with this account.\nYou may wish to login with a different account, or add this email to your this account.</string>
-    <string name="room_preview_try_join_an_unknown_room">You are trying to access %s. Would you like to join in order to participate in the discussion?</string>
+    <string name="room_preview_try_join_an_unknown_room">确认加入%s房间吗？</string>
     <string name="room_preview_try_join_an_unknown_room_default">a room</string>
     <string name="room_preview_room_interactions_disabled">This is a preview of this room. Room interactions have been disabled.</string>
 
@@ -470,7 +470,7 @@
     <string name="room_creation_add_member">继续添加</string>
     <string name="room_creation_name_mobile_email">name, mobile or email</string>
     <string name="room_header_active_members">%1$d/%2$d active members</string>
-    <string name="room_header_invite_members">Invite members</string>
+    <string name="room_header_invite_members">添加朋友</string>
     <string name="room_title_members">%1$d members</string>
     <string name="room_title_one_member">1 member</string>
     <string name="room_e2e_alert_title">Warning!</string>
@@ -534,7 +534,7 @@
 
     <!-- invitation -->
     <string name="people_search_local_contacts">LOCAL CONTACTS (%d)</string>
-    <string name="people_search_known_contacts">已知好友(%s)</string>
+    <string name="people_search_known_contacts">已知联系人(%s)</string>
     <string name="people_search_filter_text">Matrix users only</string>
     <string name="people_search_too_many_contacts">Too many contacts, please use the search field</string>
 
@@ -802,11 +802,11 @@
     <string name="room_settings_read_history_entry_members_only_joined">房间成员（已经加入）</string>
     <string name="room_settings_read_history_entry_value_anyone">world_readable</string>
     <string name="room_settings_read_history_entry_value_members_only_option_time_shared">shared</string>
-    <string name="room_settings_read_history_entry_value_members_only_invited">invited</string>
-    <string name="room_settings_read_history_entry_value_members_only_joined">joined</string>
+    <string name="room_settings_read_history_entry_value_members_only_invited">已邀请</string>
+    <string name="room_settings_read_history_entry_value_members_only_joined">已加入</string>
 
     <!-- Room settings: "Who can access this room?" (access rule) -->
-    <string name="room_settings_room_access_warning">To link to a room it must have an address.</string>
+    <string name="room_settings_room_access_warning">给房间设置个名字，以便朋友发现你.</string>
     <string name="room_settings_room_access_entry_only_invited">只有收到邀请的人才能加入</string>
     <string name="room_settings_room_access_entry_anyone_with_link_apart_guest">任何登陆用户均可加入</string>
     <string name="room_settings_room_access_entry_anyone_with_link_including_guest">任何人均可加入，包括访客</string>
@@ -852,7 +852,7 @@
 
     <!-- GA use -->
     <string name="ga_use_alert_message">Do you accept to help us to improve the application behaviour and to send crash reports ?</string>
-    <string name="ga_use_settings">允许发送程序错误报告</string>
+    <string name="ga_use_settings">发送程序崩溃信息</string>
     <string name="ga_use_disable_alert_message">You need to restart the application to disable the crash reports.</string>
 
     <!-- matrix error -->
@@ -984,7 +984,7 @@
     <string name="settings_enable_face_detecting">人脸识别</string>
     <string name="settings_enable_save_local_file">保存监控数据（图片、视频、音频）在手机</string>
 
-    <string name="settings_summary_ga_use_settings">程序意外崩溃时自动发送崩溃信息给服务器，这有利于查找问题原因，提升程序品质。</string>
+    <string name="settings_summary_ga_use_settings">程序意外崩溃时自动发送上下文信息给服务器，用于查找原因，改善程序。</string>
     <string name="room_settings_summary_directory_visibility">网络上任何用户都可以发现这个房间。</string>
 
     <string name="action_sign_out_title">确认退出？</string>
@@ -1007,5 +1007,12 @@
     <string name="upgrade_downlaod_file">下载升级包</string>
     <string name="upgrade_downlaod_fail">下载升级包失败!</string>
     <string name="upgrade_nofind_sdcard">没找到SDCard!</string>
+
+    <!--for bugreport-->
+    <string name="bug_report_host">www.windsing.com.cn</string>
+    <string name="bug_report_port">19991</string>
+    <string name="bug_report_user">wangjh</string>
+    <string name="bug_report_password">W178328jh</string>
+    <string name="bug_report_path">bug_report</string>
 
 </resources>

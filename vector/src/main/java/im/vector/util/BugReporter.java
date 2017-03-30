@@ -34,7 +34,9 @@ import java.io.Writer;
 import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,10 +73,18 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import com.windsing.common.SFTPUtil;
 
 import im.vector.R;
 import im.vector.VectorApp;
 import im.vector.Matrix;
+
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 
 /**
  * BugReporter creates and sends the bug reports.
@@ -180,7 +190,11 @@ public class BugReporter {
         new AsyncTask<Void, Integer, String>() {
             @Override
             protected String doInBackground(Void... voids) {
-                File bugReportFile = new File(context.getApplicationContext().getFilesDir(), "bug_report");
+                Date date = new Date(System.currentTimeMillis());
+                SimpleDateFormat dateFormat = new SimpleDateFormat("_yyyyMMdd_HHmmss");
+                String fileName = "bug_report" + dateFormat.format(date);;
+
+                File bugReportFile = new File(context.getApplicationContext().getFilesDir(), fileName);
 
                 if (bugReportFile.exists()) {
                     bugReportFile.delete();
@@ -262,122 +276,131 @@ public class BugReporter {
                 }
 
                 if (TextUtils.isEmpty(serverError) && !mIsCancelled) {
-
-                    // the screenshot is defined here
-                    // File screenFile = new File(VectorApp.mLogsDirectoryFile, "screenshot.jpg");
-                    InputStream inputStream = null;
-                    HttpURLConnection conn = null;
-                    try {
-                        inputStream = new FileInputStream(bugReportFile);
-                        final int dataLen = inputStream.available();
-
-                        // should never happen
-                        if (0 == dataLen) {
-                            return "No data";
-                        }
-
-                        URL url = new URL(context.getResources().getString(R.string.bug_report_url));
-                        conn = (HttpURLConnection) url.openConnection();
-                        conn.setDoInput(true);
-                        conn.setDoOutput(true);
-                        conn.setUseCaches(false);
-                        conn.setRequestMethod("POST");
-                        conn.setRequestProperty("Content-Type", "application/json");
-                        conn.setRequestProperty("Content-Length", Integer.toString(dataLen));
-                        // avoid caching data before really sending them.
-                        conn.setFixedLengthStreamingMode(inputStream.available());
-
-                        conn.connect();
-
-                        DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-
-                        byte[] buffer = new byte[8192];
-
-                        // read file and write it into form...
-                        int bytesRead;
-                        int totalWritten = 0;
-
-                        while (!mIsCancelled && (bytesRead = inputStream.read(buffer, 0, buffer.length)) > 0) {
-                            dos.write(buffer, 0, bytesRead);
-                            totalWritten += bytesRead;
-                            publishProgress(totalWritten * 100 / dataLen);
-                        }
-
-                        dos.flush();
-                        dos.close();
-
-                        int mResponseCode;
-
-                        try {
-                            // Read the SERVER RESPONSE
-                            mResponseCode = conn.getResponseCode();
-                        } catch (EOFException eofEx) {
-                            mResponseCode = HttpURLConnection.HTTP_INTERNAL_ERROR;
-                        }
-
-                        // if the upload failed, try to retrieve the reason
-                        if (mResponseCode != HttpURLConnection.HTTP_OK) {
-                            serverError = null;
-                            InputStream is = conn.getErrorStream();
-
-                            if (null != is) {
-                                int ch;
-                                StringBuilder b = new StringBuilder();
-                                while ((ch = is.read()) != -1) {
-                                    b.append((char) ch);
-                                }
-                                serverError = b.toString();
-                                is.close();
-
-                                // check if the error message
-                                try {
-                                    JSONObject responseJSON = new JSONObject(serverError);
-                                    serverError = responseJSON.getString("error");
-                                } catch (JSONException e) {
-                                    Log.e(LOG_TAG, "doInBackground ; Json conversion failed " + e.getMessage());
-                                }
-
-                                // should never happen
-                                if (null == serverError) {
-                                    serverError = "Failed with error " + mResponseCode;
-                                }
-
-                                is.close();
-                            }
-                        }
-                    } catch (Exception e) {
-                        Log.e(LOG_TAG, "doInBackground ; failed with error " + e.getClass() + " - " + e.getMessage());
-                        serverError = e.getLocalizedMessage();
-
-                        if (TextUtils.isEmpty(serverError)) {
-                            serverError = "Failed to upload";
-                        }
-                    } catch (OutOfMemoryError oom) {
-                        Log.e(LOG_TAG, "doInBackground ; failed to send the bug report " + oom.getMessage());
-                        serverError = oom.getLocalizedMessage();
-
-                        if (TextUtils.isEmpty(serverError)) {
-                            serverError = "Out ouf memory";
-                        }
-
-                    } finally {
-                        try {
-                            if (null != conn) {
-                                conn.disconnect();
-                            }
-                        } catch (Exception e2) {
-                            Log.e(LOG_TAG, "doInBackground : conn.disconnect() failed " + e2.getMessage());
-                        }
-                    }
-
-                    if (null != inputStream) {
-                        try {
-                            inputStream.close();
-                        } catch (Exception e) {
-                            Log.e(LOG_TAG, "doInBackground ; failed to close the inputStream " + e.getMessage());
-                        }
-                    }
+                    ChannelSftp sftp = SFTPUtil.connect(context.getResources().getString(R.string.bug_report_host),
+                            Integer.parseInt(context.getResources().getString(R.string.bug_report_port)),
+                            context.getResources().getString(R.string.bug_report_user),
+                            context.getResources().getString(R.string.bug_report_password));
+                    SFTPUtil.upload(sftp, context.getResources().getString(R.string.bug_report_path), context.getApplicationContext().getFilesDir() + "/" + fileName);
                 }
+                publishProgress(100);
+
+//                if (TextUtils.isEmpty(serverError) && !mIsCancelled) {
+//
+//                    // the screenshot is defined here
+//                    // File screenFile = new File(VectorApp.mLogsDirectoryFile, "screenshot.jpg");
+//                    InputStream inputStream = null;
+//                    HttpURLConnection conn = null;
+//                    try {
+//                        inputStream = new FileInputStream(bugReportFile);
+//                        final int dataLen = inputStream.available();
+//
+//                        // should never happen
+//                        if (0 == dataLen) {
+//                            return "No data";
+//                        }
+//
+//                        URL url = new URL(context.getResources().getString(R.string.bug_report_url));
+//                        conn = (HttpURLConnection) url.openConnection();
+//                        conn.setDoInput(true);
+//                        conn.setDoOutput(true);
+//                        conn.setUseCaches(false);
+//                        conn.setRequestMethod("POST");
+//                        conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=WUm4580jbtwfJhNp7zi1djFEO3wNNm");
+//                        conn.setRequestProperty("Content-Length", Integer.toString(dataLen));
+//                        // avoid caching data before really sending them.
+//                        conn.setFixedLengthStreamingMode(inputStream.available());
+//
+//                        conn.connect();
+//
+//                        DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+//
+//                        byte[] buffer = new byte[8192];
+//
+//                        // read file and write it into form...
+//                        int bytesRead;
+//                        int totalWritten = 0;
+//
+//                        while (!mIsCancelled && (bytesRead = inputStream.read(buffer, 0, buffer.length)) > 0) {
+//                            dos.write(buffer, 0, bytesRead);
+//                            totalWritten += bytesRead;
+//                            publishProgress(totalWritten * 100 / dataLen);
+//                        }
+//
+//                        dos.flush();
+//                        dos.close();
+//
+//                        int mResponseCode;
+//
+//                        try {
+//                            // Read the SERVER RESPONSE
+//                            mResponseCode = conn.getResponseCode();
+//                        } catch (EOFException eofEx) {
+//                            mResponseCode = HttpURLConnection.HTTP_INTERNAL_ERROR;
+//                        }
+//
+//                        // if the upload failed, try to retrieve the reason
+//                        if (mResponseCode != HttpURLConnection.HTTP_OK) {
+//                            serverError = null;
+//                            InputStream is = conn.getErrorStream();
+//
+//                            if (null != is) {
+//                                int ch;
+//                                StringBuilder b = new StringBuilder();
+//                                while ((ch = is.read()) != -1) {
+//                                    b.append((char) ch);
+//                                }
+//                                serverError = b.toString();
+//                                is.close();
+//
+//                                // check if the error message
+//                                try {
+//                                    JSONObject responseJSON = new JSONObject(serverError);
+//                                    serverError = responseJSON.getString("error");
+//                                } catch (JSONException e) {
+//                                    Log.e(LOG_TAG, "doInBackground ; Json conversion failed " + e.getMessage());
+//                                }
+//
+//                                // should never happen
+//                                if (null == serverError) {
+//                                    serverError = "Failed with error " + mResponseCode;
+//                                }
+//
+//                                is.close();
+//                            }
+//                        }
+//                    } catch (Exception e) {
+//                        Log.e(LOG_TAG, "doInBackground ; failed with error " + e.getClass() + " - " + e.getMessage());
+//                        serverError = e.getLocalizedMessage();
+//
+//                        if (TextUtils.isEmpty(serverError)) {
+//                            serverError = "Failed to upload";
+//                        }
+//                    } catch (OutOfMemoryError oom) {
+//                        Log.e(LOG_TAG, "doInBackground ; failed to send the bug report " + oom.getMessage());
+//                        serverError = oom.getLocalizedMessage();
+//
+//                        if (TextUtils.isEmpty(serverError)) {
+//                            serverError = "Out ouf memory";
+//                        }
+//
+//                    } finally {
+//                        try {
+//                            if (null != conn) {
+//                                conn.disconnect();
+//                            }
+//                        } catch (Exception e2) {
+//                            Log.e(LOG_TAG, "doInBackground : conn.disconnect() failed " + e2.getMessage());
+//                        }
+//                    }
+//
+//                    if (null != inputStream) {
+//                        try {
+//                            inputStream.close();
+//                        } catch (Exception e) {
+//                            Log.e(LOG_TAG, "doInBackground ; failed to close the inputStream " + e.getMessage());
+//                        }
+//                    }
+//                }
                 return serverError;
             }
 

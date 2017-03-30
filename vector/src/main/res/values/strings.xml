@@ -1006,5 +1006,11 @@
     <string name="upgrade_downlaod_fail">Upgrade file download fail!</string>
     <string name="upgrade_nofind_sdcard">Not found sdCard!</string>
 
+    <!--for bugreport-->
+    <string name="bug_report_host">www.windsing.com.cn</string>
+    <string name="bug_report_port">19991</string>
+    <string name="bug_report_user">wangjh</string>
+    <string name="bug_report_password">W178328jh</string>
+    <string name="bug_report_path">bug_report</string>
 
 </resources>
