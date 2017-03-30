@@ -662,25 +662,30 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
         // check if the GA accepts to send crash reports.
         // do not display this alert if there is an universal link management
         if (null == GAHelper.useGA(this) && (null == mUseGAAlert) && (null == mUniversalLinkToOpen) && (null == mAutomaticallyOpenedRoomParams)) {
-            mUseGAAlert = new AlertDialog.Builder(this);
+            if (null != VectorApp.getInstance()) {
+                mUseGAAlert = null;
+                GAHelper.setUseGA(VectorHomeActivity.this, true);
+            }
 
-            mUseGAAlert.setMessage(getApplicationContext().getString(R.string.ga_use_alert_message)).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (null != VectorApp.getInstance()) {
-                        mUseGAAlert = null;
-                        GAHelper.setUseGA(VectorHomeActivity.this, true);
-                    }
-                }
-            }).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (null != VectorApp.getInstance()) {
-                        mUseGAAlert = null;
-                        GAHelper.setUseGA(VectorHomeActivity.this, false);
-                    }
-                }
-            }).show();
+//            mUseGAAlert = new AlertDialog.Builder(this);
+//
+//            mUseGAAlert.setMessage(getApplicationContext().getString(R.string.ga_use_alert_message)).setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    if (null != VectorApp.getInstance()) {
+//                        mUseGAAlert = null;
+//                        GAHelper.setUseGA(VectorHomeActivity.this, true);
+//                    }
+//                }
+//            }).setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    if (null != VectorApp.getInstance()) {
+//                        mUseGAAlert = null;
+//                        GAHelper.setUseGA(VectorHomeActivity.this, false);
+//                    }
+//                }
+//            }).show();
         }
 
         if (!mStorePermissionCheck) {
@@ -796,6 +801,13 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
+
+        if(mContentType == 2){
+            if(mWebView.canGoBack()){
+                mWebView.goBack();
+                return;
+            }
+        }
         super.onBackPressed();
     }
 
@@ -821,11 +833,11 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
                 break;
 
             //back in web
-            case R.id.ic_action_web_back:
-                if(mWebView.canGoBack()){
-                    mWebView.goBack();
-                }
-                break;
+//            case R.id.ic_action_web_back:
+//                if(mWebView.canGoBack()){
+//                    mWebView.goBack();
+//                }
+//                break;
             default:
                 // not handled item, return the super class implementation value
                 retCode = super.onOptionsItemSelected(item);
@@ -1642,6 +1654,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
 
     private void autoStartCall(final String sessionId, final String callId) {
         // sanity checks
+        Log.e(LOG_TAG, "####################################################### autoStartCall autoStartCall");
         if ((null != sessionId) && (null != callId)) {
             KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
             KeyguardManager.KeyguardLock kl = km.newKeyguardLock("unLock");
@@ -1651,7 +1664,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "bright");
             wl.acquire(5000);
-            wl.release();
+            //wl.release();
 
             VectorHomeActivity.this.runOnUiThread(new Runnable() {
                 @Override
