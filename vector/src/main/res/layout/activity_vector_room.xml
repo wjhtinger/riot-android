@@ -322,7 +322,8 @@
                 android:layout_marginLeft="13dp"
                 android:layout_height="1dp"
                 android:layout_above="@id/room_notifications_area"
-                android:background="@color/vector_light_gray_color" />
+                android:background="@color/vector_light_gray_color"
+                android:visibility="gone"/>
 
             <RelativeLayout
                 android:layout_alignParentTop="true"
