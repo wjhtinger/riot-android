@@ -980,7 +980,7 @@
     <string name="settings_enable_audio_detecting">Enable audion detecting</string>
     <string name="settings_enable_timer_detecting">Enable timer detecting</string>
     <string name="settings_enable_face_detecting">Enable face detecting</string>
-    <string name="settings_enable_del_local_file">Not save local detecting file</string>
+    <string name="settings_enable_save_local_file">Not save local detecting file</string>
 
     <string name="settings_summary_ga_use_settings">Automatically send crash report to server.</string>
     <string name="room_settings_summary_directory_visibility">Anyone can find this room.</string>
