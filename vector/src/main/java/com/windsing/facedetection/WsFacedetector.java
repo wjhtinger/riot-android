@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.faceplusplus.api.FaceDetecter;
 import com.faceplusplus.api.FaceDetecter.Face;
 import com.windsing.DetectManager;
+import com.windsing.common.AudioControl;
 import com.windsing.common.FileControl;
 
 import im.vector.R;
@@ -389,6 +390,7 @@ public class WsFacedetector implements SurfaceHolder.Callback {
         }
         runingFlg = true;
 
+        AudioControl.setMediaMute(mContext, true);
         facedetecter = new FaceDetecter();
         facedetecter.init(mContext, Global.FACEPP_KEY);
         facedetecter.setTrackingMode(true);
@@ -410,6 +412,7 @@ public class WsFacedetector implements SurfaceHolder.Callback {
             return -1;
         }
 
+        AudioControl.setMediaMute(mContext, false);
         hidePreviewDialog();
 
         if(facedetecter != null){

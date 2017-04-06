@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.jjoe64.motiondetection.motiondetection.MotionDetector;
+import com.windsing.common.AudioControl;
 import com.windsing.common.FileControl;
 import com.windsing.mediarecorder.ImMediaRecorderCallback;
 
@@ -248,6 +249,7 @@ public class TimerDetector {
             return -1;
         }
 
+        AudioControl.setMediaMute(mContext, true);
         if(mContentType == 1){
             mRecorder = new MediaRecorder();
         }
@@ -271,7 +273,7 @@ public class TimerDetector {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        AudioControl.setMediaMute(mContext, false);
         mWorker.stopThread();
         if(mContentType == 1) {
             mRecorder.release();
