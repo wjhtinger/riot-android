@@ -167,8 +167,6 @@ public class DetectManager {
                         break;
                 }
             }
-
-            delLocalMedia(file);
         }
     }
 
@@ -254,14 +252,6 @@ public class DetectManager {
 
         en = Matrix.getInstance(mContext).getSharedGCMRegistrationManager().isFunctionEnable(str);
         return en;
-    }
-
-    private void delLocalMedia(String file){
-        if (Matrix.getInstance(mContext).getSharedGCMRegistrationManager().isFunctionEnable(mContext.getString(R.string.settings_enable_save_local_file))){
-            return;
-        }
-
-        FileControl.delFile(file);
     }
 
     private void sendMsg(MXSession session, Room room, String bodyString){

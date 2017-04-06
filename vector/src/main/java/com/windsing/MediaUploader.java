@@ -11,6 +11,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.windsing.common.FileControl;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.crypto.MXEncryptedAttachments;
@@ -32,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import im.vector.Matrix;
+import im.vector.R;
 import im.vector.util.ResourceUtils;
 
 /**
@@ -40,6 +42,14 @@ import im.vector.util.ResourceUtils;
 
 public class MediaUploader {
     private static final String LOG_TAG = "MediaUploader";
+
+    static void delLocalMedia(Context context, String file){
+        if (Matrix.getInstance(context).getSharedGCMRegistrationManager().isFunctionEnable(context.getString(R.string.settings_enable_save_local_file))){
+            return;
+        }
+
+        FileControl.delFile(file);
+    }
 
     static void roomSendEvent(Room room, Event event){
         room.storeOutgoingEvent(event);
@@ -67,7 +77,7 @@ public class MediaUploader {
     }
 
 
-    static void fileUploader(final Context context, final MXSession session, final Room room, String file){
+    static void fileUploader(final Context context, final MXSession session, final Room room, final String file){
         InputStream audioStream = null;
         try {
             audioStream = new FileInputStream(new File(file));
@@ -87,6 +97,7 @@ public class MediaUploader {
 
             @Override
             public void onUploadError(final String uploadId, final int serverResponseCode, final String serverErrorMessage) {
+                delLocalMedia(context, file);
             }
 
             @Override
@@ -99,12 +110,14 @@ public class MediaUploader {
                 Event newEvent = new Event(fileMessage, session.getCredentials().userId, room.getRoomId());
                 newEvent.mSentState = Event.SentState.SENDING;
                 roomSendEvent(room, newEvent);
+
+                delLocalMedia(context, file);
             }
         });
     }
 
 
-    static void audioUploader(final Context context, final MXSession session, final Room room, String file){
+    static void audioUploader(final Context context, final MXSession session, final Room room, final String file){
         InputStream audioStream = null;
         try {
             audioStream = new FileInputStream(new File(file));
@@ -124,6 +137,7 @@ public class MediaUploader {
 
             @Override
             public void onUploadError(final String uploadId, final int serverResponseCode, final String serverErrorMessage) {
+                delLocalMedia(context, file);
             }
 
             @Override
@@ -136,6 +150,8 @@ public class MediaUploader {
                 Event newEvent = new Event(audioMessage, session.getCredentials().userId, room.getRoomId());
                 newEvent.mSentState = Event.SentState.SENDING;
                 roomSendEvent(room, newEvent);
+
+                delLocalMedia(context, file);
             }
         });
     }
@@ -264,6 +280,7 @@ public class MediaUploader {
             @Override
             public void onUploadError(final String uploadId, final int serverResponseCode, final String serverErrorMessage) {
                 Log.e(LOG_TAG, "pictureUploaderwithThumb uploadContent error!");
+                delLocalMedia(context, anImageUrl.replace("file://", ""));
             }
 
             @Override
@@ -299,6 +316,8 @@ public class MediaUploader {
                     newEvent.mSentState = Event.SentState.SENDING;
                     newEvent.updateContent(JsonUtils.toJson(fImageMessage));
                     roomSendEvent(room, newEvent);
+
+                    delLocalMedia(context, anImageUrl.replace("file://", ""));
                 }
             }
         });
@@ -361,6 +380,7 @@ public class MediaUploader {
 
             @Override
             public void onUploadError(final String uploadId, final int serverResponseCode, final String serverErrorMessage) {
+                delLocalMedia(context, videoUrl.replace("file://", ""));
             }
 
             @Override
@@ -373,6 +393,7 @@ public class MediaUploader {
                     newEvent.mSentState = Event.SentState.SENDING;
                     newEvent.updateContent(JsonUtils.toJson(finalVideoMessage));
                     roomSendEvent(room, newEvent);
+	                delLocalMedia(context, videoUrl.replace("file://", ""));
                 } else {
                     finalVideoMessage.info.thumbnail_url = contentUri;
                     Matrix.getInstance(context).getMediasCache().saveFileMediaForUrl(contentUri, thumbnailUrl, -1, -1, thumbnailMimeType, true);
