@@ -963,6 +963,7 @@
     <string name="detect_echo_status_running_forStart">%s detecting is runing now, please turnoff it firstly!</string>
     <string name="detect_echo_notenable">%s is forbiden in setting.</string>
     <string name="detect_echo_call_ison">in calling, all detecting is forbiden！</string>
+    <string name="detect_echo_face_videocall_member_limit">video call only canbe started in the two members room！</string>
 
     <string name="detect_dialog_start">Start</string>
     <string name="detect_dialog_stop">Stop</string>

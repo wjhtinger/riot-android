@@ -525,6 +525,14 @@ public class DetectManager {
             return;
         }
 
+        if(content == detectContent_type.VIDEO_CALL){
+            List members = (List) room.getJoinedMembers();
+            if(members.size() > 2){
+                sendMsg(session, room, mContext.getResources().getString(R.string.detect_echo_face_videocall_member_limit));
+                return;
+            }
+        }
+
         if (mFaceDetector == null) {
             mFaceDetector = new WsFacedetector(mContext, new WsFacedetectorCallback() {
                 @Override
@@ -559,6 +567,10 @@ public class DetectManager {
                     if(type == 1){
                         mDetectEnvFace.envHandle(detectContent_type.VIDEO, file);
                     }
+
+                    KeyguardManager km = (KeyguardManager)mContext.getSystemService(Context.KEYGUARD_SERVICE);
+                    KeyguardManager.KeyguardLock kl = km.newKeyguardLock("Lock");
+                    kl.reenableKeyguard();
                 }
 
                 @Override
@@ -573,7 +585,10 @@ public class DetectManager {
         //VIDEO_CALL只能允许一个房间
         if(content == detectContent_type.VIDEO_CALL){
             if(mDetectEnvFace.getRoomNum() > 0){
-                sendMsg(session, mDetectEnvFace.getRoom(0), mContext.getResources().getString(R.string.detect_echo_removed, mContext.getResources().getString(R.string.detect_face)));
+                Room currentRoom = mDetectEnvFace.getRoom(0);
+                if(currentRoom != room){
+                    sendMsg(session, mDetectEnvFace.getRoom(0), mContext.getResources().getString(R.string.detect_echo_removed, mContext.getResources().getString(R.string.detect_face)));
+                }
                 mDetectEnvFace.remove(session, mDetectEnvFace.getRoom(0));
             }
         }

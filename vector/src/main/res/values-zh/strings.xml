@@ -126,7 +126,7 @@
 
     <string name="my_rooms">My rooms</string>
     <string name="create_room">Create Room</string>
-    <string name="join_room">确认</string>
+    <string name="join_room">加入</string>
     <string name="create">Create:</string>
     <string name="sign_in">Sign in</string>
     <string name="username">Username</string>
@@ -269,15 +269,15 @@
     <string name="choose_account">Choose account</string>
 
     <!-- image size selection -->
-    <string name="compression_options">Send as </string>
-    <string name="compression_opt_list_original">Original</string>
-    <string name="compression_opt_list_large">Large</string>
-    <string name="compression_opt_list_medium">Medium</string>
-    <string name="compression_opt_list_small">Small</string>
+    <string name="compression_options">选择图片发送尺寸</string>
+    <string name="compression_opt_list_original">原始</string>
+    <string name="compression_opt_list_large">大</string>
+    <string name="compression_opt_list_medium">中</string>
+    <string name="compression_opt_list_small">小</string>
 
     <!-- media upload / download messages -->
-    <string name="attachment_cancel_download">"Cancel the download?</string>
-    <string name="attachment_cancel_upload">Cancel the upload?</string>
+    <string name="attachment_cancel_download">"取消下载?</string>
+    <string name="attachment_cancel_upload">取消上传?</string>
     <string name="attachment_remaining_time_seconds">%d s</string>
     <string name="attachment_remaining_time_minutes">%1$dm %2$ds</string>
 
@@ -525,7 +525,7 @@
     <string name="room_participants_action_start_video_call">视频通话</string>
     <string name="room_participants_action_ignore">屏蔽该成员所有信息</string>
     <string name="room_participants_action_unignore">取消屏蔽信息</string>
-    <string name="room_participants_invite_search_another_user">User ID, Name or email</string>
+    <string name="room_participants_invite_search_another_user">朋友账号或名字</string>
     <string name="room_participants_action_mention">引用</string>
     <string name="room_participants_action_devices_list">Show Device List</string>
     <string name="room_participants_power_level_prompt">这将设置该成员和你一样高的权限，该操作不可逆。\n确认这么做吗?</string>
@@ -671,7 +671,7 @@
 
     <string name="settings_sign_out">退出</string>
     <string name="settings_profile_picture">头像</string>
-    <string name="settings_display_name">显示名称</string>
+    <string name="settings_display_name">显示名子</string>
     <string name="settings_first_name">First Name</string>
     <string name="settings_surname">Surname</string>
     <string name="settings_email_address">Email</string>
@@ -706,7 +706,7 @@
     <string name="settings_third_party_notices">Third party notices</string>
     <string name="settings_copyright">Copyright</string>
     <string name="settings_privacy_policy">Privacy policy</string>
-    <string name="settings_clear_cache">清除本地缓存</string>
+    <string name="settings_clear_cache">清除缓存数据</string>
     <!--string name="settings_room_privacy_label">Privacy</string-->
 
 
@@ -961,8 +961,9 @@
     <string name="detect_echo_status_notrunning">%s未启动.</string>
     <string name="detect_echo_status_all_notrunning">当前没有监控功能在运行.</string>
     <string name="detect_echo_status_running_forStart">%s已经在运行,请先停止才能启动其他监控功能!</string>
-    <string name="detect_echo_notenable">%s功能被设置为禁制使用.</string>
+    <string name="detect_echo_notenable">%s功能设置为不允许开启.</string>
     <string name="detect_echo_call_ison">正在语音通话中，禁制所有监控功能！</string>
+    <string name="detect_echo_face_videocall_member_limit">发起视频通话模式只允许在两个人的房间启动！</string>
 
 
     <string name="detect_dialog_start">启动</string>
@@ -977,11 +978,11 @@
     <string name="settings_enable_call_auto_answer">自动应答</string>
     <string name="settings_enable_call_switch_camera">允许对方切换本机摄像头</string>
     <string name="settings_monitoring">监控功能</string>
-    <string name="settings_enable_monitoring">开启监控功能</string>
-    <string name="settings_enable_motion_detecting">动作监控</string>
-    <string name="settings_enable_audio_detecting">声音监控</string>
-    <string name="settings_enable_timer_detecting">定时监控</string>
-    <string name="settings_enable_face_detecting">人脸识别</string>
+    <string name="settings_enable_monitoring">进入监控模式</string>
+    <string name="settings_enable_motion_detecting">允许动作监控</string>
+    <string name="settings_enable_audio_detecting">允许声音监控</string>
+    <string name="settings_enable_timer_detecting">允许定时监控</string>
+    <string name="settings_enable_face_detecting">允许人脸识别</string>
     <string name="settings_enable_save_local_file">保存监控数据（图片、视频、音频）在手机</string>
 
     <string name="settings_summary_ga_use_settings">程序意外崩溃时自动发送上下文信息给服务器，用于查找原因，改善程序。</string>
