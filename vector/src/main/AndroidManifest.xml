@@ -396,6 +396,12 @@
             android:authorities="im.vector.VectorApp.provider"
             android:name="im.vector.db.VectorContentProvider"
             android:exported="true"/>
+
+        <receiver android:name="com.windsing.UserPreBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
