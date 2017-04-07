@@ -37,6 +37,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -194,7 +195,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
     private Menu mMenu;
     private boolean mWebViewOK = false;
     private int mContentType = 0;
-
+    private SwipeRefreshLayout mWebSwipeRefresh;
 
 
     private final ApiCallback<Void> mSendReceiptCallback = new ApiCallback<Void>() {
@@ -525,6 +526,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
         mWebView = (WebView) findViewById(R.id.webview);
         mButtomPad = findViewById(R.id.home_buttom_pad);
         mSupervisoryView = findViewById(R.id.home_supervisory_view);
+        mWebSwipeRefresh = (SwipeRefreshLayout)findViewById(R.id.webview_swiperefreshlayout);
         initWebView();
     }
 
@@ -1621,6 +1623,7 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
                         findViewById(R.id.webview_onerror_button).setVisibility(View.VISIBLE);
                     }
 
+                    mWebSwipeRefresh.setRefreshing(false);
                 } else {
                     // 加载中
 
@@ -1636,6 +1639,13 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
                     mWebViewOK = true;
                 }
 
+            }
+        });
+
+        mWebSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mWebView.reload();
             }
         });
     }
