@@ -7,6 +7,7 @@ import android.util.Log;
 
 import im.vector.Matrix;
 import im.vector.R;
+import im.vector.VectorApp;
 
 /**
  * Created by New on 2017/2/23.
@@ -21,7 +22,8 @@ public class UserPreBroadcastReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(ACTION)) {
             Log.d(LOG_TAG, "Load windsing!");
 
-            if(!Matrix.getInstance(context).getSharedGCMRegistrationManager().isFunctionEnable(context.getString(R.string.settings_enable_monitoring))){
+            if(!Matrix.getInstance(context).getSharedGCMRegistrationManager().isFunctionEnable(context.getString(R.string.settings_enable_monitoring)) ||
+                    !VectorApp.isAppInBackground()){
                 return;
             }
 

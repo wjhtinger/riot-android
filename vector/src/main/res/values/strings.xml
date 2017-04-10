@@ -995,7 +995,7 @@
     <string name="home_supervisory_notice1">Now in supervisory mode，all IM functions are forbiden.</string>
     <string name="home_supervisory_notice2">Please enter setting menu to turn off supervisory mode.</string>
     <string name="home_supervisory_textshow">On Intenet, no one know you are a webcam...</string>
-    <string name="home_webview_onerror_textshow">Data on loading...</string>
+    <string name="home_webview_onerror_textshow">Data loading fail...</string>
 
     <!--for upgrade-->
     <string name="upgrade_yes">Upgrade</string>

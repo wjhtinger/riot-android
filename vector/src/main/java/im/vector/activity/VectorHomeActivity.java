@@ -1669,12 +1669,12 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
             KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
             KeyguardManager.KeyguardLock kl = km.newKeyguardLock("unLock");
             kl.disableKeyguard();
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "bright");
-            wl.acquire(5000);
-            //wl.release();
+            wl.acquire();
+            wl.release();
 
             VectorHomeActivity.this.runOnUiThread(new Runnable() {
                 @Override

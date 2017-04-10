@@ -957,7 +957,7 @@
     <string name="detect_echo_restop">%s未启动.</string>
     <string name="detect_echo_exit">退出%s.</string>
     <string name="detect_echo_removed">注意：%s功能被其他房间抢走.</string>
-    <string name="detect_echo_status_running">%s已启动.</string>
+    <string name="detect_echo_status_running">%s正在运行.</string>
     <string name="detect_echo_status_notrunning">%s未启动.</string>
     <string name="detect_echo_status_all_notrunning">当前没有监控功能在运行.</string>
     <string name="detect_echo_status_running_forStart">%s已经在运行,请先停止才能启动其他监控功能!</string>
@@ -997,7 +997,7 @@
     <string name="home_supervisory_notice1">现在程序处于监控模式，所有IM功能停止使用。</string>
     <string name="home_supervisory_notice2">要关闭监控模式请进入左上角菜单设置。</string>
     <string name="home_supervisory_textshow">互联网上，没人知道你是一个摄像头...</string>
-    <string name="home_webview_onerror_textshow">数据加载中，请稍后...</string>
+    <string name="home_webview_onerror_textshow">数据加载中失败，网络连接有问题？</string>
 
     <!--for upgrade-->
     <string name="upgrade_yes">升级</string>

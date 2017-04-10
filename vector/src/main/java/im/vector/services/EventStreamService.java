@@ -107,7 +107,7 @@ public class EventStreamService extends Service {
      * 1- the client uses GCM but the third party server registration fails
      * 2- the client does not use GCM.
      */
-    private static final String NOTIFICATION_SUB_TITLE = "Listening for events";
+    private static final String NOTIFICATION_SUB_TITLE = "";
 
     /**
      * Parameters to the service
@@ -736,10 +736,10 @@ public class EventStreamService extends Service {
 
         // build the notification builder
         NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(this);
-        //notifBuilder.setSmallIcon(R.drawable.permanent_notification_transparent);
+        notifBuilder.setSmallIcon(R.drawable.permanent_notification_transparent);
         notifBuilder.setWhen(System.currentTimeMillis());
-        //notifBuilder.setContentTitle(getString(R.string.app_name));
-        //notifBuilder.setContentText(NOTIFICATION_SUB_TITLE);
+        notifBuilder.setContentTitle(getString(R.string.app_name));
+        notifBuilder.setContentText(NOTIFICATION_SUB_TITLE);
         notifBuilder.setContentIntent(pi);
 
         // hide the notification from the status bar
@@ -1237,7 +1237,7 @@ public class EventStreamService extends Service {
         if(!cmd.substring(0, 9).equals(getResources().getString(R.string.tag_message_command))) {
             return;
         }
-
+        Log.d(LOG_TAG,"##### wsCmdHandle:" + cmd);
         if (Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_monitoring))) {
             DetectManager.instance(getApplicationContext()).detectHandle(session, session.getDataHandler().getRoom(event.roomId), cmd);
         }
