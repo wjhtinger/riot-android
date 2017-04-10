@@ -22,6 +22,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
 
+import com.windsing.common.CameraControl;
 import com.windsing.common.FileControl;
 
 import java.io.File;
@@ -518,9 +519,9 @@ public class MotionDetector {
         // 3.1 Video Settings
         recorder.setVideoSize(1280, 720);
         recorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-        recorder.setVideoEncodingBitRate(500000);
+        recorder.setVideoEncodingBitRate(1024 * 1024 * 2);
         recorder.setVideoFrameRate(15);
-        recorder.setOrientationHint(270);
+        recorder.setOrientationHint(CameraControl.getVideoRotation(mContext, cameraId));
         // 3.2 Audio Settings
         recorder.setAudioChannels(1);
         recorder.setAudioSamplingRate(44100);
