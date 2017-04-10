@@ -2,17 +2,24 @@ package com.windsing.timerdetection;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.media.ExifInterface;
 import android.media.MediaRecorder;
 import android.opengl.GLES11Ext;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Surface;
+import android.view.WindowManager;
 
 import com.jjoe64.motiondetection.motiondetection.MotionDetector;
 import com.windsing.common.AudioControl;
+import com.windsing.common.CameraControl;
 import com.windsing.common.FileControl;
 import com.windsing.mediarecorder.ImMediaRecorderCallback;
 
@@ -22,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -155,6 +163,8 @@ public class TimerDetector {
             parameters.setPictureFormat(PixelFormat.JPEG);
             parameters.setPictureSize(mVideoWidth, mVideoHeight);
             parameters.setPreviewFrameRate(mVideoFrameRate);
+            parameters.setRotation(CameraControl.getPhotoRotation(mContext, cameraId));
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
             mCamera.setParameters(parameters);
         }
     }
@@ -168,12 +178,89 @@ public class TimerDetector {
         }
     }
 
+    private int getPhotoRotation(Context context, int cameraId){
+        android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(cameraId, info);
+
+        WindowManager wmManager=(WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE);
+        int rotation = wmManager.getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0: degrees = 0; break; // portrait
+            case Surface.ROTATION_90: degrees = 90; break; // landscape
+            case Surface.ROTATION_180: degrees = 180; break;
+            case Surface.ROTATION_270: degrees = 270; break; // landscape
+        }
+
+        int previewRotation;
+        int imageRotation;
+
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            imageRotation = previewRotation = (info.orientation + degrees) % 360;
+            previewRotation = (360 - previewRotation) % 360;  // compensate the mirror
+        } else {  // back-facing
+            imageRotation = previewRotation = (info.orientation - degrees + 360) % 360;
+        }
+
+        return imageRotation;
+    }
+
     private void takePicture(){
         safeToTakePicture = false;
         initCamera();
         fileString = FileControl.getFileString("Timerdetector", "Timer") + ".jpg";
         mCamera.startPreview();
-        mCamera.takePicture(null, null, new TimerDetector.PhotoHandler());
+        //mCamera.takePicture(null, null, new TimerDetector.PhotoHandler());
+
+
+        try {
+            List<String> supportedFocusModes = null;
+            if (null != mCamera.getParameters()) {
+                supportedFocusModes = mCamera.getParameters().getSupportedFocusModes();
+            }
+            Log.d(LOG_TAG, "onClickTakeImage : supported focus modes " + supportedFocusModes);
+
+            if ((null != supportedFocusModes) && (supportedFocusModes.indexOf(Camera.Parameters.FOCUS_MODE_AUTO) >= 0)) {
+                Log.d(LOG_TAG, "onClickTakeImage : autofocus starts");
+                mCamera.autoFocus(new Camera.AutoFocusCallback() {
+                    public void onAutoFocus(boolean success, Camera camera) {
+                        if (!success) {
+                            Log.e(LOG_TAG, "## autoFocus(): fails");
+                        } else {
+                            Log.d(LOG_TAG, "## autoFocus(): succeeds");
+                        }
+                        mCamera.takePicture(null, null, new TimerDetector.PhotoHandler());
+                    }
+                });
+            } else {
+                Log.d(LOG_TAG, "onClickTakeImage : no autofocus : take photo");
+                mCamera.takePicture(null, null, new TimerDetector.PhotoHandler());
+            }
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "## autoFocus(): EXCEPTION Msg=" + e.getMessage());
+            mCamera.takePicture(null, null, new TimerDetector.PhotoHandler());
+        }
+    }
+
+    private int getVideoRotation(Context context, int cameraId) {
+        android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(cameraId, info);
+
+        WindowManager wmManager=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        int rotation = wmManager.getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0: degrees = 0; break;
+            case Surface.ROTATION_90: degrees = 90; break;
+            case Surface.ROTATION_180: degrees = 180; break;
+            case Surface.ROTATION_270: degrees = 270; break;
+        }
+
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            return (info.orientation + degrees) % 360;
+        } else {  // back-facing
+            return (info.orientation - degrees + 360) % 360;
+        }
     }
 
     private void takeVideo(){
@@ -188,10 +275,11 @@ public class TimerDetector {
         mRecorder.setVideoFrameRate(mVideoFrameRate);
         mRecorder.setVideoSize(mVideoWidth, mVideoHeight);
         mRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-        mRecorder.setVideoEncodingBitRate(1024 * 400);
-        mRecorder.setOrientationHint(270);
+        //mRecorder.setVideoEncodingBitRate(1024 * 400);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
         //mRecorder.setMaxDuration(1000 * 5);  //8MB大小
+        mRecorder.setProfile(CameraControl.getCamcorderProfile(cameraId));
+        mRecorder.setOrientationHint(CameraControl.getVideoRotation(mContext, cameraId));
         fileString = FileControl.getFileString("Timerdetector", "Timer") + ".mp4";
         mRecorder.setOutputFile(fileString);
         try {
