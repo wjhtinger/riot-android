@@ -147,7 +147,8 @@ public class DetectManager {
             for(Room room: mRoom){
                 switch (content_type){
                     case PICTURE:
-                        MediaUploader.pictureUploaderwithThumb(mContext, mSession, room, null, null, "file://" + file, file.substring(file.lastIndexOf("/") + 1), "image/jpeg");
+                        //MediaUploader.pictureUploaderwithThumb(mContext, mSession, room, null, null, "file://" + file, file.substring(file.lastIndexOf("/") + 1), "image/jpeg");
+                        MediaUploader.pictureUploader(mContext, mSession, room, file);
                         break;
 
                     case VIDEO:

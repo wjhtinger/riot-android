@@ -25,6 +25,7 @@ import org.matrix.androidsdk.rest.model.ImageMessage;
 import org.matrix.androidsdk.rest.model.MatrixError;
 import org.matrix.androidsdk.rest.model.Message;
 import org.matrix.androidsdk.rest.model.VideoMessage;
+import org.matrix.androidsdk.util.ImageUtils;
 import org.matrix.androidsdk.util.JsonUtils;
 
 import java.io.File;
@@ -156,15 +157,27 @@ public class MediaUploader {
         });
     }
 
-    static void pictureUploader(final Context context, final MXSession session, final Room room, String file){
+    static void pictureUploader(final Context context, final MXSession session, final Room room, final String file){
+        int rotationAngle = ImageUtils.getRotationAngleForBitmap(context, Uri.parse("file://" + file));
+        Log.d(LOG_TAG, "pictureUploader rotationAngle:" + rotationAngle);
+        if (0 != rotationAngle) {
+            ImageUtils.rotateImage(context, "file://" + file, rotationAngle, session.getMediasCache());
+        }
+
+        final String fileName= file.substring(file.lastIndexOf("/") + 1);
+        final String url = " file://" + file;
+        final ImageMessage imageMessage = new ImageMessage();
+        imageMessage.url = url;
+        imageMessage.thumbnailUrl = null;
+        imageMessage.body = fileName;
+        Room.fillImageInfo(context, imageMessage, Uri.parse(url), "image/jpeg");
+
         InputStream imageStream = null;
         try {
             imageStream = new FileInputStream(new File(file));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        final String fileName= file.substring(file.lastIndexOf("/") + 1);
-        final String url = " file://" + file;
         session.getMediasCache().uploadContent(imageStream, fileName, "image/jpeg", url, new MXMediaUploadListener() {
             @Override
             public void onUploadStart(String uploadId) {
@@ -176,19 +189,20 @@ public class MediaUploader {
 
             @Override
             public void onUploadError(final String uploadId, final int serverResponseCode, final String serverErrorMessage) {
+                delLocalMedia(context, file);
             }
 
             @Override
             public void onUploadComplete(final String uploadId, final String contentUri) {
-                ImageMessage imageMessage = new ImageMessage();
                 imageMessage.url = contentUri;
-                imageMessage.thumbnailUrl = null;
-                imageMessage.body = fileName;
-                Room.fillImageInfo(context, imageMessage, Uri.parse(uploadId), "image/jpeg");
 
                 Event newEvent = new Event(imageMessage, session.getCredentials().userId, room.getRoomId());
+                room.storeOutgoingEvent(newEvent);
                 newEvent.mSentState = Event.SentState.SENDING;
+                newEvent.updateContent(JsonUtils.toJson(imageMessage));
                 roomSendEvent(room, newEvent);
+
+                delLocalMedia(context, file);
             }
         });
     }
@@ -211,25 +225,23 @@ public class MediaUploader {
         MXEncryptedAttachments.EncryptionResult encryptionResult = null;
         InputStream imageStream = null;
         String url = null;
+        String filename;
 
         try {
             Uri imageUri = Uri.parse(anImageUrl);
+            Uri thumbUri = Uri.parse(thumbnailUrl);
 
             if (null == imageMessage.info) {
                 Room.fillImageInfo(context, imageMessage, imageUri, imageMimeType);
             }
-
             if ((null != thumbnailUrl) && (null == imageMessage.thumbnailInfo)) {
-                Uri thumbUri = Uri.parse(thumbnailUrl);
                 Room.fillThumbnailInfo(context, imageMessage, thumbUri, "image/jpeg");
             }
-
-            String filename;
 
             if (imageMessage.isThumbnailLocalContent()) {
                 url = thumbnailUrl;
                 mimeType = "image/jpeg";
-                filename = Uri.parse(thumbnailUrl).getPath();
+                filename = thumbUri.getPath();
             } else {
                 url = anImageUrl;
                 mimeType = imageMimeType;
