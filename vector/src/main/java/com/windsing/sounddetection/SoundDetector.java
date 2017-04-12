@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.windsing.common.AudioControl;
+import com.windsing.common.CameraControl;
 import com.windsing.common.FileControl;
 
 import java.io.DataInputStream;
@@ -235,8 +236,8 @@ public class SoundDetector {
             mRecorder.setVideoFrameRate(mVideoFrameRate);
             mRecorder.setVideoSize(mVideoWidth, mVideoHeight);
             mRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-            mRecorder.setVideoEncodingBitRate(1024 * 400);
-            mRecorder.setOrientationHint(270);
+            mRecorder.setVideoEncodingBitRate(1024 * 1024 * 2);
+            mRecorder.setOrientationHint(CameraControl.getVideoRotation(mContext, cameraId));
             mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
         }
 

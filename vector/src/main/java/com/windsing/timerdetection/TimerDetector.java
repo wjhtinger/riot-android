@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
 import android.media.ExifInterface;
 import android.media.MediaRecorder;
 import android.opengl.GLES11Ext;
@@ -285,7 +286,7 @@ public class TimerDetector {
         mRecorder.setVideoFrameRate(mVideoFrameRate);
         mRecorder.setVideoSize(mVideoWidth, mVideoHeight);
         mRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-        //mRecorder.setVideoEncodingBitRate(1024 * 400);
+        mRecorder.setVideoEncodingBitRate(1024 * 1024 * 2);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
         //mRecorder.setMaxDuration(1000 * 5);  //8MB大小
         //mRecorder.setProfile(CameraControl.getCamcorderProfile(cameraId));

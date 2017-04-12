@@ -26,6 +26,7 @@ import com.faceplusplus.api.FaceDetecter;
 import com.faceplusplus.api.FaceDetecter.Face;
 import com.windsing.DetectManager;
 import com.windsing.common.AudioControl;
+import com.windsing.common.CameraControl;
 import com.windsing.common.FileControl;
 
 import im.vector.R;
@@ -285,8 +286,8 @@ public class WsFacedetector implements SurfaceHolder.Callback {
         mRecorder.setVideoFrameRate(mVideoFrameRate);
         mRecorder.setVideoSize(mVideoWidth, mVideoHeight);
         mRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-        mRecorder.setVideoEncodingBitRate(1024 * 400);
-        mRecorder.setOrientationHint(270);
+        mRecorder.setVideoEncodingBitRate(1024 * 1024 * 2);
+        mRecorder.setOrientationHint(CameraControl.getVideoRotation(mContext, cameraId));
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
         fileString = FileControl.getFileString("Facedetector", "Face") + ".mp4";
         mRecorder.setOutputFile(fileString);
