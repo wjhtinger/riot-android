@@ -160,11 +160,16 @@ public class TimerDetector {
             if(parameters.isVideoStabilizationSupported()){
                 parameters.setVideoStabilization(true);
             }
-            parameters.setPictureFormat(PixelFormat.JPEG);
+            //parameters.setPreviewSize(mVideoWidth, mVideoHeight);
             parameters.setPictureSize(mVideoWidth, mVideoHeight);
+            parameters.setPictureFormat(PixelFormat.JPEG);
             parameters.setPreviewFrameRate(mVideoFrameRate);
             parameters.setRotation(CameraControl.getPhotoRotation(mContext, cameraId));
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            if(mContentType == 0) {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            }else if(mContentType == 1){
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+            }
             mCamera.setParameters(parameters);
         }
     }
@@ -212,6 +217,11 @@ public class TimerDetector {
         mCamera.startPreview();
         //mCamera.takePicture(null, null, new TimerDetector.PhotoHandler());
 
+        try {
+            Thread.sleep(500);    //此处必须加延时，不然某些手机照出来会严重发黑
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         try {
             List<String> supportedFocusModes = null;
@@ -278,7 +288,7 @@ public class TimerDetector {
         //mRecorder.setVideoEncodingBitRate(1024 * 400);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
         //mRecorder.setMaxDuration(1000 * 5);  //8MB大小
-        mRecorder.setProfile(CameraControl.getCamcorderProfile(cameraId));
+        //mRecorder.setProfile(CameraControl.getCamcorderProfile(cameraId));
         mRecorder.setOrientationHint(CameraControl.getVideoRotation(mContext, cameraId));
         fileString = FileControl.getFileString("Timerdetector", "Timer") + ".mp4";
         mRecorder.setOutputFile(fileString);
