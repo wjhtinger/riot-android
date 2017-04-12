@@ -1140,6 +1140,17 @@ public final class GcmRegistrationManager {
     public void setFunctionEnable(String str, boolean flag){
         if(isFunctionEnable(str) != flag){
             getGcmSharedPreferences().edit().putBoolean(str, flag).apply();
+
+            if (str.equals(mContext.getString(R.string.settings_enable_monitoring))){
+                if(flag){
+                    Log.d(LOG_TAG, "set sync time out to 1000");
+                    setBackgroundSyncDelay(1000);  //在监控模式下，背景sync时间需要短，这样才能及时响应监控指令
+                }
+                else{
+                    Log.d(LOG_TAG, "set sync time out to 10000");
+                    setBackgroundSyncDelay(10000);
+                }
+            }
         }
     }
 }
