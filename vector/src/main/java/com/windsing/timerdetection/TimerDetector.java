@@ -161,15 +161,16 @@ public class TimerDetector {
             if(parameters.isVideoStabilizationSupported()){
                 parameters.setVideoStabilization(true);
             }
-            //parameters.setPreviewSize(mVideoWidth, mVideoHeight);
-            parameters.setPictureSize(mVideoWidth, mVideoHeight);
-            parameters.setPictureFormat(PixelFormat.JPEG);
+            parameters.setPreviewSize(mVideoWidth, mVideoHeight);
             parameters.setPreviewFrameRate(mVideoFrameRate);
             parameters.setRotation(CameraControl.getPhotoRotation(mContext, cameraId));
             if(mContentType == 0) {
+                parameters.setPictureFormat(PixelFormat.JPEG);
+                parameters.setPictureSize(mVideoWidth, mVideoHeight);
                 parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
             }else if(mContentType == 1){
                 parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+                parameters.setRecordingHint(false);
             }
             mCamera.setParameters(parameters);
         }
@@ -283,13 +284,10 @@ public class TimerDetector {
         mRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mRecorder.setVideoFrameRate(mVideoFrameRate);
         mRecorder.setVideoSize(mVideoWidth, mVideoHeight);
         mRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         mRecorder.setVideoEncodingBitRate(1024 * 1024 * 2);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
-        //mRecorder.setMaxDuration(1000 * 5);  //8MB大小
-        //mRecorder.setProfile(CameraControl.getCamcorderProfile(cameraId));
         mRecorder.setOrientationHint(CameraControl.getVideoRotation(mContext, cameraId));
         fileString = FileControl.getFileString("Timerdetector", "Timer") + ".mp4";
         mRecorder.setOutputFile(fileString);
