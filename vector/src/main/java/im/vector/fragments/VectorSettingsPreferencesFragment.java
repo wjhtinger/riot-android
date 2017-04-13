@@ -806,7 +806,7 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
             }
         });
 
-        mUserSettingsCategory.addPreference(addPhoneNumberPreference);
+        //mUserSettingsCategory.addPreference(addPhoneNumberPreference);
     }
 
     //==============================================================================================================
