@@ -11,6 +11,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.windsing.common.CameraControl;
 import com.windsing.common.FileControl;
 
 import org.matrix.androidsdk.MXSession;
@@ -161,7 +162,8 @@ public class MediaUploader {
         int rotationAngle = ImageUtils.getRotationAngleForBitmap(context, Uri.parse("file://" + file));
         Log.d(LOG_TAG, "pictureUploader rotationAngle:" + rotationAngle);
         if (0 != rotationAngle) {
-            ImageUtils.rotateImage(context, "file://" + file, rotationAngle, session.getMediasCache());
+            //ImageUtils.rotateImage(context, "file://" + file, rotationAngle, session.getMediasCache());
+            CameraControl.rotateImage(context, file, rotationAngle);
         }
 
         final String fileName= file.substring(file.lastIndexOf("/") + 1);

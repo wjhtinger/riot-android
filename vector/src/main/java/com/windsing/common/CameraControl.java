@@ -2,17 +2,24 @@ package com.windsing.common;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.VectorDrawable;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
+import android.net.Uri;
 import android.opengl.GLES11Ext;
 import android.view.Surface;
 import android.view.WindowManager;
 
+import org.matrix.androidsdk.db.MXMediasCache;
 import org.matrix.androidsdk.util.Log;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -29,6 +36,7 @@ public class CameraControl{
 
         WindowManager wmManager=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         int rotation = wmManager.getDefaultDisplay().getRotation();
+        rotation = 90; //TODO,因为没有UI,getRotation()不起作用，所以这里默认所有照片都是立着的，但实际应该按照手机方位设置立着还是躺着
         int degrees = 0;
         switch (rotation) {
             case Surface.ROTATION_0: degrees = 0; break; // portrait
@@ -56,6 +64,7 @@ public class CameraControl{
 
         WindowManager wmManager=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         int rotation = wmManager.getDefaultDisplay().getRotation();
+        rotation = 90;  //TODO,因为没有UI,getRotation()不起作用，所以这里默认所有照片都是立着的，但实际应该按照手机方位设置立着还是躺着
         int degrees = 0;
         switch (rotation) {
             case Surface.ROTATION_0: degrees = 0; break;
@@ -98,4 +107,45 @@ public class CameraControl{
         Log.d(LOG_TAG, "getCamcorderProfile for camera " + cameraId + " width " + camcorderProfile.videoFrameWidth + " height " + camcorderProfile.videoFrameWidth);
         return camcorderProfile;
     }
+
+    public static void rotateImage(Context context, String filename, int rotationAngle) {
+        try
+        {
+            // there is one
+            if (0 != rotationAngle) {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                options.outWidth = -1;
+                options.outHeight = -1;
+
+                // decode the bitmap
+                Bitmap bitmap = null;
+                try {
+                    FileInputStream imageStream = new FileInputStream(filename);
+                    bitmap = BitmapFactory.decodeStream(imageStream, null, options);
+                    imageStream.close();
+                } catch (OutOfMemoryError e) {
+                    Log.e(LOG_TAG, "applyExifRotation BitmapFactory.decodeStream : " + e.getLocalizedMessage());
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "applyExifRotation " + e.getLocalizedMessage());
+                }
+
+                android.graphics.Matrix bitmapMatrix = new android.graphics.Matrix();
+                bitmapMatrix.postRotate(rotationAngle);
+                Bitmap transformedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), bitmapMatrix, false);
+                bitmap.recycle();
+
+                FileOutputStream fos = new FileOutputStream(filename);
+                transformedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                fos.flush();
+                fos.close();
+            }
+
+        } catch (OutOfMemoryError e) {
+            Log.e(LOG_TAG, "applyExifRotation " + e.getLocalizedMessage());
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "applyExifRotation " + e.getLocalizedMessage());
+        }
+    }
+
 }
