@@ -1230,6 +1230,15 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
                                                 VectorHomeActivity.this.showWaitingView();
+
+                                                if(Matrix.getInstance(VectorHomeActivity.this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_monitoring))){
+                                                    DetectManager detect = DetectManager.instance(null);
+                                                    if(detect != null) {
+                                                        Log.d(LOG_TAG, "sign_out to stop detect function");
+                                                        detect.stop(DetectManager.detectType.ALL);
+                                                    }
+                                                }
+
                                                 CommonActivityUtils.logout(VectorHomeActivity.this);
                                             }
                                         })
