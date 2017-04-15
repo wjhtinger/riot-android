@@ -985,6 +985,11 @@ public class EventStreamService extends Service {
 
         Log.d(LOG_TAG, "prepareNotification : with sound " + bingRule.isDefaultNotificationSound(bingRule.notificationSound()));
 
+        boolean soundEn = false;
+        if (Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_notice_beep))){
+            soundEn = bingRule.isDefaultNotificationSound(bingRule.notificationSound());
+        }
+
         mLatestNotification = NotificationUtils.buildMessageNotification(
                 EventStreamService.this,
                 from, session.getCredentials().userId,
@@ -994,7 +999,7 @@ public class EventStreamService extends Service {
                 body,
                 event.roomId,
                 getRoomName(session, room, event),
-                bingRule.isDefaultNotificationSound(bingRule.notificationSound()),
+                soundEn,
                 isInvitationEvent);
     }
 
@@ -1234,7 +1239,8 @@ public class EventStreamService extends Service {
 
 
     private void wsCmdHandle(final MXSession session, final Event event, String cmd){
-        if(!cmd.substring(0, 9).equals(getResources().getString(R.string.tag_message_command))) {
+        String cmdStringTag = getResources().getString(R.string.tag_message_command);
+        if(cmd.length() < cmdStringTag.length() || !cmd.substring(0, 9).equals(cmdStringTag)) {
             return;
         }
         Log.d(LOG_TAG,"##### wsCmdHandle:" + cmd);
@@ -1243,7 +1249,7 @@ public class EventStreamService extends Service {
         }
 
         String[] cmdSplit = cmd.split("-]");
-        if((cmdSplit[1] + "-]").equals(this.getResources().getString(R.string.tag_message_command_call))){
+        if(cmdSplit.length >= 2 && (cmdSplit[1] + "-]").equals(this.getResources().getString(R.string.tag_message_command_call))){
             IMXCall call = VectorCallViewActivity.getActiveCall();
             if((call != null) && call.getCallState().equals(IMXCall.CALL_STATE_CONNECTED) && call.isVideo()) {
                 if((cmdSplit[2] + "-]").equals(this.getResources().getString(R.string.tag_message_command_call_switch_camera))){

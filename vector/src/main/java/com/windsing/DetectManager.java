@@ -841,13 +841,16 @@ public class DetectManager {
 
     public void detectHandle(MXSession session, Room room, String cmdString){
         Log.d(LOG_TAG, "detectHandle:" + cmdString);
-
         String[] cmdSplit = cmdString.split("-]");
-        if(!(cmdSplit[1] + "-]").equals(mContext.getResources().getString(R.string.tag_message_command_detect))){
+        if(cmdSplit.length < 2 || !(cmdSplit[1] + "-]").equals(mContext.getResources().getString(R.string.tag_message_command_detect))){
             return;
         }
 
-        IMXCall call = VectorCallViewActivity.getActiveCall();
+        if(cmdSplit.length < 3){
+            return;
+        }
+
+        IMXCall call = VectorCallViewActivity.getActiveCall();  
         if(call != null) {
             sendMsg(session, room, mContext.getResources().getString(R.string.detect_echo_call_ison));
             return;
@@ -855,7 +858,7 @@ public class DetectManager {
 
         String detectType = cmdSplit[2] + "-]";
         Log.d(LOG_TAG, "detectHandle.detectType：" + detectType);
-        if(detectType.equals(mContext.getResources().getString(R.string.tag_message_command_detect_motion))){
+        if(cmdSplit.length == 5 && detectType.equals(mContext.getResources().getString(R.string.tag_message_command_detect_motion))){
             String contentType = cmdSplit[3] + "-]";
             String cameraId = cmdSplit[4].replace("[-", "");
 
@@ -867,7 +870,7 @@ public class DetectManager {
             }else if(contentType.equals(mContext.getResources().getString(R.string.tag_message_command_detect_stop))){
                 detectMotionStop(session, room);
             }
-        }else if(detectType.equals(mContext.getResources().getString(R.string.tag_message_command_detect_audio))) {
+        }else if(cmdSplit.length == 5 && detectType.equals(mContext.getResources().getString(R.string.tag_message_command_detect_audio))) {
             String contentType = cmdSplit[3] + "-]";
             String cameraId = cmdSplit[4].replace("[-", "");
 
@@ -879,7 +882,7 @@ public class DetectManager {
             }else if(contentType.equals(mContext.getResources().getString(R.string.tag_message_command_detect_stop))){
                 detectAudioStop(session, room);
             }
-        }else if (detectType.equals(mContext.getResources().getString(R.string.tag_message_command_detect_timer))) {
+        }else if (cmdSplit.length == 6 && detectType.equals(mContext.getResources().getString(R.string.tag_message_command_detect_timer))) {
             String contentType = cmdSplit[3] + "-]";
             String cameraId = cmdSplit[4].replace("[-", "");
 
@@ -892,7 +895,7 @@ public class DetectManager {
             }else if(contentType.equals(mContext.getResources().getString(R.string.tag_message_command_detect_stop))){
                 detectTimerStop(session, room);
             }
-        }else if(detectType.equals(mContext.getResources().getString(R.string.tag_message_command_detect_face))){
+        }else if(cmdSplit.length == 5 && detectType.equals(mContext.getResources().getString(R.string.tag_message_command_detect_face))){
             String contentType = cmdSplit[3] + "-]";
             String cameraId = cmdSplit[4].replace("[-", "");
 
