@@ -3194,6 +3194,23 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
         }
     }
 
+    private void displayFaceCallNotAllowed() {
+        // display the dialog with the info text
+        AlertDialog.Builder permissionsInfoDialog = new AlertDialog.Builder(VectorRoomActivity.this);
+        Resources resource = getResources();
+
+        if ((null != resource) && (null != permissionsInfoDialog)) {
+            permissionsInfoDialog.setTitle(resource.getString(R.string.detect_face));
+            permissionsInfoDialog.setMessage(resource.getString(R.string.detect_echo_face_videocall_member_limit));
+
+            permissionsInfoDialog.setIcon(android.R.drawable.ic_dialog_alert);
+            permissionsInfoDialog.setPositiveButton(resource.getString(R.string.ok), null);
+            permissionsInfoDialog.show();
+        } else {
+            Log.e(LOG_TAG, "## displayFaceCallNotAllowed(): impossible to create dialog");
+        }
+    }
+
     private void detectOptionDialog(final DetectManager.detectType type){
         FragmentManager fm = getSupportFragmentManager();
         CmdDialogFragment fragment = (CmdDialogFragment) fm.findFragmentByTag("TAG_FRAGMENT_ATTACHMENTS_DIALOG_TEST");
@@ -3239,7 +3256,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
                         case FACE:
                             if(param[1] == 0){
                                 if(mRoom.getActiveMembers().size() > 2){
-                                    displayConfCallNotAllowed();
+                                    displayFaceCallNotAllowed();
                                 }else{
                                     cmdStr = detectManager.sendStartFaceDetect(mSession, mRoom, DetectManager.detectContent_type.VIDEO_CALL, param[0]);
                                 }
@@ -3312,6 +3329,39 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
         }
 
         mSendImageView.setImageResource(moreImg);
+    }
+
+
+    private void sendMsgT(MXSession session, Room room, String bodyString){
+        android.util.Log.d(LOG_TAG, "sendMsg:" + bodyString);
+
+        Message message = new Message();
+        message.msgtype = Message.MSGTYPE_TEXT;
+        message.body = bodyString;
+        final Event event = new Event(message, session.getCredentials().userId, room.getRoomId());
+        //room.storeOutgoingEvent(event);
+        //session.getDataHandler().getStore().commit();
+        room.sendEvent(event, new ApiCallback<Void>() {
+            @Override
+            public void onSuccess(Void info) {
+                android.util.Log.d(LOG_TAG, "Send message : onSuccess ");
+            }
+
+            @Override
+            public void onNetworkError(Exception e) {
+                android.util.Log.d(LOG_TAG, "Send message : onNetworkError " + e.getLocalizedMessage());
+            }
+
+            @Override
+            public void onMatrixError(MatrixError e) {
+                android.util.Log.d(LOG_TAG, "Send message : onMatrixError " + e.getLocalizedMessage());
+            }
+
+            @Override
+            public void onUnexpectedError(Exception e) {
+                android.util.Log.d(LOG_TAG, "Send message : onUnexpectedError " + e.getLocalizedMessage());
+            }
+        });
     }
 
 }

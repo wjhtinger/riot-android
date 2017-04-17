@@ -959,11 +959,11 @@
     <string name="detect_echo_removed">注意：%s功能被其他房间抢走.</string>
     <string name="detect_echo_status_running">%s正在运行.</string>
     <string name="detect_echo_status_notrunning">%s未启动.</string>
-    <string name="detect_echo_status_all_notrunning">当前没有监控功能在运行.</string>
-    <string name="detect_echo_status_running_forStart">%s已经在运行,请先停止才能启动其他监控功能!</string>
+    <string name="detect_echo_status_all_notrunning">当前在该房间没有监控功能运行.</string>
+    <string name="detect_echo_status_running_forStart">%s功能正在运行中,请先停止才能启动其他监控功能!</string>
     <string name="detect_echo_notenable">%s功能设置为不允许开启.</string>
     <string name="detect_echo_call_ison">正在语音通话中，禁制所有监控功能！</string>
-    <string name="detect_echo_face_videocall_member_limit">发起视频通话模式只允许在两个人的房间启动！</string>
+    <string name="detect_echo_face_videocall_member_limit">视频通话模式只允许在2个人的房间启动！</string>
 
 
     <string name="detect_dialog_start">启动</string>
@@ -974,17 +974,18 @@
 
     <string name="settings_enable_notice_beep">消息提示音</string>
 
-    <string name="settings_ipcall">语音通话功能</string>
+    <string name="settings_ipcall">语音通话功能设置</string>
     <string name="settings_enable_call_auto_answer">自动应答</string>
     <string name="settings_enable_call_switch_camera">允许对方切换本机摄像头</string>
-    <string name="settings_monitoring">监控功能</string>
-    <string name="settings_enable_monitoring">监控模式</string>
+    <string name="settings_monitoring">监控功能设置</string>
+    <string name="settings_enable_monitoring">进入监控模式</string>
     <string name="settings_enable_motion_detecting">允许动作监控</string>
     <string name="settings_enable_audio_detecting">允许声音监控</string>
     <string name="settings_enable_timer_detecting">允许定时监控</string>
     <string name="settings_enable_face_detecting">允许人脸识别</string>
-    <string name="settings_enable_save_local_file">保存监控数据（图片、视频、音频）在手机</string>
+    <string name="settings_enable_save_local_file">保存监控数据在手机</string>
 
+    <string name="settings_summary_save_local_file">监控过程产生的图片、视频、音频文件将不会删除。</string>
     <string name="settings_summary_ga_use_settings">程序意外崩溃时自动发送上下文信息给服务器，用于查找原因，改善程序。</string>
     <string name="room_settings_summary_directory_visibility">网络上任何用户都可以发现这个房间。</string>
 

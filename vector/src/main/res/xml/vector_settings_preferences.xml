@@ -251,6 +251,7 @@
         <im.vector.preference.VectorSwitchPreference
             android:title="@string/settings_enable_save_local_file"
             android:key="@string/settings_enable_save_local_file"
+            android:summary="@string/settings_summary_save_local_file"
             android:dependency="@string/settings_enable_monitoring"/>
 
     </PreferenceCategory>
