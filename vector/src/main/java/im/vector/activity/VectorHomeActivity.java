@@ -17,6 +17,7 @@
 
 package im.vector.activity;
 
+import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
@@ -303,6 +304,10 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
             public void onClick(View v) {
                 // ignore any action if there is a pending one
                 if (View.VISIBLE != mWaitingView.getVisibility()) {
+                    ObjectAnimator animator = new ObjectAnimator().ofFloat(v, "rotation", 0F, -255F, -235F);
+                    animator.setDuration(800);
+                    animator.start();
+
                     Context context = VectorHomeActivity.this;
 
                     AlertDialog.Builder dialog = new AlertDialog.Builder(context);

@@ -18,6 +18,7 @@
 package im.vector.activity;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,6 +32,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -632,6 +634,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(mEditText.getText())) {
+                    ObjectAnimator.ofFloat(v, "translationX", 0F, 20F, 0F).setDuration(300).start();//
                     sendTextMessage();
                 } else {
                     // hide the header room
@@ -1490,7 +1493,12 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
                     public void run() {
                         enableActionBarHeader(HIDE_ACTION_BAR_HEADER);
                         sendMessage(text, TextUtils.equals(text, HTMLText) ? null : HTMLText, Message.FORMAT_MATRIX_HTML);
-                        mEditText.setText("");
+
+                        new Handler().postDelayed(new Runnable(){
+                            public void run() {
+                                mEditText.setText("");
+                            }
+                        }, 300);
                     }
                 });
             }
@@ -3314,6 +3322,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
     private void freshButtomPad(){
         View room_function_pad = findViewById(R.id.room_function_pad);
         View function_pad_separator = findViewById(R.id.function_pad_separator);
+        Float arc0, arc1;
+        int duration;
         if(room_function_pad.getVisibility() == View.GONE){
             TranslateAnimation mHiddenAction = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
                     Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
@@ -3322,11 +3332,21 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
             room_function_pad.setVisibility(View.VISIBLE);
             function_pad_separator.setVisibility(View.VISIBLE);
             moreImg = R.drawable.ic_material_file2;
+            arc0 = 370F;
+            arc1 = 360F;
+            duration = 1000;
         }else {
             room_function_pad.setVisibility(View.GONE);
             function_pad_separator.setVisibility(View.GONE);
             moreImg = R.drawable.ic_material_file;
+            arc0 = -370F;
+            arc1 = -360F;
+            duration = 500;
         }
+
+        ObjectAnimator animator = new ObjectAnimator().ofFloat(mSendImageView, "rotation", 0F, arc0, arc1);
+        animator.setDuration(duration);
+        animator.start();
 
         mSendImageView.setImageResource(moreImg);
     }
