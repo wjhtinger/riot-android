@@ -987,6 +987,8 @@
     <string name="room_settings_summary_directory_visibility">Anyone can find this room.</string>
 
     <string name="action_sign_out_title">Sure to Logout？</string>
+    <string name="medias_picker_usage_hint">Short press to take photo, Long press to record video.</string>
+
 
     <!--for bug supervisory mode-->
     <string name="home_buttom_bar_message">Message</string>

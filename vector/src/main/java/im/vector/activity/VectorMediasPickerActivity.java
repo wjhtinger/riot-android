@@ -391,6 +391,8 @@ public class VectorMediasPickerActivity extends MXCActionBarActivity implements 
 
         // restart the preview
         startCameraPreview();
+
+        Toast.makeText(this, getString(R.string.medias_picker_usage_hint), Toast.LENGTH_LONG).show();
     }
 
     @Override
