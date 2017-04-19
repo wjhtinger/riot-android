@@ -430,7 +430,7 @@
     <string name="permissions_action_not_performed_missing_permissions">Sorry.. Action not performed, due to missing permissions</string>
 
     <!-- medias slider string -->
-    <string name="media_slider_saved">Saved</string>
+    <string name="media_slider_saved">已保存</string>
     <string name="media_slider_saved_message">Save to downloads</string>
     <string name="yes">是</string>
     <string name="no">否</string>

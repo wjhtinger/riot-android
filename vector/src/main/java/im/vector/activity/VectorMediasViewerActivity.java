@@ -203,8 +203,9 @@ public class VectorMediasViewerActivity extends MXCActionBarActivity {
         if (null != file) {
             // download
             if (action == R.id.ic_action_download) {
-                if (null != CommonActivityUtils.saveMediaIntoDownloads(this, file, mediaInfo.mFileName, mediaInfo.mMimeType)) {
-                    Toast.makeText(this, getText(R.string.media_slider_saved), Toast.LENGTH_LONG).show();
+                String fullFilePath = CommonActivityUtils.saveMediaIntoDownloads(this, file, mediaInfo.mFileName, mediaInfo.mMimeType);
+                if (null != fullFilePath) {
+                    Toast.makeText(this, getText(R.string.media_slider_saved) + ":" + fullFilePath, Toast.LENGTH_LONG).show();
                 }
             } else {
                 // shared

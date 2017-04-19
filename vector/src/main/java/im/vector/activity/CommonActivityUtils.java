@@ -1525,7 +1525,7 @@ public class CommonActivityUtils {
      */
     @SuppressLint("NewApi")
     public static String saveMediaIntoDownloads(Context context, File srcFile, String filename, String mimeType) {
-        String fullFilePath = saveFileInto(srcFile, Environment.DIRECTORY_DOWNLOADS, filename);
+        String fullFilePath = saveFileInto(srcFile, "windsing/" + Environment.DIRECTORY_DOWNLOADS, filename);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             if (null != fullFilePath) {
