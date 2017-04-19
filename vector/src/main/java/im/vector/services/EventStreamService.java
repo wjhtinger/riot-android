@@ -986,7 +986,8 @@ public class EventStreamService extends Service {
         Log.d(LOG_TAG, "prepareNotification : with sound " + bingRule.isDefaultNotificationSound(bingRule.notificationSound()));
 
         boolean soundEn = false;
-        if (Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_notice_beep))){
+        if (Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_notice_beep)) &&
+            !Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_monitoring)) ){
             soundEn = bingRule.isDefaultNotificationSound(bingRule.notificationSound());
         }
 
