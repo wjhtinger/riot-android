@@ -1326,6 +1326,11 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
             isAllowed = true;
         }
 
+        //TODO, now not support conference call
+        if(mRoom.getActiveMembers().size() > 2){
+            isAllowed = false;
+        }
+
         Log.d(LOG_TAG, "## isUserAllowedToStartConfCall(): isAllowed=" + isAllowed);
         return isAllowed;
     }

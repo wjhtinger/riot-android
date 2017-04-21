@@ -52,8 +52,8 @@
     <string name="cannot_start_call">Cannot start the call, please try later</string>
     <string name="room_url">Room URL</string>
     <string name="missing_permissions_warning">"Due to missing permissions, some features may be missing..</string>
-    <string name="missing_permissions_to_start_conf_call">You need permission to invite to start a conference in this room</string>
-    <string name="missing_permissions_title_to_start_conf_call">Cannot start call</string>
+    <string name="missing_permissions_to_start_conf_call">语音视频通话只在两人房间中允许.</string>
+    <string name="missing_permissions_title_to_start_conf_call">禁止通话</string>
     <string name="device_information">Device information</string>
     <string name="room_no_conference_call_in_encrypted_rooms">Conference calls are not supported in encrypted rooms</string>
     <string name="send_anyway">Send Anyway</string>
