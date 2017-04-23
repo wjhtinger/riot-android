@@ -1,5 +1,6 @@
 package com.windsing.upgrade;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -46,8 +47,6 @@ import javax.net.ssl.X509TrustManager;
 import im.vector.R;
 import im.vector.VectorApp;
 import im.vector.activity.SplashActivity;
-
-import static com.google.android.gms.internal.zzid.runOnUiThread;
 
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
@@ -264,7 +263,7 @@ public class Upgrader {
 
                         Log.d(LOG_TAG, String.format("NewVersionCode[%d], OldVersionCode[%d], mDownloadUrl[%s]", mVersionCode, getVersionCode(), mDownloadUrl));
                         if (mVersionCode > getVersionCode()) {
-                            runOnUiThread(new Runnable() {
+                            ((Activity) mContext).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     showUpgradeDialog();

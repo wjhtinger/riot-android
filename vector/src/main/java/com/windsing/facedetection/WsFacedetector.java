@@ -33,7 +33,7 @@ import im.vector.R;
 import im.vector.VectorApp;
 
 import static android.content.Context.WINDOW_SERVICE;
-import static com.google.android.gms.internal.zzid.runOnUiThread;
+//import static com.google.android.gms.internal.zzid.runOnUiThread;
 
 
 /**
@@ -97,7 +97,7 @@ public class WsFacedetector implements SurfaceHolder.Callback {
                 }
             }
             final Face[] faceinfo = facedetecter.findFaces(ori, mVideoHeight, mVideoWidth);
-            runOnUiThread(new Runnable() {
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
                     mFmMask.setFaceInfo(faceinfo);

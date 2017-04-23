@@ -2,15 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:orientation="vertical"
     android:padding="0dp">
 
     <SurfaceView
         android:id="@+id/sv_preview"
-        android:layout_width="100dp"
-        android:layout_height="100dp" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <com.windsing.facedetection.FaceMask
         android:id="@+id/fm_mask"
