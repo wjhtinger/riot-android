@@ -4,7 +4,7 @@
     <string name="resouces_country">UK</string>
 
     <!-- titles -->
-    <string name="app_name">Windsing</string>
+    <string name="app_name">windsing</string>
     <string name="title_activity_home">Windsing</string>
     <string name="title_activity_room">Room</string>
     <string name="title_activity_public_rooms">Public Rooms</string>

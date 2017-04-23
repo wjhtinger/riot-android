@@ -4,7 +4,7 @@
     <string name="resouces_country">UK</string>
 
     <!-- titles -->
-    <string name="app_name">Windsing</string>
+    <string name="app_name">windsing</string>
     <string name="title_activity_home">Messages</string>
     <string name="title_activity_room">Room</string>
     <string name="title_activity_public_rooms">Public Rooms</string>
@@ -920,7 +920,7 @@
     <string name="room_function_pad_file">Send File</string>
     <string name="room_function_pad_camera">Use Camera</string>
     <string name="room_function_pad_audiocall">Audio Call</string>
-    <string name="room_function_pad_video">Video Call</string>
+    <string name="room_function_pad_videocall">Video Call</string>
     <string name="room_function_pad_motiondetect">Motion Detect</string>
     <string name="room_function_pad_audiodetect">Audio Detect</string>
     <string name="room_function_pad_timerdetect">Timer Detect</string>
@@ -983,6 +983,7 @@
     <string name="settings_enable_face_detecting">Enable face detecting</string>
     <string name="settings_enable_save_local_file">Not save local detecting file</string>
 
+    <string name="settings_summary_save_local_file">detect picture, video, audio file would never be del.</string>
     <string name="settings_summary_ga_use_settings">Automatically send crash report to server.</string>
     <string name="room_settings_summary_directory_visibility">Anyone can find this room.</string>
 
