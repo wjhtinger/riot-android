@@ -220,7 +220,7 @@ public class TimerDetector {
         //mCamera.takePicture(null, null, new TimerDetector.PhotoHandler());
 
         try {
-            Thread.sleep(500);    //此处必须加延时，不然某些手机照出来会严重发黑
+            Thread.sleep(1000);    //此处必须加延时，不然某些手机照出来会严重发黑
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -10,6 +10,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -91,7 +92,7 @@ public class Upgrader {
             mProgressText = (TextView) mDialogView.findViewById(R.id.upgrade_progress_text);
             mnoNotifyCheck = (CheckBox) mDialogView.findViewById(R.id.upgrade_nonotify_check);
             mProgressBar.setVisibility(View.VISIBLE);
-            mProgressText.setVisibility(View.VISIBLE);
+            //mProgressText.setVisibility(View.VISIBLE);
             mnoNotifyCheck.setVisibility(View.GONE);
 
             String target = Environment.getExternalStorageDirectory() + "/update.apk";
@@ -103,7 +104,7 @@ public class Upgrader {
 
                     int percent = (int)(current * 100 / total);
                     mProgressBar.setProgress(percent);
-                    mProgressText.setText(percent + "%");
+                    //mProgressText.setText(percent + "%");
                     Log.d(LOG_TAG, "Down percent:" + percent);
                 }
 
@@ -263,12 +264,15 @@ public class Upgrader {
 
                         Log.d(LOG_TAG, String.format("NewVersionCode[%d], OldVersionCode[%d], mDownloadUrl[%s]", mVersionCode, getVersionCode(), mDownloadUrl));
                         if (mVersionCode > getVersionCode()) {
-                            ((Activity) mContext).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    showUpgradeDialog();
-                                }
-                            });
+                            Looper.prepare();
+                            showUpgradeDialog();
+                            Looper.loop();
+//                            mContext.runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    showUpgradeDialog();
+//                                }
+//                            });
                         }
                     }
 

@@ -54,6 +54,7 @@
                 android:layout_height="24dp"
                 android:layout_weight="14"
                 android:src="@drawable/ic_material_speaker_phone_grey"
+                android:visibility="gone"
                 android:onClick="onClickMenuRemote"/>
 
             <ImageView
