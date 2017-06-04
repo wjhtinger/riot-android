@@ -60,7 +60,7 @@
     <string name="or">or</string>
 
     <!-- server urls -->
-    <string name="vector_im_server_url">https://windsing.com.cn:8448</string>
+    <string name="vector_im_server_url">https://vector.im</string>    <!--必须和default_hs_server_url不一样，避免输入错误账号&密码时长时间不反馈的错误（临时） -->
     <string name="matrix_org_server_url">https://windsing.com.cn:8448</string>
     <string name="default_hs_server_url">https://windsing.com.cn:8448</string>
     <string name="default_identity_server_url">https://windsing.com.cn:8448</string>

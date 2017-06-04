@@ -383,16 +383,16 @@
 
     <!-- call string -->
     <string name="call_connected">Call connected</string>
-    <string name="call_connecting">Call connecting...</string>
+    <string name="call_connecting">正在连接...</string>
     <string name="call_ended">Call ended</string>
-    <string name="call_ring">Calling...</string>
+    <string name="call_ring">呼叫...</string>
     <string name="incoming_call">来电</string>
     <string name="incoming_video_call">Incoming Video Call</string>
     <string name="incoming_voice_call">Incoming Voice Call</string>
     <string name="call_invite_expired">Call Invite Expired</string>
     <string name="call_in_progress">Call In Progress</string>
 
-    <string name="call_error_user_not_responding">The remote side failed to pick up.</string>
+    <string name="call_error_user_not_responding">对方接听出错.</string>
     <string name="call_error_ice_failed">Media Connection Failed</string>
     <string name="call_error_camera_init_failed">Cannot initialize the camera</string>
     <string name="call_error_answered_elsewhere">call answered elsewhere</string>

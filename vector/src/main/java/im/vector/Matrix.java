@@ -173,7 +173,8 @@ public class Matrix {
                     @Override
                     public void run() {
                         // can only manage one call instance.
-                        if (null == VectorCallViewActivity.getActiveCall()) {
+                        IMXCall nowCall = VectorCallViewActivity.getActiveCall();
+                        if (null == nowCall) {
                             Log.d(LOG_TAG, "onIncomingCall with no active call");
 
                             VectorHomeActivity homeActivity = VectorHomeActivity.getInstance();
@@ -201,6 +202,7 @@ public class Matrix {
                         } else {
                             Log.d(LOG_TAG, "onIncomingCall : a call is already in progress -> cancel");
                             call.hangup("busy");
+                            nowCall.hangup("last");
                         }
                     }
                 });
