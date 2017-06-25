@@ -362,7 +362,8 @@ public class VectorCallSoundManager {
     public static void startRinging() {
         Log.d(LOG_TAG, "startRinging");
 
-        if (Matrix.getInstance(VectorApp.getInstance()).getSharedGCMRegistrationManager().isFunctionEnable(VectorApp.getInstance().getString(R.string.settings_enable_monitoring))){
+        if (Matrix.getInstance(VectorApp.getInstance()).getSharedGCMRegistrationManager().isFunctionEnable(VectorApp.getInstance().getString(R.string.settings_enable_monitoring))
+            || Matrix.getInstance(VectorApp.getInstance()).getSharedGCMRegistrationManager().isFunctionEnable(VectorApp.getInstance().getString(R.string.settings_enable_call_auto_answer))){
             return;
         }
 

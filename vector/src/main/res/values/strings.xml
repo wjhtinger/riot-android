@@ -975,6 +975,7 @@
     <string name="settings_ipcall">IP Call</string>
     <string name="settings_enable_call_auto_answer">Enable auto answer</string>
     <string name="settings_enable_call_switch_camera">switch remote camera</string>
+
     <string name="settings_monitoring">Monitoring</string>
     <string name="settings_enable_monitoring">Enable monitoring function</string>
     <string name="settings_enable_motion_detecting">Enable motion detecting</string>
@@ -983,8 +984,12 @@
     <string name="settings_enable_face_detecting">Enable face detecting</string>
     <string name="settings_enable_save_local_file">Not save local detecting file</string>
 
+    <string name="settings_device">Device setting</string>
+    <string name="settings_enable_device_PTZ">Enable windsing PTZ</string>
+
     <string name="settings_summary_save_local_file">detect picture, video, audio file would never be del.</string>
     <string name="settings_summary_ga_use_settings">Automatically send crash report to server.</string>
+    <string name="settings_summary_device_PTZ">This function need windsing PTZ device, please confirm.</string>
     <string name="room_settings_summary_directory_visibility">Anyone can find this room.</string>
 
     <string name="action_sign_out_title">Sure to Logout？</string>

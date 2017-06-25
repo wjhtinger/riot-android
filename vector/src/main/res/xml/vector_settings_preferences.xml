@@ -257,6 +257,15 @@
     </PreferenceCategory>
 
     <im.vector.preference.VectorDividerCategory />
+
+    <PreferenceCategory android:title="@string/settings_device" >
+        <im.vector.preference.VectorSwitchPreference
+            android:title="@string/settings_enable_device_PTZ"
+            android:key="@string/settings_enable_device_PTZ"
+            android:summary="@string/settings_summary_device_PTZ"/>
+    </PreferenceCategory>
+
+    <im.vector.preference.VectorDividerCategory />
     <!--
     <PreferenceCategory
         android:key="@string/settings_background_sync"

@@ -965,18 +965,17 @@
     <string name="detect_echo_call_ison">正在语音通话中，禁制所有监控功能！</string>
     <string name="detect_echo_face_videocall_member_limit">视频通话模式只允许在2个人的房间启动！</string>
 
-
     <string name="detect_dialog_start">启动</string>
     <string name="detect_dialog_stop">停止</string>
 
     <string name="wordpress_server_url">http://www.windsing.com.cn:8081/wordpress/</string>
-
 
     <string name="settings_enable_notice_beep">消息提示音</string>
 
     <string name="settings_ipcall">语音通话功能设置</string>
     <string name="settings_enable_call_auto_answer">自动应答</string>
     <string name="settings_enable_call_switch_camera">允许对方切换本机摄像头</string>
+
     <string name="settings_monitoring">监控功能设置</string>
     <string name="settings_enable_monitoring">进入监控模式</string>
     <string name="settings_enable_motion_detecting">允许动作监控</string>
@@ -985,8 +984,12 @@
     <string name="settings_enable_face_detecting">允许人脸识别</string>
     <string name="settings_enable_save_local_file">保存监控数据在手机</string>
 
+    <string name="settings_device">设备设置</string>
+    <string name="settings_enable_device_PTZ">允许支持windsing云台设备</string>
+
     <string name="settings_summary_save_local_file">监控过程产生的图片、视频、音频文件将不会删除。</string>
     <string name="settings_summary_ga_use_settings">程序意外崩溃时自动发送上下文信息给服务器，用于查找原因，改善程序。</string>
+    <string name="settings_summary_device_PTZ">该功能需要额外的硬件设备配合，如果没有请不要打开这个选项。</string>
     <string name="room_settings_summary_directory_visibility">网络上任何用户都可以发现这个房间。</string>
 
     <string name="action_sign_out_title">确认退出？</string>

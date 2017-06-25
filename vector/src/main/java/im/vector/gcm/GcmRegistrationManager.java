@@ -1130,7 +1130,8 @@ public final class GcmRegistrationManager {
         boolean en = true;
         if(str.equals(mContext.getString(R.string.settings_enable_monitoring))
             || str.equals(mContext.getString(R.string.settings_enable_call_auto_answer))
-            || str.equals(mContext.getString(R.string.settings_enable_save_local_file))){
+            || str.equals(mContext.getString(R.string.settings_enable_save_local_file))
+            || str.equals(mContext.getString(R.string.settings_enable_device_PTZ))){
             en = false;
         }
 
@@ -1141,7 +1142,8 @@ public final class GcmRegistrationManager {
         if(isFunctionEnable(str) != flag){
             getGcmSharedPreferences().edit().putBoolean(str, flag).apply();
 
-            if (str.equals(mContext.getString(R.string.settings_enable_monitoring))){
+            if (str.equals(mContext.getString(R.string.settings_enable_monitoring))
+                || str.equals(mContext.getString(R.string.settings_enable_call_auto_answer))){
                 if(flag){
                     Log.d(LOG_TAG, "set sync time out to 1000");
                     setBackgroundSyncDelay(1000);  //在监控模式下，背景sync时间需要短，这样才能及时响应监控指令

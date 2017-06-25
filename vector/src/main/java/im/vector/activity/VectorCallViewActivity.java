@@ -17,11 +17,13 @@
 
 package im.vector.activity;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -29,9 +31,12 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.LocationManager;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
@@ -57,6 +62,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.windsing.DetectManager;
+import com.windsing.bluno.BlunoLibrary;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
@@ -78,7 +84,7 @@ import im.vector.view.VectorPendingCallView;
 /**
  * VectorCallViewActivity is the call activity.
  */
-public class VectorCallViewActivity extends Activity implements SensorEventListener {
+public class VectorCallViewActivity extends BlunoLibrary implements SensorEventListener {
     private static final String LOG_TAG = "VCallViewActivity";
     private static final String HANGUP_MSG_HEADER_UI_CALL = "user hangup from header back arrow";
     private static final String HANGUP_MSG_BACK_KEY = "user hangup from back key";
@@ -159,6 +165,9 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
     // on Samsung devices, the application is suspended when the screen is turned off
     // so the call must not be suspended
     private boolean mIsScreenOff = false;
+    private float mLastPosX = 0, mLastPosY = 0;
+    private long mLastTime = 0;
+    private boolean mCallIn = false;
 
     private final IMXCall.MXCallListener mListener = new IMXCall.MXCallListener() {
         private String mLastCallState = null;
@@ -236,7 +245,77 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
 
             mCallView = callView;
             insertCallView();
-        }
+
+            if (isPTZEnable()) {
+                buttonScanOnClickProcess();
+            }
+
+            mCallView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        boolean ret = true;
+                        float mCurPosX, mCurPosY;
+                        float xDiff, yDiff;
+                        String servoData = null;
+
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                                //View.performClick();
+                                fadeInVideoEdge();
+                                startVideoFadingEdgesScreenTimer();
+                                break;
+                            case MotionEvent.ACTION_MOVE:
+                                long curTime = System.currentTimeMillis();
+                                long tDiff = curTime - mLastTime;
+                                if(tDiff < 150){
+                                    return true;
+                                }
+                                mLastTime = curTime;
+
+                                mCurPosX = event.getX();
+                                mCurPosY = event.getY();
+                                xDiff = mCurPosX - mLastPosX;
+                                yDiff = mCurPosY - mLastPosY;
+
+                                if(mLastPosX != 0 && mLastPosY != 0){
+                                    int xServo = (int)(xDiff / 6);
+                                    int yServo = (int)(yDiff / 6);
+                                    if(xServo > 0){
+                                        servoData = "X" + xServo +"E";
+                                    }else if(xServo < 0){
+                                        servoData = "x" + (-xServo) +"E";
+                                    }
+                                    if(servoData != null){
+                                        //serialSend(servoData);
+                                        mCall.sendData(servoData);
+                                        Log.d(LOG_TAG, "#########:" + xDiff + "," + yDiff + "," + servoData);
+                                    }
+
+                                    servoData = null;
+                                    if(yServo > 0){
+                                        servoData = "Y" + yServo +"E";
+                                    }else if(yServo < 0){
+                                        servoData = "y" + (-yServo) +"E";
+                                    }
+                                    if(servoData != null){
+                                        //serialSend(servoData);
+                                        mCall.sendData(servoData);
+                                        Log.d(LOG_TAG, "#########:" + xDiff + "," + yDiff + "," + servoData);
+                                    }
+                                }
+
+                                mLastPosX = mCurPosX;
+                                mLastPosY = mCurPosY;
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                mLastPosX = 0;
+                                mLastPosY = 0;
+                                break;
+                        }
+                        return ret;
+                    }
+                });
+            }
 
         @Override
         public void onViewReady() {
@@ -293,6 +372,13 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
                 computeVideoUiLayout();
                 mCall.updateLocalVideoRendererPosition(mLocalVideoLayoutConfig);
             }
+        }
+        @Override
+        public void onData(String str){
+            if (isPTZEnable()) {
+                serialSend(str);
+            }
+            Log.d(LOG_TAG, "########## onData:" + str);
         }
     };
 
@@ -698,6 +784,25 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
         }
 
         setupHeaderPendingCallView();
+
+        mCallIn = mCall.isIncoming();
+        if (isPTZEnable()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // Android M Permission check
+                if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                }
+
+                if(!isGpsEnable(this)){
+                    //跳转到gps设置页
+                    Intent intent2 = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivityForResult(intent2,0);
+                }
+            }
+            onCreateProcess();
+            serialBegin(115200);
+        }
+
         Log.d(LOG_TAG,"## onCreate(): OUT");
     }
 
@@ -895,6 +1000,10 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
         if (!mIsScreenOff) {
             stopProximitySensor();
         }
+
+        if (isPTZEnable()) {
+            onStopProcess();
+        }
     }
 
     @Override
@@ -908,6 +1017,10 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
                 mCall.onPause();
                 mCall.removeListener(mListener);
             }
+        }
+
+        if (isPTZEnable()) {
+            onPauseProcess();
         }
     }
 
@@ -956,6 +1069,10 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
             mRemoteButtonsContainerView.setVisibility(View.VISIBLE);
         }else{
             mRemoteButtonsContainerView.setVisibility(View.INVISIBLE);
+        }
+
+        if (isPTZEnable()) {
+            onResumeProcess();
         }
     }
 
@@ -1441,6 +1558,10 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
 
         if(DetectManager.instance(null) != null)
             DetectManager.instance(null).restoreDetect();
+
+        if (isPTZEnable()) {
+            onDestroyProcess();
+        }
     }
 
     // ************* SensorEventListener *************
@@ -1597,6 +1718,38 @@ public class VectorCallViewActivity extends Activity implements SensorEventListe
                 }
             });
         }
+    }
+
+    // gps是否可用
+    public static final boolean isGpsEnable(final Context context) {
+        LocationManager locationManager
+                = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if (gps || network) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isPTZEnable() {
+        if (Matrix.getInstance(VectorCallViewActivity.this).getSharedGCMRegistrationManager().isFunctionEnable(VectorCallViewActivity.this.getString(R.string.settings_enable_device_PTZ))
+                && mCallIn
+                && android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void onConectionStateChange(connectionStateEnum theconnectionStateEnum) {
+        Log.d(LOG_TAG, "onConectionStateChange ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc:" + theconnectionStateEnum);
+    }
+
+    @Override
+    public void onSerialReceived(String theString) {
+        Log.d(LOG_TAG, "onSerialReceived theString:" + theString);
     }
 
 }

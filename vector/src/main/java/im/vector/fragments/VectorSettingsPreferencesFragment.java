@@ -238,6 +238,7 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
             mPushesRuleByResourceId.put(getString(R.string.settings_enable_timer_detecting), DUMMY_RULE);
             mPushesRuleByResourceId.put(getString(R.string.settings_enable_face_detecting), DUMMY_RULE);
             mPushesRuleByResourceId.put(getString(R.string.settings_enable_save_local_file), DUMMY_RULE);
+            mPushesRuleByResourceId.put(getString(R.string.settings_enable_device_PTZ), DUMMY_RULE);
         }
 
         UserAvatarPreference avatarPreference = (UserAvatarPreference) findPreference("matrixId");
@@ -751,7 +752,8 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
                         resourceText.equals(getString(R.string.settings_enable_audio_detecting)) ||
                         resourceText.equals(getString(R.string.settings_enable_timer_detecting)) ||
                         resourceText.equals(getString(R.string.settings_enable_face_detecting)) ||
-                        resourceText.equals(getString(R.string.settings_enable_save_local_file))){
+                        resourceText.equals(getString(R.string.settings_enable_save_local_file)) ||
+                        resourceText.equals(getString(R.string.settings_enable_device_PTZ))){
                     switchPreference.setChecked(gcmMgr.isFunctionEnable(resourceText));
                 }
                 else {
@@ -946,7 +948,8 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
             fResourceText.equals(getString(R.string.settings_enable_audio_detecting)) ||
             fResourceText.equals(getString(R.string.settings_enable_timer_detecting)) ||
             fResourceText.equals(getString(R.string.settings_enable_face_detecting)) ||
-            fResourceText.equals(getString(R.string.settings_enable_save_local_file))){
+            fResourceText.equals(getString(R.string.settings_enable_save_local_file)) ||
+            fResourceText.equals(getString(R.string.settings_enable_device_PTZ))){
             gcmMgr.setFunctionEnable(fResourceText, newValue);
         }
 
