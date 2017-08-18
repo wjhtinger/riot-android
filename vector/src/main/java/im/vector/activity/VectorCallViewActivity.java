@@ -248,9 +248,7 @@ public class VectorCallViewActivity extends BlunoLibrary implements SensorEventL
 
             if (isPTZEnable()) {
                 buttonScanOnClickProcess();
-            }
-
-            mCallView.setOnTouchListener(new View.OnTouchListener() {
+                mCallView.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
                         boolean ret = true;
@@ -278,8 +276,9 @@ public class VectorCallViewActivity extends BlunoLibrary implements SensorEventL
                                 yDiff = mCurPosY - mLastPosY;
 
                                 if(mLastPosX != 0 && mLastPosY != 0){
-                                    int xServo = (int)(xDiff / 6);
-                                    int yServo = (int)(yDiff / 6);
+                                    int xServo = (int)(xDiff / 18);
+                                    int yServo = (int)(yDiff / 18
+                                    );
                                     if(xServo > 0){
                                         servoData = "X" + xServo +"E";
                                     }else if(xServo < 0){
@@ -316,6 +315,7 @@ public class VectorCallViewActivity extends BlunoLibrary implements SensorEventL
                     }
                 });
             }
+        }
 
         @Override
         public void onViewReady() {
@@ -1744,7 +1744,7 @@ public class VectorCallViewActivity extends BlunoLibrary implements SensorEventL
 
     @Override
     public void onConectionStateChange(connectionStateEnum theconnectionStateEnum) {
-        Log.d(LOG_TAG, "onConectionStateChange ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc:" + theconnectionStateEnum);
+        Log.d(LOG_TAG, "onConectionStateChange:" + theconnectionStateEnum);
     }
 
     @Override
