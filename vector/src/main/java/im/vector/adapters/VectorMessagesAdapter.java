@@ -20,6 +20,7 @@ package im.vector.adapters;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -292,6 +293,17 @@ public class VectorMessagesAdapter extends MessagesAdapter {
             senderMargin.setVisibility(View.GONE);
         }
 
+        View textLayout = view.findViewById(R.id.messagesAdapter_text_layout);
+        if(textLayout != null) {
+            boolean isAvatarOnRightSide = isAvatarDisplayedOnRightSide(event);
+            GradientDrawable mGroupDrawable= (GradientDrawable)textLayout.getBackground();
+            if(isAvatarOnRightSide){
+                mGroupDrawable.setColor(0xffaaCCaa);
+            }else{
+                mGroupDrawable.setColor(0xffbbbbff);
+            }
+        }
+
         return view;
     }
 
@@ -519,7 +531,7 @@ public class VectorMessagesAdapter extends MessagesAdapter {
 
     @Override
     protected boolean isAvatarDisplayedOnRightSide(Event event) {
-        return false;
+        return super.isAvatarDisplayedOnRightSide(event);
     }
 
     @Override
@@ -607,7 +619,7 @@ public class VectorMessagesAdapter extends MessagesAdapter {
         moreText.setText((receipts.size() - imageViews.size()) + "+");
 
         for(; index < imageViews.size(); index++) {
-            imageViews.get(index).setVisibility(View.INVISIBLE);
+            imageViews.get(index).setVisibility(View.GONE);
         }
 
         if (receipts.size() > 0) {

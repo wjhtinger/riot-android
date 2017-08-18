@@ -75,9 +75,10 @@
                     <!-- the body is here -->
                     <RelativeLayout
                         android:id="@+id/messagesAdapter_text_layout"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="left">
+                        android:layout_gravity="left"
+                        android:background="@drawable/corners_bg">
 
                         <ImageView
                             android:id="@+id/message_adapter_e2e_icon"
@@ -93,15 +94,21 @@
                             android:layout_marginLeft="4dp"
                             android:layout_toRightOf="@id/message_adapter_e2e_icon"
                             android:autoLink="web"
+                            android:padding="5dp"
                             android:text="A body"
                             android:textIsSelectable="false"
-                            android:textSize="14sp" />
+                            android:textSize="15sp" />
 
                     </RelativeLayout>
 
                 </FrameLayout>
             </LinearLayout>
         </LinearLayout>
+
+        <include
+            android:id="@+id/messagesAdapter_roundAvatar_right"
+            layout="@layout/vector_room_round_avatar" />
+
     </LinearLayout>
 
     <include
