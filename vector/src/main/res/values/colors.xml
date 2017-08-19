@@ -16,7 +16,7 @@
     <color name="vector_deemed_background_view_gray_color">#339D9D9D</color>
 
     <!-- action bar color -->
-    <color name="vector_statusbar_color">#5EA584</color>
+    <color name="vector_statusbar_color">#0099cc</color>
     <color name="vector_actionbar_background">#ff0099cc</color>
     <color name="vector_actionbar_text_color">#FFFFFF</color>
     <color name="vector_actionbar_icons_color">#FFFFFF</color>
