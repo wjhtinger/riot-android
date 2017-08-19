@@ -31,10 +31,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.matrix.androidsdk.MXSession;
@@ -54,6 +56,7 @@ import org.matrix.androidsdk.rest.model.PowerLevels;
 import org.matrix.androidsdk.rest.model.ReceiptData;
 import org.matrix.androidsdk.rest.model.RoomMember;
 import org.matrix.androidsdk.util.JsonUtils;
+import org.w3c.dom.Text;
 
 import im.vector.VectorApp;
 import im.vector.R;
@@ -252,7 +255,7 @@ public class VectorMessagesAdapter extends MessagesAdapter {
 
         ImageView e2eIconView = (ImageView)view.findViewById(R.id.message_adapter_e2e_icon);
         View senderMargin = view.findViewById(R.id.e2e_sender_margin);
-        View senderNameView = view.findViewById(R.id.messagesAdapter_sender);
+        TextView senderNameView = (TextView)view.findViewById(R.id.messagesAdapter_sender);
 
         // GA issue
         if (position >= getCount()) {
@@ -293,14 +296,62 @@ public class VectorMessagesAdapter extends MessagesAdapter {
             senderMargin.setVisibility(View.GONE);
         }
 
+        if ((position > 0) && isMergeableEvent(event)) {
+            MessageRow prevRow = getItem(position - 1);
+            boolean isMergedView = TextUtils.equals(prevRow.getEvent().getSender(), event.getSender());
+            if(!isMergedView){
+                senderNameView.setVisibility(View.VISIBLE);
+                senderNameView.setText(getUserDisplayName(event.getSender(), row.getRoomState()));
+            }
+        }
+
         View textLayout = view.findViewById(R.id.messagesAdapter_text_layout);
-        if(textLayout != null) {
+        View imageLayout = view.findViewById(R.id.messagesAdapter_image_layout);
+        View fileLayout = view.findViewById(R.id.messagesAdapter_file_layout);
+        View contentLayout = null;
+        if(textLayout != null)
+            contentLayout = textLayout;
+        else if(imageLayout != null) {
+            contentLayout = imageLayout;
+            final FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) contentLayout.getLayoutParams();
+            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+            contentLayout.setLayoutParams(layoutParams);
+        }
+        else if(fileLayout != null){
+            contentLayout = fileLayout;
+        }
+
+        if(contentLayout != null) {
             boolean isAvatarOnRightSide = isAvatarDisplayedOnRightSide(event);
-            GradientDrawable mGroupDrawable= (GradientDrawable)textLayout.getBackground();
+            GradientDrawable mGroupDrawable = (GradientDrawable)contentLayout.getBackground();
+            View messageSenderLayout = view.findViewById(R.id.message_sender_layout);
+
             if(isAvatarOnRightSide){
-                mGroupDrawable.setColor(0xffaaCCaa);
+                mGroupDrawable.setColor(0xfff7d96a); //0xff55beff蓝
+
+                if(messageSenderLayout != null){
+                    RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.message_timestamp_layout_right);
+                    messageSenderLayout.setLayoutParams(layoutParams);
+                    senderNameView.setGravity(Gravity.RIGHT);
+                    view.findViewById(R.id.messagesAdapter_roundAvatar_left).setVisibility(View.INVISIBLE);
+                }
+
+                TextView tsTextView = (TextView) view.findViewById(R.id.messagesAdapter_timestamp);
+                if(tsTextView.getVisibility() == View.VISIBLE){
+                    tsTextView.setText(getFormattedTimestamp(event));
+                }
             }else{
-                mGroupDrawable.setColor(0xffbbbbff);
+                mGroupDrawable.setColor(0xffe8e8e8); //0xffe8e8e8灰
+
+                if(messageSenderLayout != null){
+                    RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.message_timestamp_layout_left);
+                    messageSenderLayout.setLayoutParams(layoutParams);
+                    senderNameView.setGravity(Gravity.LEFT);
+                    view.findViewById(R.id.messagesAdapter_roundAvatar_right).setVisibility(View.INVISIBLE);
+                }
             }
         }
 
@@ -965,8 +1016,10 @@ public class VectorMessagesAdapter extends MessagesAdapter {
                 bodyLayout.setMargins(4, bodyLayout.topMargin, 4, bodyLayout.bottomMargin);
 
                 highlightMakerView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.vector_green_color));
+                highlightMakerView.setVisibility(View.VISIBLE);
             } else {
                 highlightMakerView.setBackgroundColor(ContextCompat.getColor(mContext, android.R.color.transparent));
+                highlightMakerView.setVisibility(View.GONE);
             }
         }
 

@@ -37,6 +37,7 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout
+                    android:id="@+id/message_sender_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toLeftOf="@+id/message_timestamp_layout_right"
@@ -49,7 +50,7 @@
                     android:id="@+id/message_timestamp_layout_right"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_centerInParent="true"
                     android:orientation="horizontal">
 
                     <include layout="@layout/vector_message_timestamp" />
@@ -73,49 +74,51 @@
                         android:src="@drawable/e2e_verified" />
 
                     <FrameLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:paddingRight="4dp"
                         android:id="@+id/messagesAdapter_body_layout">
 
                         <RelativeLayout
-                            android:layout_gravity="right"
                             android:id="@+id/messagesAdapter_image_layout"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:background="@drawable/corners_bg"
+                            android:padding="5dp">
 
                             <!-- the media -->
                             <ImageView
-                                android:layout_height="match_parent"
-                                android:layout_width="match_parent"
-                                android:layout_marginLeft="4dp"
                                 android:id="@+id/messagesAdapter_image"
-                                android:adjustViewBounds="true" />
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="0dp"
+                                android:adjustViewBounds="false" />
 
                             <!-- the media type -->
                             <ImageView
-                                android:layout_alignLeft="@+id/messagesAdapter_image"
-                                android:layout_width="@dimen/chat_avatar_size"
-                                android:layout_height="@dimen/chat_avatar_size"
                                 android:id="@+id/messagesAdapter_image_type"
-                                android:src="@drawable/filetype_image"/>
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignLeft="@+id/messagesAdapter_image"
+                                android:src="@drawable/filetype_image" />
 
                             <!-- the upload fails -->
                             <ImageView
                                 android:id="@+id/media_upload_failed"
-                                android:src="@drawable/file_upload_failed"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"
-                                android:visibility="gone"
-                                android:layout_width="@dimen/chat_avatar_size"
-                                android:layout_height="@dimen/chat_avatar_size"/>
+                                android:src="@drawable/file_upload_failed"
+                                android:visibility="gone" />
 
                             <!-- the thumbnail has been uploaded : sending the message -->
                             <ProgressBar
                                 android:id="@+id/upload_event_spinner"
-                                android:layout_centerInParent="true"
-                                android:layout_width="@dimen/chat_avatar_size"
-                                android:layout_height="@dimen/chat_avatar_size"/>
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true" />
                         </RelativeLayout>
                     </FrameLayout>
                 </LinearLayout>
@@ -133,6 +136,10 @@
 
             </LinearLayout>
         </LinearLayout>
+
+        <include
+            android:id="@+id/messagesAdapter_roundAvatar_right"
+            layout="@layout/vector_room_round_avatar" />
     </LinearLayout>
 
     <include layout="@layout/vector_message_receipts_list"
