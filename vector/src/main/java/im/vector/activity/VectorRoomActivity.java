@@ -114,6 +114,9 @@ import im.vector.util.VectorRoomMediasSender;
 import im.vector.util.VectorUtils;
 import im.vector.view.VectorOngoingConferenceCallView;
 import im.vector.view.VectorPendingCallView;
+import io.github.rockerhieu.emojicon.EmojiconGridFragment;
+import io.github.rockerhieu.emojicon.EmojiconsFragment;
+import io.github.rockerhieu.emojicon.emoji.Emojicon;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -125,7 +128,7 @@ import java.util.TimerTask;
 /**
  * Displays a single room with messages.
  */
-public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMessageListFragment.IRoomPreviewDataListener, MatrixMessageListFragment.IEventSendingListener, MatrixMessageListFragment.IOnScrollListener {
+public class VectorRoomActivity extends MXCActionBarActivity implements EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener, MatrixMessageListFragment.IRoomPreviewDataListener, MatrixMessageListFragment.IEventSendingListener, MatrixMessageListFragment.IOnScrollListener {
 
     /**
      * the session
@@ -609,6 +612,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
         mEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                hidePadType(0);
+                hidePadType(1);
                 enableActionBarHeader(HIDE_ACTION_BAR_HEADER);
             }
         });
@@ -676,7 +681,23 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
 //
 //                    fragment.show(fm, TAG_FRAGMENT_ATTACHMENTS_DIALOG);
 
-                    freshButtomPad();
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if(imm != null) {
+                        imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(100);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                freshButtomPad();
+                            }
+                        });
+                    }else{
+                        freshButtomPad();
+                    }
                 }
             }
         });
@@ -752,6 +773,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
             @Override
             public void onClick(View v) {
                 if (mEditText.requestFocus()) {
+                    hidePadType(0);
+                    hidePadType(1);
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(mEditText, InputMethodManager.SHOW_IMPLICIT);
                 }
@@ -762,19 +785,37 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
         mStartCallLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if ((null != mRoom) && mRoom.isEncrypted() && (mRoom.getActiveMembers().size() > 2)) {
-                    // display the dialog with the info text
-                    AlertDialog.Builder permissionsInfoDialog = new AlertDialog.Builder(VectorRoomActivity.this);
-                    Resources resource = getResources();
-                    permissionsInfoDialog.setMessage(resource.getString(R.string.room_no_conference_call_in_encrypted_rooms));
-                    permissionsInfoDialog.setIcon(android.R.drawable.ic_dialog_alert);
-                    permissionsInfoDialog.setPositiveButton(resource.getString(R.string.ok), null);
-                    permissionsInfoDialog.show();
+//                if ((null != mRoom) && mRoom.isEncrypted() && (mRoom.getActiveMembers().size() > 2)) {
+//                    // display the dialog with the info text
+//                    AlertDialog.Builder permissionsInfoDialog = new AlertDialog.Builder(VectorRoomActivity.this);
+//                    Resources resource = getResources();
+//                    permissionsInfoDialog.setMessage(resource.getString(R.string.room_no_conference_call_in_encrypted_rooms));
+//                    permissionsInfoDialog.setIcon(android.R.drawable.ic_dialog_alert);
+//                    permissionsInfoDialog.setPositiveButton(resource.getString(R.string.ok), null);
+//                    permissionsInfoDialog.show();
+//
+//                } else if (isUserAllowedToStartConfCall()) {
+//                    displayVideoCallIpDialog();
+//                } else {
+//                    displayConfCallNotAllowed();
+//                }
 
-                } else if (isUserAllowedToStartConfCall()) {
-                    displayVideoCallIpDialog();
-                } else {
-                    displayConfCallNotAllowed();
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                if(imm != null) {
+                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            showEmojiPad();
+                        }
+                    });
+                }else{
+                    showEmojiPad();
                 }
             }
         });
@@ -903,6 +944,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
 
         // the both flags are only used once
         intent.removeExtra(EXTRA_EXPAND_ROOM_HEADER);
+
+        setEmojiconFragment(false);
 
         Log.d(LOG_TAG, "End of create");
     }
@@ -3325,11 +3368,18 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
     }
 
     private void freshButtomPad(){
+        hidePadType(0);
+
         View room_function_pad = findViewById(R.id.room_function_pad);
         View function_pad_separator = findViewById(R.id.function_pad_separator);
         Float arc0, arc1;
         int duration;
         if(room_function_pad.getVisibility() == View.GONE){
+//            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//            if(imm != null) {
+//                imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+//            }
+
             TranslateAnimation mHiddenAction = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
                     Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
             mHiddenAction.setDuration(500);
@@ -3388,6 +3438,87 @@ public class VectorRoomActivity extends MXCActionBarActivity implements MatrixMe
             }
         });
     }
+
+    private void showEmojiPad(){
+        hidePadType(1);
+
+        View room_functtion_pad_emojicons = findViewById(R.id.emojicons);
+        View function_pad_separator = findViewById(R.id.function_pad_separator);
+
+        Float arc0, arc1, arc2, arc3;
+        int duration;
+        int moreImgEmoji;
+        if(room_functtion_pad_emojicons.getVisibility() == View.GONE){
+//            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//            if(imm != null) {
+//                imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+//            }
+
+            TranslateAnimation mHiddenAction = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                    Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
+            mHiddenAction.setDuration(500);
+            room_functtion_pad_emojicons.startAnimation(mHiddenAction);
+            room_functtion_pad_emojicons.setVisibility(View.VISIBLE);
+            function_pad_separator.setVisibility(View.VISIBLE);
+            moreImgEmoji = R.drawable.ic_material_emoji2;
+            arc0 = 50F;
+            arc1 = -50F;
+            arc2 = 10F;
+            arc3 = 0F;
+            duration = 1000;
+        }else {
+            room_functtion_pad_emojicons.setVisibility(View.GONE);
+            function_pad_separator.setVisibility(View.GONE);
+            moreImgEmoji = R.drawable.ic_material_emoji;
+            arc0 = -50F;
+            arc1 = 50F;
+            arc2 = -10F;
+            arc3 = 0F;
+            duration = 500;
+        }
+
+        ImageView mEmojiImageView = (ImageView)findViewById(R.id.room_start_call_image_view);
+        ObjectAnimator animator = new ObjectAnimator().ofFloat(mEmojiImageView, "rotation", 0F, arc0, arc1, arc2, arc3);
+        animator.setDuration(duration);
+        animator.start();
+
+        mEmojiImageView.setImageResource(moreImgEmoji);
+    }
+
+    private void hidePadType(int type){
+        if(type == 0){
+            View room_functtion_pad_emojicons = findViewById(R.id.emojicons);
+            if (room_functtion_pad_emojicons.getVisibility() == View.VISIBLE) {
+                room_functtion_pad_emojicons.setVisibility(View.GONE);
+                ImageView mEmojiImageView = (ImageView)findViewById(R.id.room_start_call_image_view);
+                mEmojiImageView.setImageResource(R.drawable.ic_material_emoji);
+            }
+        }else if(type == 1){
+            View room_function_pad = findViewById(R.id.room_function_pad);
+            if (room_function_pad.getVisibility() == View.VISIBLE) {
+                room_function_pad.setVisibility(View.GONE);
+                mSendImageView.setImageResource(R.drawable.ic_material_file);
+                moreImg = R.drawable.ic_material_file;
+            }
+        }
+    }
+
+    private void setEmojiconFragment(boolean useSystemDefault) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.emojicons, EmojiconsFragment.newInstance(useSystemDefault))
+                .commit();
+    }
+
+        @Override
+        public void onEmojiconClicked(Emojicon emojicon) {
+            EmojiconsFragment.input(mEditText, emojicon);
+        }
+
+        @Override
+        public void onEmojiconBackspaceClicked(View v) {
+            EmojiconsFragment.backspace(mEditText);
+        }
 
 }
 

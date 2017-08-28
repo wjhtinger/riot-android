@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <include
@@ -87,7 +88,7 @@
                             android:layout_height="14dp"
                             android:src="@drawable/e2e_verified" />
 
-                        <TextView
+                        <io.github.rockerhieu.emojicon.EmojiconTextView
                             android:id="@+id/messagesAdapter_body"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -99,7 +100,8 @@
                             android:padding="5dp"
                             android:text="A body"
                             android:textIsSelectable="false"
-                            android:textSize="15sp" />
+                            android:textSize="15sp"
+                            emojicon:emojiconSize="24sp" />
 
                     </RelativeLayout>
 

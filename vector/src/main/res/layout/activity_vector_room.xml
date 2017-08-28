@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:emojicon="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:id="@+id/room_action_bar"
@@ -181,7 +182,7 @@
                     android:layout_height="wrap_content">
 
                     <RelativeLayout
-                        android:layout_width="20dp"
+                        android:layout_width="5dp"
                         android:layout_height="match_parent">
 
                         <ImageView
@@ -189,11 +190,12 @@
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:layout_centerInParent="true"
+                            android:visibility="gone"
                             android:src="@drawable/e2e_verified"/>
 
                     </RelativeLayout>
 
-                    <EditText
+                    <io.github.rockerhieu.emojicon.EmojiconEditText
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
@@ -206,12 +208,28 @@
                         android:theme="@style/SearchesAppTheme"
                         android:background="@android:color/transparent"
                         android:textCursorDrawable="@drawable/searches_cursor_background"
-                        android:textColorHint="@color/vector_0_54_black_color"/>
+                        android:textColorHint="@color/vector_0_54_black_color"
+                        emojicon:emojiconSize="24sp"/>
 
                     <View
                         android:id="@+id/room_button_margin_left"
                         android:layout_width="6dp"
                         android:layout_height="match_parent" />
+
+                    <RelativeLayout
+                        android:id="@+id/room_start_call_layout"
+                        android:layout_width="37dp"
+                        android:layout_height="match_parent"
+                        android:visibility="visible"
+                        android:contentDescription="@string/call_connecting">
+
+                        <ImageView
+                            android:id="@+id/room_start_call_image_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/ic_material_emoji"/>
+                    </RelativeLayout>
 
                     <RelativeLayout
                         android:id="@+id/room_send_layout"
@@ -226,21 +244,6 @@
                             android:layout_centerInParent="true"
                             android:src="@drawable/ic_material_file"/>
 
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/room_start_call_layout"
-                        android:layout_width="37dp"
-                        android:layout_height="match_parent"
-                        android:visibility="gone"
-                        android:contentDescription="@string/call_connecting">
-
-                        <ImageView
-                            android:id="@+id/room_start_call_image_view"
-                            android:layout_width="24dp"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:src="@drawable/voice_call_start_green"/>
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -631,7 +634,15 @@
                         android:textSize="10sp" />
                 </LinearLayout>
             </TableRow>
+
+
+
         </TableLayout>
+        <FrameLayout
+            android:id="@+id/emojicons"
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:visibility="gone"/>
 </LinearLayout>
 
     <RelativeLayout

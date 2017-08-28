@@ -301,7 +301,13 @@ public class VectorMessagesAdapter extends MessagesAdapter {
             boolean isMergedView = TextUtils.equals(prevRow.getEvent().getSender(), event.getSender());
             if(!isMergedView){
                 senderNameView.setVisibility(View.VISIBLE);
-                senderNameView.setText(getUserDisplayName(event.getSender(), row.getRoomState()));
+                String name = getUserDisplayName(event.getSender(), row.getRoomState());
+                int idx = name.indexOf(":windsing");
+                String name2 = name;
+                if(idx > 0) {
+                    name2 = name.substring(0, idx);
+                }
+                senderNameView.setText(name2);
             }
         }
 
