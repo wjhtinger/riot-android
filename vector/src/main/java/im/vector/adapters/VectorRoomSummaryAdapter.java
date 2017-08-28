@@ -35,6 +35,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.matrix.androidsdk.MXDataHandler;
@@ -604,7 +605,7 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
         // the directory section has always only one entry
         // same for the join by room alias or ID
         if ((mDirectoryGroupPosition == groupPosition) || (mRoomByAliasGroupPosition == groupPosition)) {
-            return 1;
+            return 3;
         }
 
         return mSummaryListByGroupPosition.get(groupPosition).size();
@@ -723,33 +724,49 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
             encryptedIcon.setVisibility(View.GONE);
 
             if (mDirectoryGroupPosition == groupPosition) {
-                roomNameTxtView.setText(mContext.getResources().getString(R.string.directory_search_results_title));
+                if(childPosition == 0){
+                    roomNameTxtView.setText(mContext.getResources().getString(R.string.directory_search_results_title));
 
-                if (!TextUtils.isEmpty(mSearchedPattern)) {
-                    if (null == mMatchedPublicRoomsCount) {
-                        roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_searching_title));
-                    } else if (mMatchedPublicRoomsCount < 2) {
-                        roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_room_for, mMatchedPublicRoomsCount, mSearchedPattern));
-                    } else {
-                        String value = mMatchedPublicRoomsCount.toString();
+                    if (!TextUtils.isEmpty(mSearchedPattern)) {
+                        if (null == mMatchedPublicRoomsCount) {
+                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_searching_title));
+                        } else if (mMatchedPublicRoomsCount < 2) {
+                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_room_for, mMatchedPublicRoomsCount, mSearchedPattern));
+                        } else {
+                            String value = mMatchedPublicRoomsCount.toString();
 
-                        if (mMatchedPublicRoomsCount >= PublicRoomsManager.PUBLIC_ROOMS_LIMIT) {
-                            value = "> " + PublicRoomsManager.PUBLIC_ROOMS_LIMIT;
+                            if (mMatchedPublicRoomsCount >= PublicRoomsManager.PUBLIC_ROOMS_LIMIT) {
+                                value = "> " + PublicRoomsManager.PUBLIC_ROOMS_LIMIT;
+                            }
+
+                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_rooms_for, value, mSearchedPattern));
                         }
-
-                        roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_rooms_for, value, mSearchedPattern));
-                    }
-                } else {
-                    if (null == mPublicRoomsCount) {
-                        roomMsgTxtView.setText(null);
-                    } else if (mPublicRoomsCount > 1) {
-                        roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_rooms, mPublicRoomsCount));
                     } else {
-                        roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_room, mPublicRoomsCount));
+                        if (null == mPublicRoomsCount) {
+                            roomMsgTxtView.setText(null);
+                        } else if (mPublicRoomsCount > 1) {
+                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_rooms, mPublicRoomsCount));
+                        } else {
+                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_room, mPublicRoomsCount));
+                        }
                     }
-                }
 
-                avatarImageView.setImageBitmap(VectorUtils.getAvatar(avatarImageView.getContext(), VectorUtils.getAvatarColor(null), null, true));
+                    avatarImageView.setImageBitmap(VectorUtils.getAvatar(avatarImageView.getContext(), VectorUtils.getAvatarColor(null), "P", true));
+                }else if(childPosition == 1){
+                    roomNameTxtView.setText(mContext.getResources().getString(R.string.room_recents_create_room));
+                    RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+                    roomNameTxtView.setLayoutParams(layoutParams);
+                    convertView.findViewById(R.id.roomSummaryAdapter_down_layout).setVisibility(View.GONE);
+                    avatarImageView.setImageBitmap(VectorUtils.getAvatar(avatarImageView.getContext(), VectorUtils.getAvatarColor(null), "C", true));
+                }else if(childPosition == 2){
+                    roomNameTxtView.setText(mContext.getResources().getString(R.string.room_recents_start_chat));
+                    RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+                    roomNameTxtView.setLayoutParams(layoutParams);
+                    convertView.findViewById(R.id.roomSummaryAdapter_down_layout).setVisibility(View.GONE);
+                    avatarImageView.setImageBitmap(VectorUtils.getAvatar(avatarImageView.getContext(), VectorUtils.getAvatarColor(null), "F", true));
+                }
             } else {
                 roomNameTxtView.setText(mSearchedPattern);
                 roomMsgTxtView.setText("");
