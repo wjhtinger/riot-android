@@ -44,9 +44,9 @@
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:background="@color/vector_green_color"
-                android:indeterminate="true"/>
+                android:background="@color/vector_light_gray_color"
+                android:indeterminate="true"
+                android:visibility="gone" />
 
             <FrameLayout
                 android:id="@+id/home_recents_list_anchor"
@@ -160,14 +160,13 @@
                     android:id="@+id/imageView"/>
 
                 <TextView
-                    android:text="@string/home_buttom_bar_message"
+                    android:id="@+id/textView2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textView2"
-                    android:textStyle="normal|bold"
                     android:gravity="center"
-                    android:textSize="12sp"
-                    android:textColor="@color/vector_actionbar_background" />
+                    android:text="@string/home_buttom_bar_message"
+                    android:textColor="@color/vector_actionbar_background"
+                    android:textSize="10sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -186,13 +185,13 @@
                     android:id="@+id/imageView2"/>
 
                 <TextView
-                    android:text="@string/home_buttom_bar_discovery"
+                    android:id="@+id/textView3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textView3"
-                    android:textStyle="normal|bold"
                     android:gravity="center"
-                    android:textSize="12sp" />
+                    android:text="@string/home_buttom_bar_discovery"
+                    android:textAllCaps="false"
+                    android:textSize="10sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -212,13 +211,12 @@
                     android:id="@+id/imageView3"/>
 
                 <TextView
-                    android:text="@string/home_buttom_bar_space"
+                    android:id="@+id/textView4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textView4"
-                    android:textStyle="normal|bold"
                     android:gravity="center"
-                    android:textSize="12sp" />
+                    android:text="@string/home_buttom_bar_space"
+                    android:textSize="10sp" />
             </LinearLayout>
         </LinearLayout>
 

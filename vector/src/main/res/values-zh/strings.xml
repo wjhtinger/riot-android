@@ -231,7 +231,7 @@
     <string name="login_error_already_logged_in">Already logged in</string>
     <string name="login_error_must_start_http">URL must start with http[s]://</string>
     <string name="login_error_network_error">不能登录: 网络错误</string>
-    <string name="login_error_unable_login">不能登录，网络错误：</string>
+    <string name="login_error_unable_login">不能登录，网络错误</string>
     <string name="login_error_registration_network_error">不能注册: 网络错误</string>
     <string name="login_error_unable_register">不能注册</string>
     <string name="login_error_unable_register_mail_ownership">不能注册: 邮箱已被注册过</string>
@@ -542,9 +542,9 @@
     <string name="people_search_matrix_contacts">Matrix contacts</string>
 
     <!-- Presence status-->
-    <string name="presence_offline">Offline</string>
-    <string name="presence_online">Online</string>
-    <string name="presence_online_now">Online now</string>
+    <string name="presence_offline">离线</string>
+    <string name="presence_online">在线</string>
+    <string name="presence_online_now">在线</string>
     <string name="presence_hidden">Hidden</string>
     <string name="presence_unavailable">Unavailable</string>
 
@@ -616,7 +616,7 @@
     <string name="room_displayname_room_invite">Room Invite</string>
     <string name="room_displayname_two_members">%1$s和%2$s</string>
     <string name="room_displayname_more_than_two_members">%1$s和其他%2$d个</string>
-    <string name="room_displayname_no_title">空房间</string>
+    <string name="room_displayname_no_title">无名房间</string>
 
     <!-- Search -->
     <string name="search_hint">Search</string>
@@ -639,7 +639,7 @@
     <string name="room_recents_create_room">创建房间</string>
 
     <!-- Directory -->
-    <string name="directory_search_results_title">查找公共房间</string>
+    <string name="directory_search_results_title">公共房间</string>
     <string name="directory_search_room">%1$d room</string>
     <string name="directory_search_rooms">%1$d rooms</string>
     <string name="directory_search_room_for">%1$d room found for %2$s</string>
@@ -671,7 +671,7 @@
 
     <string name="settings_sign_out">退出</string>
     <string name="settings_profile_picture">头像</string>
-    <string name="settings_display_name">显示名称</string>
+    <string name="settings_display_name">昵称</string>
     <string name="settings_first_name">First Name</string>
     <string name="settings_surname">Surname</string>
     <string name="settings_email_address">Email</string>
@@ -776,7 +776,7 @@
     <string name="room_settings_topic">房间主题</string>
     <string name="room_settings_room_tag">Room Tag</string>
     <string name="room_settings_tag_pref_dialog_title">Tagged as:</string>
-    <string name="room_settings_mute_notifs">房间消息提醒</string>
+    <string name="room_settings_mute_notifs">关闭消息提醒</string>
 
     <!-- Room settings: Room tag -->
     <string name="room_settings_tag_pref_entry_favourite">Favourite</string>
@@ -798,8 +798,8 @@
     <!-- Room settings, access and visibility : WHO CAN READ HISTORY? (read rule) -->
     <string name="room_settings_read_history_entry_anyone">任何人</string>
     <string name="room_settings_read_history_entry_members_only_option_time_shared">房间成员</string>
-    <string name="room_settings_read_history_entry_members_only_invited">房间成员（已被邀请）</string>
-    <string name="room_settings_read_history_entry_members_only_joined">房间成员（已经加入）</string>
+    <string name="room_settings_read_history_entry_members_only_invited">房间成员（从被邀请开始）</string>
+    <string name="room_settings_read_history_entry_members_only_joined">房间成员（从已加入房间开始）</string>
     <string name="room_settings_read_history_entry_value_anyone">world_readable</string>
     <string name="room_settings_read_history_entry_value_members_only_option_time_shared">shared</string>
     <string name="room_settings_read_history_entry_value_members_only_invited">已邀请</string>
@@ -807,9 +807,9 @@
 
     <!-- Room settings: "Who can access this room?" (access rule) -->
     <string name="room_settings_room_access_warning">给房间设置个名字，以便朋友发现你.</string>
-    <string name="room_settings_room_access_entry_only_invited">只有收到邀请的人才能加入</string>
-    <string name="room_settings_room_access_entry_anyone_with_link_apart_guest">任何登陆用户均可加入</string>
-    <string name="room_settings_room_access_entry_anyone_with_link_including_guest">任何人均可加入，包括访客</string>
+    <string name="room_settings_room_access_entry_only_invited">只有被邀请的人才能加入</string>
+    <string name="room_settings_room_access_entry_anyone_with_link_apart_guest">登陆用户均可加入</string>
+    <string name="room_settings_room_access_entry_anyone_with_link_including_guest">任何人可加入，包括访客</string>
 
     <!-- Room settings: banned users -->
     <string name="room_settings_banned_users_title">Banned users</string>

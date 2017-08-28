@@ -161,7 +161,7 @@ public class VectorApp extends Application {
 
         GAHelper.initGoogleAnalytics(getApplicationContext());
 
-        mRageShake.start(this);
+        //mRageShake.start(this);
 
         // init the REST client
         MXSession.initUserAgent(getApplicationContext());
