@@ -297,45 +297,45 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
         mToolbar.setTitle(R.string.title_activity_home);
         this.setTitle(R.string.title_activity_home);
 
-        mRoomCreationFab = (FloatingActionButton) findViewById(R.id.listView_create_room_view);
-
-        mRoomCreationFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // ignore any action if there is a pending one
-                if (View.VISIBLE != mWaitingView.getVisibility()) {
-                    ObjectAnimator animator = new ObjectAnimator().ofFloat(v, "rotation", 0F, -255F, -235F);
-                    animator.setDuration(800);
-                    animator.start();
-
-                    Context context = VectorHomeActivity.this;
-
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-                    CharSequence items[] = new CharSequence[]{context.getString(R.string.room_recents_start_chat), context.getString(R.string.room_recents_create_room)};
-                    dialog.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface d, int n) {
-                            d.cancel();
-                            if (0 == n) {
-                                invitePeopleToNewRoom();
-                            } else {
-                                createRoom();
-                            }
-                        }
-                    });
-
-                    dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            invitePeopleToNewRoom();
-                        }
-                    });
-
-                    dialog.setNegativeButton(R.string.cancel, null);
-                    dialog.show();
-                }
-            }
-        });
+//        mRoomCreationFab = (FloatingActionButton) findViewById(R.id.listView_create_room_view);
+//
+//        mRoomCreationFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // ignore any action if there is a pending one
+//                if (View.VISIBLE != mWaitingView.getVisibility()) {
+//                    ObjectAnimator animator = new ObjectAnimator().ofFloat(v, "rotation", 0F, -255F, -235F);
+//                    animator.setDuration(800);
+//                    animator.start();
+//
+//                    Context context = VectorHomeActivity.this;
+//
+//                    AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+//                    CharSequence items[] = new CharSequence[]{context.getString(R.string.room_recents_start_chat), context.getString(R.string.room_recents_create_room)};
+//                    dialog.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface d, int n) {
+//                            d.cancel();
+//                            if (0 == n) {
+//                                invitePeopleToNewRoom();
+//                            } else {
+//                                createRoom();
+//                            }
+//                        }
+//                    });
+//
+//                    dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            invitePeopleToNewRoom();
+//                        }
+//                    });
+//
+//                    dialog.setNegativeButton(R.string.cancel, null);
+//                    dialog.show();
+//                }
+//            }
+//        });
 
         mSession = Matrix.getInstance(this).getDefaultSession();
 
@@ -1348,6 +1348,14 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
 
         if (null != mainAvatarView) {
             VectorUtils.loadUserAvatar(this, mSession, mainAvatarView, mSession.getMyUser());
+            mainAvatarView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Intent settingsIntent = new Intent(VectorHomeActivity.this, VectorSettingsActivity.class);
+                    settingsIntent.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, mSession.getMyUserId());
+                    VectorHomeActivity.this.startActivity(settingsIntent);
+                }
+            });
         } else {
             // on Android M, the mNavigationView is not loaded at launch
             // so launch asap it is rendered.

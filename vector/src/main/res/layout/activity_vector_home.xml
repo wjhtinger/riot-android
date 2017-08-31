@@ -62,6 +62,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="@dimen/floating_action_button_margin"
                 android:layout_marginBottom="@dimen/floating_action_button_margin"
+                android:visibility="gone"
                 app:backgroundTint="@color/vector_fuchsia_color"
                 android:src="@drawable/ic_add_white"
                 app:borderWidth="0dp"
