@@ -643,12 +643,13 @@ public class ContactsManager implements SharedPreferences.OnSharedPreferenceChan
      * @return true if it was granted.
      */
     public boolean isContactBookAccessAllowed() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            return (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_CONTACTS));
-        } else {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-            return preferences.getBoolean(CONTACTS_BOOK_ACCESS_KEY, false);
-        }
+        return false;
+//        if (Build.VERSION.SDK_INT >= 23) {
+//            return (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(mContext, Manifest.permission.READ_CONTACTS));
+//        } else {
+//            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+//            return preferences.getBoolean(CONTACTS_BOOK_ACCESS_KEY, false);
+//        }
     }
 }
 
