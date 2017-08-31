@@ -1017,4 +1017,8 @@
     <string name="bug_report_password">W178328jh</string>
     <string name="bug_report_path">bug_report</string>
 
+    <!-- others -->
+    <string name="room_recents_device">DEVICE</string>
+    <string name="room_recents_device_ptz">PTZ Device</string>
+
 </resources>

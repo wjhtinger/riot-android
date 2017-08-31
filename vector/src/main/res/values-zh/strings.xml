@@ -86,7 +86,7 @@
     <string name="action_video_call">Video Call</string>
     <string name="action_search_room">Search room</string>
     <string name="action_search_contact">Search contact</string>
-    <string name="action_mark_all_as_read">清除所有新信息标志</string>
+    <string name="action_mark_all_as_read">清除新信息标志</string>
     <string name="action_quick_reply">快速回复</string>
     <string name="action_open">打开应用</string>
     <string name="action_close">关闭</string>
@@ -565,7 +565,7 @@
     <string name="room_message_placeholder_encrypted">输入信息...</string>
     <string name="room_message_placeholder_not_encrypted">输入信息...</string>
     <string name="room_offline_notification">连接丢失，请检查网络！</string>
-    <string name="room_unsent_messages_notification">有消息发送失败. %1$s还是%2$s?</string>
+    <string name="room_unsent_messages_notification">有消息发送失败：%1$s / %2$s?</string>
     <string name="room_unknown_devices_messages_notification">Messages not sent due to unknown devices being present. %1$s or %2$s now?</string>
     <string name="room_prompt_resend">重新发送</string>
     <string name="room_prompt_cancel">取消发送</string>
@@ -776,7 +776,7 @@
     <string name="room_settings_topic">房间主题</string>
     <string name="room_settings_room_tag">Room Tag</string>
     <string name="room_settings_tag_pref_dialog_title">Tagged as:</string>
-    <string name="room_settings_mute_notifs">关闭消息提醒</string>
+    <string name="room_settings_mute_notifs">消息免打扰</string>
 
     <!-- Room settings: Room tag -->
     <string name="room_settings_tag_pref_entry_favourite">Favourite</string>
@@ -1017,5 +1017,10 @@
     <string name="bug_report_user">wangjh</string>
     <string name="bug_report_password">W178328jh</string>
     <string name="bug_report_path">bug_report</string>
+
+    <!-- others -->
+    <string name="room_recents_device">设备</string>
+    <string name="room_recents_device_ptz">云台</string>
+
 
 </resources>

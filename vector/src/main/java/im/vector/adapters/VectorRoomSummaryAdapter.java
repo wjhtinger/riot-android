@@ -100,6 +100,7 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
     private int mFavouritesGroupPosition = -1;// "Favourites" index
     private int mNoTagGroupPosition = -1;    // "Rooms" index
     private int mLowPriorGroupPosition = -1;  // "Low Priority" index
+    private int mDeviceGroupPosition = -1;  // "Low Priority" index
 
     private final String DBG_CLASS_NAME;
 
@@ -199,6 +200,9 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
         }
         else if (mInvitedGroupPosition == groupPosition) {
             retValue = mContext.getResources().getString(R.string.room_recents_invites);
+        }
+        else if (mDeviceGroupPosition == groupPosition) {
+            retValue = mContext.getResources().getString(R.string.room_recents_device);
         } else {
             // unknown section
             retValue = "??";
@@ -261,6 +265,10 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
         return (mDirectoryGroupPosition == groupPosition);
     }
 
+    public boolean isDeviceGroupPosition(int groupPosition) {
+        return (mDeviceGroupPosition == groupPosition);
+    }
+
     /**
      * @return the directory group position
      */
@@ -314,6 +322,7 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
         mFavouritesGroupPosition = -1;
         mNoTagGroupPosition = -1;
         mLowPriorGroupPosition = -1;
+        mDeviceGroupPosition = -1;
 
         if(null != aRoomSummaryCollection) {
 
@@ -442,6 +451,12 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
                 summaryListByGroupsRetValue.add(lowPriorityRoomSummaryList);
                 mLowPriorGroupPosition = groupIndex; // save section index
                 groupIndex++;
+            }
+
+            if(mForceDirectoryGroupDisplay){
+                mDeviceGroupPosition = groupIndex;
+                groupIndex++;
+                summaryListByGroupsRetValue.add(new ArrayList<RoomSummary>());
             }
 
             // in avoiding empty history mode
@@ -608,6 +623,10 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
             return 3;
         }
 
+        if (mDeviceGroupPosition == groupPosition) {
+            return 1;
+        }
+
         return mSummaryListByGroupPosition.get(groupPosition).size();
     }
 
@@ -727,50 +746,81 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
                 if(childPosition == 0){
                     roomNameTxtView.setText(mContext.getResources().getString(R.string.directory_search_results_title));
 
-                    if (!TextUtils.isEmpty(mSearchedPattern)) {
-                        if (null == mMatchedPublicRoomsCount) {
-                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_searching_title));
-                        } else if (mMatchedPublicRoomsCount < 2) {
-                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_room_for, mMatchedPublicRoomsCount, mSearchedPattern));
-                        } else {
-                            String value = mMatchedPublicRoomsCount.toString();
-
-                            if (mMatchedPublicRoomsCount >= PublicRoomsManager.PUBLIC_ROOMS_LIMIT) {
-                                value = "> " + PublicRoomsManager.PUBLIC_ROOMS_LIMIT;
-                            }
-
-                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_rooms_for, value, mSearchedPattern));
-                        }
-                    } else {
-                        if (null == mPublicRoomsCount) {
-                            roomMsgTxtView.setText(null);
-                        } else if (mPublicRoomsCount > 1) {
-                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_rooms, mPublicRoomsCount));
-                        } else {
-                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_room, mPublicRoomsCount));
-                        }
-                    }
-
-                    avatarImageView.setImageBitmap(VectorUtils.getAvatar(avatarImageView.getContext(), VectorUtils.getAvatarColor(null), "P", true));
+//                    if (!TextUtils.isEmpty(mSearchedPattern)) {
+//                        if (null == mMatchedPublicRoomsCount) {
+//                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_searching_title));
+//                        } else if (mMatchedPublicRoomsCount < 2) {
+//                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_room_for, mMatchedPublicRoomsCount, mSearchedPattern));
+//                        } else {
+//                            String value = mMatchedPublicRoomsCount.toString();
+//
+//                            if (mMatchedPublicRoomsCount >= PublicRoomsManager.PUBLIC_ROOMS_LIMIT) {
+//                                value = "> " + PublicRoomsManager.PUBLIC_ROOMS_LIMIT;
+//                            }
+//
+//                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_rooms_for, value, mSearchedPattern));
+//                        }
+//                    } else {
+//                        if (null == mPublicRoomsCount) {
+//                            roomMsgTxtView.setText(null);
+//                        } else if (mPublicRoomsCount > 1) {
+//                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_rooms, mPublicRoomsCount));
+//                        } else {
+//                            roomMsgTxtView.setText(mContext.getResources().getString(R.string.directory_search_room, mPublicRoomsCount));
+//                        }
+//                    }
+                    RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+                    roomNameTxtView.setLayoutParams(layoutParams);
+                    convertView.findViewById(R.id.roomSummaryAdapter_down_layout).setVisibility(View.GONE);
+                    //avatarImageView.setImageBitmap(VectorUtils.getAvatar(avatarImageView.getContext(), VectorUtils.getAvatarColor(null), "P", true));
+                    avatarImageView.setImageResource(R.drawable.ic_language_black_24dp);
                 }else if(childPosition == 1){
                     roomNameTxtView.setText(mContext.getResources().getString(R.string.room_recents_create_room));
                     RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
                     roomNameTxtView.setLayoutParams(layoutParams);
                     convertView.findViewById(R.id.roomSummaryAdapter_down_layout).setVisibility(View.GONE);
-                    avatarImageView.setImageBitmap(VectorUtils.getAvatar(avatarImageView.getContext(), VectorUtils.getAvatarColor(null), "C", true));
+                    //avatarImageView.setImageBitmap(VectorUtils.getAvatar(avatarImageView.getContext(), VectorUtils.getAvatarColor(null), "C", true));
+                    avatarImageView.setImageResource(R.drawable.ic_group_black_24dp);
                 }else if(childPosition == 2){
                     roomNameTxtView.setText(mContext.getResources().getString(R.string.room_recents_start_chat));
                     RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
                     roomNameTxtView.setLayoutParams(layoutParams);
                     convertView.findViewById(R.id.roomSummaryAdapter_down_layout).setVisibility(View.GONE);
-                    avatarImageView.setImageBitmap(VectorUtils.getAvatar(avatarImageView.getContext(), VectorUtils.getAvatarColor(null), "F", true));
+                    //avatarImageView.setImageBitmap(VectorUtils.getAvatar(avatarImageView.getContext(), VectorUtils.getAvatarColor(null), "F", true));
+                    avatarImageView.setImageResource(R.drawable.ic_zoom_in_black_24dp);
                 }
             } else {
                 roomNameTxtView.setText(mSearchedPattern);
                 roomMsgTxtView.setText("");
                 avatarImageView.setImageBitmap(VectorUtils.getAvatar(avatarImageView.getContext(), VectorUtils.getAvatarColor(null), "@", true));
+            }
+
+            return convertView;
+        }
+
+        if (mDeviceGroupPosition == groupPosition){
+            bingUnreadMsgView.setVisibility(View.INVISIBLE);
+            timestampTxtView.setVisibility(View.GONE);
+            actionImageView.setVisibility(View.GONE);
+            invitationView.setVisibility(View.GONE);
+            separatorView.setVisibility(View.GONE);
+            separatorGroupView.setVisibility(View.VISIBLE);
+            showMoreView.setVisibility(View.VISIBLE);
+            actionClickArea.setVisibility(View.GONE);
+            unreadCountTxtView.setVisibility(View.GONE);
+            directChatIcon.setVisibility(View.GONE);
+            encryptedIcon.setVisibility(View.GONE);
+
+            if(childPosition == 0){
+                roomNameTxtView.setText(mContext.getResources().getString(R.string.room_recents_device_ptz));
+                RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+                roomNameTxtView.setLayoutParams(layoutParams);
+                convertView.findViewById(R.id.roomSummaryAdapter_down_layout).setVisibility(View.GONE);
+                avatarImageView.setImageResource(R.drawable.ic_developer_board_black_24dp);
             }
 
             return convertView;

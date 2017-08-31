@@ -194,14 +194,14 @@ public class VectorRecentsListFragment extends Fragment implements VectorRoomSum
                                         int groupPosition, int childPosition, long id) {
                 if (mAdapter.isDirectoryGroupPosition(groupPosition)) {
                     Intent intent = null;
-                    if(childPosition == 0){
+                    if (childPosition == 0) {
                         intent = new Intent(getActivity(), VectorPublicRoomsActivity.class);
                         intent.putExtra(VectorPublicRoomsActivity.EXTRA_MATRIX_ID, mSession.getMyUserId());
 
                         if (!TextUtils.isEmpty(mAdapter.getSearchedPattern())) {
                             intent.putExtra(VectorPublicRoomsActivity.EXTRA_SEARCHED_PATTERN, mAdapter.getSearchedPattern());
                         }
-                    }else if(childPosition == 1){
+                    } else if (childPosition == 1) {
                         findWaitingView();
                         mWaitingView.setVisibility(View.VISIBLE);
                         mSession.createRoom(new SimpleApiCallback<String>(getActivity()) {
@@ -220,6 +220,7 @@ public class VectorRecentsListFragment extends Fragment implements VectorRoomSum
                                     }
                                 });
                             }
+
                             private void onError(final String message) {
                                 mWaitingView.post(new Runnable() {
                                     @Override
@@ -231,27 +232,34 @@ public class VectorRecentsListFragment extends Fragment implements VectorRoomSum
                                     }
                                 });
                             }
+
                             @Override
                             public void onNetworkError(Exception e) {
                                 onError(e.getLocalizedMessage());
                             }
+
                             @Override
                             public void onMatrixError(final MatrixError e) {
                                 onError(e.getLocalizedMessage());
                             }
+
                             @Override
                             public void onUnexpectedError(final Exception e) {
                                 onError(e.getLocalizedMessage());
                             }
                         });
-                    }else if(childPosition == 2){
+                    } else if (childPosition == 2) {
                         intent = new Intent(getActivity(), VectorRoomCreationActivity.class);
                         intent.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, mSession.getMyUserId());
                     }
 
-                    if(intent != null){
+                    if (intent != null) {
                         getActivity().startActivity(intent);
                     }
+                }
+                else if (mAdapter.isDeviceGroupPosition(groupPosition)) {
+                    //do nothing
+
                 } else {
                     RoomSummary roomSummary = mAdapter.getRoomSummaryAt(groupPosition, childPosition);
                     MXSession session = Matrix.getInstance(getActivity()).getSession(roomSummary.getMatrixId());
