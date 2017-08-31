@@ -233,6 +233,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
     // room preview
     private View mRoomPreviewLayout;
 
+    private MenuItem mLiveMenuItem;
     private MenuItem mResendUnsentMenuItem;
     private MenuItem mResendDeleteMenuItem;
     private MenuItem mSearchInRoomMenuItem;
@@ -1253,6 +1254,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
             // Inflate the menu; this adds items to the action bar if it is present.
             getMenuInflater().inflate(R.menu.vector_room, menu);
 
+
+            mLiveMenuItem = menu.findItem(R.id.ic_action_room_leave);
             mResendUnsentMenuItem = menu.findItem(R.id.ic_action_room_resend_unsent);
             mResendDeleteMenuItem = menu.findItem(R.id.ic_action_room_delete_unsent);
             mSearchInRoomMenuItem =  menu.findItem(R.id.ic_action_search_in_room);
@@ -2004,7 +2007,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
             super.updateDrawState(ds);
             ds.setColor(getResources().getColor(R.color.vector_fuchsia_color));
             ds.bgColor = 0;
-            ds.setUnderlineText(true);
+            ds.setFakeBoldText(true);
         }
     }
 
@@ -2023,7 +2026,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
             super.updateDrawState(ds);
             ds.setColor(getResources().getColor(R.color.vector_fuchsia_color));
             ds.bgColor = 0;
-            ds.setUnderlineText(true);
+            ds.setFakeBoldText(true);
         }
     }
 
@@ -2151,11 +2154,15 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
 
         //
         if (null != mResendUnsentMenuItem) {
-            mResendUnsentMenuItem.setVisible(hasUnsentEvent);
+            mResendUnsentMenuItem.setVisible(false);
         }
 
         if (null != mResendDeleteMenuItem) {
-            mResendDeleteMenuItem.setVisible(hasUnsentEvent);
+            mResendDeleteMenuItem.setVisible(false);
+        }
+
+        if (null != mLiveMenuItem) {
+            mLiveMenuItem.setVisible(false);
         }
 
         if (null != mSearchInRoomMenuItem) {
