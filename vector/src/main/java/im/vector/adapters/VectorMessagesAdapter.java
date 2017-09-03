@@ -334,7 +334,7 @@ public class VectorMessagesAdapter extends MessagesAdapter {
             View messageSenderLayout = view.findViewById(R.id.message_sender_layout);
 
             if(isAvatarOnRightSide){
-                mGroupDrawable.setColor(0xfff7d96a); //0xff55beff蓝
+                mGroupDrawable.setColor(0xffffed87); //(0xfff7d96a); //0xff55beff蓝
 
                 if(messageSenderLayout != null){
                     RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

@@ -30,6 +30,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -50,6 +51,7 @@ import org.matrix.androidsdk.crypto.data.MXDeviceInfo;
 import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap;
 import org.matrix.androidsdk.util.Log;
 
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -57,6 +59,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
@@ -64,6 +67,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -616,6 +620,18 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
                 hidePadType(0);
                 hidePadType(1);
                 enableActionBarHeader(HIDE_ACTION_BAR_HEADER);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                    }
+                });
             }
         });
 
@@ -778,6 +794,20 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
                     hidePadType(1);
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(mEditText, InputMethodManager.SHOW_IMPLICIT);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                        }
+                    });
+
                 }
             }
         });
@@ -812,6 +842,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
+                            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
                             showEmojiPad();
                         }
                     });
@@ -3382,14 +3413,9 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
         Float arc0, arc1;
         int duration;
         if(room_function_pad.getVisibility() == View.GONE){
-//            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//            if(imm != null) {
-//                imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
-//            }
-
             TranslateAnimation mHiddenAction = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
                     Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
-            mHiddenAction.setDuration(500);
+            mHiddenAction.setDuration(200);
             room_function_pad.startAnimation(mHiddenAction);
             room_function_pad.setVisibility(View.VISIBLE);
             function_pad_separator.setVisibility(View.VISIBLE);
@@ -3452,18 +3478,19 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
         View room_functtion_pad_emojicons = findViewById(R.id.emojicons);
         View function_pad_separator = findViewById(R.id.function_pad_separator);
 
+        int softInputHeight = getSupportSoftInputHeight();
+        if (softInputHeight == 0) {
+            softInputHeight = mSoftHeight == 0 ? 831 : mSoftHeight;
+        }
+        room_functtion_pad_emojicons.getLayoutParams().height = softInputHeight;
+
         Float arc0, arc1, arc2, arc3;
         int duration;
         int moreImgEmoji;
         if(room_functtion_pad_emojicons.getVisibility() == View.GONE){
-//            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//            if(imm != null) {
-//                imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
-//            }
-
             TranslateAnimation mHiddenAction = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
                     Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
-            mHiddenAction.setDuration(500);
+            mHiddenAction.setDuration(200);
             room_functtion_pad_emojicons.startAnimation(mHiddenAction);
             room_functtion_pad_emojicons.setVisibility(View.VISIBLE);
             function_pad_separator.setVisibility(View.VISIBLE);
@@ -3517,15 +3544,51 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
                 .commit();
     }
 
-        @Override
-        public void onEmojiconClicked(Emojicon emojicon) {
-            EmojiconsFragment.input(mEditText, emojicon);
+    @Override
+    public void onEmojiconClicked(Emojicon emojicon) {
+        EmojiconsFragment.input(mEditText, emojicon);
+    }
+
+    @Override
+    public void onEmojiconBackspaceClicked(View v) {
+        EmojiconsFragment.backspace(mEditText);
+    }
+
+
+    private int mSoftHeight = 0;
+    private int getSoftButtonsBarHeight() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int usableHeight = metrics.heightPixels;
+        this.getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+        int realHeight = metrics.heightPixels;
+        if (realHeight > usableHeight) {
+            return realHeight - usableHeight;
+        } else {
+            return 0;
+        }
+    }
+
+    private int getSupportSoftInputHeight() {
+        Rect r = new Rect();
+        this.getWindow().getDecorView().getWindowVisibleDisplayFrame(r);
+        int screenHeight = this.getWindow().getDecorView().getRootView().getHeight();
+        int softInputHeight = screenHeight - r.bottom;
+        if (Build.VERSION.SDK_INT >= 20) {
+            // When SDK Level >= 20 (Android L), the softInputHeight will contain the height of softButtonsBar (if has)
+            softInputHeight = softInputHeight - getSoftButtonsBarHeight();
         }
 
-        @Override
-        public void onEmojiconBackspaceClicked(View v) {
-            EmojiconsFragment.backspace(mEditText);
+        if (softInputHeight > 0) {
+            mSoftHeight = softInputHeight;
         }
+
+        return softInputHeight;
+    }
+
+    private boolean isSoftShow() {
+        return getSupportSoftInputHeight() != 0;
+    }
 
 }
 
