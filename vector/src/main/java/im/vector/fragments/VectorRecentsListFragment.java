@@ -17,7 +17,9 @@
 
 package im.vector.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,6 +36,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -54,6 +59,7 @@ import org.matrix.androidsdk.util.EventUtils;
 import im.vector.Matrix;
 import im.vector.PublicRoomsManager;
 import im.vector.R;
+import im.vector.VectorApp;
 import im.vector.ViewedRoomTracker;
 import im.vector.activity.CommonActivityUtils;
 import im.vector.activity.MXCActionBarActivity;
@@ -202,52 +208,8 @@ public class VectorRecentsListFragment extends Fragment implements VectorRoomSum
                             intent.putExtra(VectorPublicRoomsActivity.EXTRA_SEARCHED_PATTERN, mAdapter.getSearchedPattern());
                         }
                     } else if (childPosition == 1) {
-                        findWaitingView();
-                        mWaitingView.setVisibility(View.VISIBLE);
-                        mSession.createRoom(new SimpleApiCallback<String>(getActivity()) {
-                            @Override
-                            public void onSuccess(final String roomId) {
-                                mWaitingView.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mWaitingView.setVisibility(View.GONE);
-
-                                        HashMap<String, Object> params = new HashMap<>();
-                                        params.put(VectorRoomActivity.EXTRA_MATRIX_ID, mSession.getMyUserId());
-                                        params.put(VectorRoomActivity.EXTRA_ROOM_ID, roomId);
-                                        params.put(VectorRoomActivity.EXTRA_EXPAND_ROOM_HEADER, true);
-                                        CommonActivityUtils.goToRoomPage(getActivity(), mSession, params);
-                                    }
-                                });
-                            }
-
-                            private void onError(final String message) {
-                                mWaitingView.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (null != message) {
-                                            Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-                                        }
-                                        mWaitingView.setVisibility(View.GONE);
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onNetworkError(Exception e) {
-                                onError(e.getLocalizedMessage());
-                            }
-
-                            @Override
-                            public void onMatrixError(final MatrixError e) {
-                                onError(e.getLocalizedMessage());
-                            }
-
-                            @Override
-                            public void onUnexpectedError(final Exception e) {
-                                onError(e.getLocalizedMessage());
-                            }
-                        });
+						findWaitingView();
+                        createRoomDialog();
                     } else if (childPosition == 2) {
                         intent = new Intent(getActivity(), VectorRoomCreationActivity.class);
                         intent.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, mSession.getMyUserId());
@@ -1266,5 +1228,161 @@ public class VectorRecentsListFragment extends Fragment implements VectorRoomSum
                 }
             });
         }
+    }
+
+    private void createRoomDialog(){
+        Activity currentActivity = VectorApp.getCurrentActivity();
+
+        LayoutInflater inflater = currentActivity.getLayoutInflater();
+        View dialogLayout = inflater.inflate(R.layout.dialog_create_room, null);
+        final EditText editTextRoomNane = (EditText) dialogLayout.findViewById(R.id.editTextRoomNane);
+        final EditText editTextRoomTopic = (EditText) dialogLayout.findViewById(R.id.editTextRoomTopic);
+        final CheckBox checkBoxPublicRoom = (CheckBox) dialogLayout.findViewById(R.id.checkBoxPublicRoom);
+
+//        final AlertDialog.Builder dialog = new AlertDialog.Builder(currentActivity);
+//        dialog.setTitle(R.string.room_recents_create_room);
+//        dialog.setView(dialogLayout);
+//
+//        dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                findWaitingView();
+//                mWaitingView.setVisibility(View.VISIBLE);
+//
+//                String visibility = null;
+//                String guestAccess = null;
+//                if(checkBoxPublicRoom.isChecked()){
+//                    visibility = "public";
+//                    guestAccess = "can_join";
+//                }
+//
+//                mSession.createRoom(editTextRoomNane.getText().toString(), editTextRoomTopic.getText().toString(), visibility, null, guestAccess, null, new SimpleApiCallback<String>(getActivity()) {
+//                    @Override
+//                    public void onSuccess(final String roomId) {
+//                        mWaitingView.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                mWaitingView.setVisibility(View.GONE);
+//
+//                                HashMap<String, Object> params = new HashMap<>();
+//                                params.put(VectorRoomActivity.EXTRA_MATRIX_ID, mSession.getMyUserId());
+//                                params.put(VectorRoomActivity.EXTRA_ROOM_ID, roomId);
+//                                params.put(VectorRoomActivity.EXTRA_EXPAND_ROOM_HEADER, true);
+//                                CommonActivityUtils.goToRoomPage(getActivity(), mSession, params);
+//                            }
+//                        });
+//                    }
+//
+//                    private void onError(final String message) {
+//                        mWaitingView.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (null != message) {
+//                                    Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+//                                }
+//                                mWaitingView.setVisibility(View.GONE);
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onNetworkError(Exception e) {
+//                        onError(e.getLocalizedMessage());
+//                    }
+//
+//                    @Override
+//                    public void onMatrixError(final MatrixError e) {
+//                        onError(e.getLocalizedMessage());
+//                    }
+//
+//                    @Override
+//                    public void onUnexpectedError(final Exception e) {
+//                        onError(e.getLocalizedMessage());
+//                    }
+//                });
+//            }
+//        });
+//
+//        dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//            }
+//        });
+
+
+        final Dialog dialog=new Dialog(currentActivity, R.style.CircleDialog);
+        dialog.setTitle(R.string.room_recents_create_room);
+        dialog.setContentView(dialogLayout);
+
+        Button buttonComfirm = (Button)dialogLayout.findViewById(R.id.confirm);
+        buttonComfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                findWaitingView();
+                mWaitingView.setVisibility(View.VISIBLE);
+
+                String visibility = null;
+                String guestAccess = null;
+                if(checkBoxPublicRoom.isChecked()){
+                    visibility = "public";
+                    guestAccess = "can_join";
+                }
+
+                mSession.createRoom(editTextRoomNane.getText().toString(), editTextRoomTopic.getText().toString(), visibility, null, guestAccess, null, new SimpleApiCallback<String>(getActivity()) {
+                    @Override
+                    public void onSuccess(final String roomId) {
+                        mWaitingView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mWaitingView.setVisibility(View.GONE);
+
+                                HashMap<String, Object> params = new HashMap<>();
+                                params.put(VectorRoomActivity.EXTRA_MATRIX_ID, mSession.getMyUserId());
+                                params.put(VectorRoomActivity.EXTRA_ROOM_ID, roomId);
+                                params.put(VectorRoomActivity.EXTRA_EXPAND_ROOM_HEADER, true);
+                                CommonActivityUtils.goToRoomPage(getActivity(), mSession, params);
+                            }
+                        });
+                    }
+
+                    private void onError(final String message) {
+                        mWaitingView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (null != message) {
+                                    Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+                                }
+                                mWaitingView.setVisibility(View.GONE);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onNetworkError(Exception e) {
+                        onError(e.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onMatrixError(final MatrixError e) {
+                        onError(e.getLocalizedMessage());
+                    }
+
+                    @Override
+                    public void onUnexpectedError(final Exception e) {
+                        onError(e.getLocalizedMessage());
+                    }
+                });
+            }
+        });
+
+        Button cancel = (Button)dialogLayout.findViewById(R.id.cancel);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 }

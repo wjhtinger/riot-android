@@ -283,4 +283,14 @@
         <item name="android:textColorHint">@color/vector_74_gray</item>
     </style>
 
+    <style name="CircleDialog" parent="android:Theme.Dialog">
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowFrame">@null</item> <!--边框-->
+        <item name="android:windowBackground">@android:color/transparent</item> <!-- 背景透明 -->
+        <item name="android:windowNoTitle">true</item> <!--无标题-->
+        <item name="android:windowIsTranslucent">true</item> <!--半透明-->
+        <item name="android:windowIsFloating">true</item> <!--是否浮现在activity之上-->
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
 </resources>
