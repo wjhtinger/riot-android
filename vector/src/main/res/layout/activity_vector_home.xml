@@ -39,14 +39,7 @@
             tools:context="org.matrix.vector.activity.VectorHomeActivity"
             android:visibility="visible">
 
-            <ProgressBar
-                android:id="@+id/home_recents_sync_in_progress"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/vector_light_gray_color"
-                android:indeterminate="true"
-                android:visibility="gone" />
+
 
             <FrameLayout
                 android:id="@+id/home_recents_list_anchor"
@@ -130,6 +123,17 @@
 
         </RelativeLayout>
         </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/home_recents_sync_in_progress"
+            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/vector_light_gray_color"
+            android:indeterminate="true"
+            android:maxHeight="10dp"
+            android:minHeight="10dp"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/home_buttom_pad"
@@ -304,6 +308,8 @@
                 android:textStyle="bold"
                 android:typeface="monospace" />
         </RelativeLayout>
+
+
 
     </LinearLayout>
 

@@ -25,6 +25,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
@@ -38,6 +40,8 @@ import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -61,7 +65,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * An images slider
@@ -126,6 +132,7 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
 
                         if (mediaInfo.mMessageType.equals(Message.MSGTYPE_VIDEO)) {
                             final VideoView videoView = (VideoView) view.findViewById(R.id.media_slider_videoview);
+                            videoView.setOnPreparedListener(mOnPreparedListener);
                             playVideo(view, videoView, mediaInfo.mMediaUrl, mediaInfo.mMimeType);
                         }
 
@@ -184,6 +191,8 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         final VideoView videoView = (VideoView)view.findViewById(R.id.media_slider_videoview);
         final ImageView thumbView = (ImageView)view.findViewById(R.id.media_slider_video_thumbnail);
         final PieFractionView pieFractionView = (PieFractionView)view.findViewById(R.id.media_slider_piechart);
+        mVideoView = videoView;
+        videoView.setOnPreparedListener(mOnPreparedListener);
 
         final SlidableMediaInfo mediaInfo = mMediasMessagesList.get(position);
         final String loadingUri = mediaInfo.mMediaUrl;
@@ -632,6 +641,10 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         final ImageView thumbView = (ImageView)view.findViewById(R.id.media_slider_video_thumbnail);
         final ImageView playView = (ImageView)view.findViewById(R.id.media_slider_video_playView);
 
+        mText_Current = (TextView) view.findViewById(R.id.text_currentpostion);
+        mText_Durtion = (TextView) view.findViewById(R.id.text_durtionposition);
+        mSeekBar = (SeekBar) view.findViewById(R.id.progress);
+
         displayVideoThumbnail(view, !videoView.isPlaying());
 
         videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -813,5 +826,103 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((View) object);
+    }
+
+
+    private VideoView mVideoView;
+    private MediaPlayer mMediaPlayer;
+    private SeekBar mSeekBar;
+    private TextView mText_Current;
+    private TextView mText_Durtion;
+    private int mDuration = -1;
+
+    private MediaPlayer.OnPreparedListener mOnPreparedListener = new MediaPlayer.OnPreparedListener() {
+        @Override
+        public void onPrepared(MediaPlayer mp) {
+//            if (mIsBackPrepared) {
+//                mVideoView.pause();
+//                mIsBackPrepared = false;
+//            } else {
+//                mHandler.sendEmptyMessage(MSG_SURFACE_START);
+//            }
+            if (mMediaPlayer == null) {
+                mMediaPlayer = mp;
+                //mMediaPlayer.setOnInfoListener(mOnInfoListener);
+                mMediaPlayer.setOnBufferingUpdateListener(mOnBufferingUpdateListener);
+                mDuration = 0;
+            }
+        }
+
+    };
+
+    private MediaPlayer.OnBufferingUpdateListener mOnBufferingUpdateListener = new MediaPlayer.OnBufferingUpdateListener() {
+        @Override
+        public void onBufferingUpdate(MediaPlayer mp, int percent) {
+            if (/*mServerTimer != null &&*/ percent > 0) {
+                setProgressController(percent);
+            }
+        }
+    };
+
+    private void setProgressController(int percent) {
+        int currentPostion = 0;
+        int duration = -1;
+        try {
+            currentPostion = mVideoView.getCurrentPosition();
+            duration = getDuration();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+        int progress = currentPostion * 100 / (duration == 0 ? 1 : duration);
+        setProgressAndTime(currentPostion, duration, progress, percent);
+    }
+
+    public int getDuration() {
+        int du = mVideoView.getDuration();
+        int duration = du != -1 ? du : mDuration;  //home键恢复后 有可能拿不到总长度值 故
+        return duration;
+    }
+
+    private void setProgressAndTime(int current, int duration, int progress, int secProgress) {
+        mSeekBar.setProgress(progress > 0 ? progress : 0);
+        if (secProgress > 0) {
+            mSeekBar.setSecondaryProgress(secProgress);
+        }
+        mText_Current.setText(stringForTime(current));
+        mText_Durtion.setText(stringForTime(duration));
+    }
+
+    private void resetProgressAndTimer() {
+        mDuration = 0;
+        mSeekBar.setProgress(0);
+        mSeekBar.setSecondaryProgress(0);
+        mText_Current.setText("00:00");
+        mText_Durtion.setText("00:00");
+    }
+
+    private static String stringForTime(int timeMs) {
+        if (timeMs <= 0 || timeMs >= 24 * 60 * 60 * 1000) {
+            return "00:00";
+        }
+        int totalSeconds = timeMs / 1000;
+        int seconds = totalSeconds % 60;
+        int minutes = (totalSeconds / 60) % 60;
+        int hours = totalSeconds / 3600;
+        StringBuilder stringBuilder = new StringBuilder();
+        Formatter mFormatter = new Formatter(stringBuilder, Locale.getDefault());
+        if (hours > 0) {
+            return mFormatter.format("%d:%02d:%02d", hours, minutes, seconds).toString();
+        } else {
+            return mFormatter.format("%02d:%02d", minutes, seconds).toString();
+        }
+    }
+
+    private static boolean isWifiConnected(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (wifiNetworkInfo.isConnected()) {
+            return true;
+        }
+        return false;
     }
 }
