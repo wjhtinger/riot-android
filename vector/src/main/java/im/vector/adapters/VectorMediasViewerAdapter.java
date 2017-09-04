@@ -58,6 +58,7 @@ import im.vector.R;
 
 import org.matrix.androidsdk.db.MXMediasCache;
 
+import im.vector.VectorApp;
 import im.vector.activity.CommonActivityUtils;
 import im.vector.util.SlidableMediaInfo;
 
@@ -68,6 +69,8 @@ import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * An images slider
@@ -554,8 +557,10 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
                 displayVideoThumbnail(pageView, false);
 
                 // let's playing
+                mVideoView = videoView;
                 mPlayingVideoView = videoView;
                 videoView.start();
+                videoView.requestFocus();
 
             } catch (Exception e) {
                 Log.e(LOG_TAG, "## playVideo() : videoView.start(); failed " + e.getMessage());
@@ -829,6 +834,7 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
     }
 
 
+    private Timer mServerTimer = null;
     private VideoView mVideoView;
     private MediaPlayer mMediaPlayer;
     private SeekBar mSeekBar;
@@ -847,12 +853,33 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
 //            }
             if (mMediaPlayer == null) {
                 mMediaPlayer = mp;
-                //mMediaPlayer.setOnInfoListener(mOnInfoListener);
+                mMediaPlayer.setOnInfoListener(mOnInfoListener);
                 mMediaPlayer.setOnBufferingUpdateListener(mOnBufferingUpdateListener);
                 mDuration = 0;
             }
+
+            startProgressTimer();
         }
 
+    };
+
+    private MediaPlayer.OnInfoListener mOnInfoListener = new MediaPlayer.OnInfoListener() {
+        @Override
+        public boolean onInfo(MediaPlayer mp, int what, int extra) {
+            switch (what) {
+                case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+
+                    break;
+
+                case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+
+                    break;
+
+                default:
+                    break;
+            }
+            return true;
+        }
     };
 
     private MediaPlayer.OnBufferingUpdateListener mOnBufferingUpdateListener = new MediaPlayer.OnBufferingUpdateListener() {
@@ -863,6 +890,33 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
             }
         }
     };
+
+    private void cancleControllerTimer() {
+        if (mServerTimer != null) {
+            mServerTimer.cancel();
+            mServerTimer = null;
+        }
+//        if (mControllerTimer != null) {
+//            mControllerTimer.cancel();
+//            mControllerTimer = null;
+//        }
+    }
+
+    private void startProgressTimer() {
+        cancleControllerTimer();
+        mServerTimer = new Timer();
+        mServerTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                VectorApp.getCurrentActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setProgressController(0);
+                    }
+                });
+            }
+        }, 0, 500);
+    }
 
     private void setProgressController(int percent) {
         int currentPostion = 0;

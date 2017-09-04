@@ -37,11 +37,11 @@
         <RelativeLayout
             android:id="@+id/bottom_media_controller"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="20dp"
             android:layout_alignParentBottom="true"
             android:layout_below="@+id/media_slider_video_playView"
             android:layout_marginBottom="30dp"
-            android:layout_marginTop="-40dp"
+            android:layout_marginTop="40dp"
             android:background="#40000000">
 
             <TextView
