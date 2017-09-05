@@ -194,7 +194,7 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         final VideoView videoView = (VideoView)view.findViewById(R.id.media_slider_videoview);
         final ImageView thumbView = (ImageView)view.findViewById(R.id.media_slider_video_thumbnail);
         final PieFractionView pieFractionView = (PieFractionView)view.findViewById(R.id.media_slider_piechart);
-        mVideoView = videoView;
+
         videoView.setOnPreparedListener(mOnPreparedListener);
 
         final SlidableMediaInfo mediaInfo = mMediasMessagesList.get(position);
@@ -487,10 +487,26 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
      * Stop any playing video
      */
     public void stopPlayingVideo() {
+        cancleControllerTimer();
         if (null != mPlayingVideoView) {
             mPlayingVideoView.stopPlayback();
             displayVideoThumbnail((View)(mPlayingVideoView.getParent()), true);
             mPlayingVideoView = null;
+            playStatus = 0;
+        }
+    }
+
+    public void pausePlayingVideo(){
+        if (null != mPlayingVideoView) {
+            mPlayingVideoView.pause();
+            playStatus = 2;
+        }
+    }
+
+    public void resumePlayingVideo(){
+        if (null != mPlayingVideoView) {
+            mPlayingVideoView.start();
+            playStatus = 1;
         }
     }
 
@@ -557,8 +573,8 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
                 displayVideoThumbnail(pageView, false);
 
                 // let's playing
-                mVideoView = videoView;
                 mPlayingVideoView = videoView;
+                playStatus = 1;
                 videoView.start();
                 videoView.requestFocus();
 
@@ -655,8 +671,10 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
+                cancleControllerTimer();
                 mPlayingVideoView = null;
                 displayVideoThumbnail(view, true);
+                playStatus = 0;
             }
         });
 
@@ -664,8 +682,15 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         ((View)videoView.getParent()).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stopPlayingVideo();
-                displayVideoThumbnail(view, true);
+                if(playStatus == 1){
+                    pausePlayingVideo();
+                    ((ImageView)view.findViewById(R.id.media_slider_video_playView)).setVisibility(View.VISIBLE);
+                }else if(playStatus == 2){
+                    resumePlayingVideo();
+                    ((ImageView)view.findViewById(R.id.media_slider_video_playView)).setVisibility(View.INVISIBLE);
+                }
+//                stopPlayingVideo();
+//                displayVideoThumbnail(view, true);
             }
         });
 
@@ -688,9 +713,17 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
                 // init the video view only if there is a valid file
                 // check if the media has been downloaded
                 File srcFile = mMediasCache.mediaCacheFile(videoUrl, videoMimeType);
-
                 if (null != srcFile) {
-                    playVideo(view, videoView, videoUrl, videoMimeType);
+                    //playVideo(view, videoView, videoUrl, videoMimeType);
+                    if(playStatus == 1){
+                        pausePlayingVideo();
+                        ((ImageView)view.findViewById(R.id.media_slider_video_playView)).setVisibility(View.VISIBLE);
+                    }else if(playStatus == 2){
+                        resumePlayingVideo();
+                        ((ImageView)view.findViewById(R.id.media_slider_video_playView)).setVisibility(View.INVISIBLE);
+                    }else if(playStatus == 0){
+                        playVideo(view, videoView, videoUrl, videoMimeType);
+                    }
                 } else {
                     mAutoPlayItemAt = position;
                     downloadVideo(view, position);
@@ -835,12 +868,12 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
 
 
     private Timer mServerTimer = null;
-    private VideoView mVideoView;
     private MediaPlayer mMediaPlayer;
     private SeekBar mSeekBar;
     private TextView mText_Current;
     private TextView mText_Durtion;
     private int mDuration = -1;
+    private int playStatus = 0;  //0:stop 1:play 2:pause
 
     private MediaPlayer.OnPreparedListener mOnPreparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
@@ -851,14 +884,35 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
 //            } else {
 //                mHandler.sendEmptyMessage(MSG_SURFACE_START);
 //            }
-            if (mMediaPlayer == null) {
+            //if (mMediaPlayer == null) {
                 mMediaPlayer = mp;
                 mMediaPlayer.setOnInfoListener(mOnInfoListener);
                 mMediaPlayer.setOnBufferingUpdateListener(mOnBufferingUpdateListener);
                 mDuration = 0;
-            }
+            //}
 
             startProgressTimer();
+
+            mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if(fromUser){
+                        try {
+                            int time = progress * getDuration() / 100;
+                            mMediaPlayer.seekTo(time);
+                        } catch (IllegalStateException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                }
+            });
         }
 
     };
@@ -895,11 +949,8 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         if (mServerTimer != null) {
             mServerTimer.cancel();
             mServerTimer = null;
+            resetProgressAndTimer();
         }
-//        if (mControllerTimer != null) {
-//            mControllerTimer.cancel();
-//            mControllerTimer = null;
-//        }
     }
 
     private void startProgressTimer() {
@@ -911,7 +962,9 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
                 VectorApp.getCurrentActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setProgressController(0);
+                        if(mPlayingVideoView != null) {
+                            setProgressController(0);
+                        }
                     }
                 });
             }
@@ -922,7 +975,7 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         int currentPostion = 0;
         int duration = -1;
         try {
-            currentPostion = mVideoView.getCurrentPosition();
+            currentPostion = mPlayingVideoView.getCurrentPosition();
             duration = getDuration();
         } catch (IllegalStateException e) {
             e.printStackTrace();
@@ -932,7 +985,7 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
     }
 
     public int getDuration() {
-        int du = mVideoView.getDuration();
+        int du = mPlayingVideoView.getDuration();
         int duration = du != -1 ? du : mDuration;  //home键恢复后 有可能拿不到总长度值 故
         return duration;
     }
@@ -944,6 +997,8 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         }
         mText_Current.setText(stringForTime(current));
         mText_Durtion.setText(stringForTime(duration));
+
+        //Log.d(LOG_TAG, "setProgressAndTime: " + secProgress + " : " + progress);
     }
 
     private void resetProgressAndTimer() {

@@ -26,22 +26,22 @@
             android:layout_height="match_parent"
             android:background="#000" />
 
-        <ImageView android:id="@+id/media_slider_video_playView"
+        <ImageView
+            android:id="@+id/media_slider_video_playView"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_material_play_circle"
-            android:background="#00777777" />
+            android:alpha="0.7"
+            android:background="#00777777"
+            android:src="@drawable/ic_material_play_circle" />
 
         <RelativeLayout
             android:id="@+id/bottom_media_controller"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_below="@+id/media_slider_video_playView"
             android:layout_marginBottom="30dp"
-            android:layout_marginTop="40dp"
             android:background="#40000000">
 
             <TextView
