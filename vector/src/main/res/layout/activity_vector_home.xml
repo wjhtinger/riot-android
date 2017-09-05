@@ -137,32 +137,31 @@
 
         <LinearLayout
             android:id="@+id/home_buttom_pad"
-            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_weight="0"
             android:background="@color/vector_light_gray_color"
             android:gravity="bottom"
+            android:orientation="horizontal"
+            android:paddingTop="3dp"
             android:showDividers="middle|beginning|end"
-            android:layout_weight="0"
-            android:layout_marginTop="5dp"
-            android:paddingTop="3dp">
+            android:visibility="visible">
 
             <LinearLayout
                 android:id="@+id/messageItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@color/vector_light_gray_color"
+                android:layout_marginLeft="40dp"
                 android:layout_weight="1"
+                android:background="@color/vector_light_gray_color"
                 android:onClick="onClickBottomButton"
-                android:layout_marginLeft="40dp">
+                android:orientation="vertical">
 
                 <ImageView
+                    android:id="@+id/imageView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/message"
-                    android:id="@+id/imageView"/>
+                    app:srcCompat="@drawable/message" />
 
                 <TextView
                     android:id="@+id/textView2"
@@ -178,16 +177,16 @@
                 android:id="@+id/messageItem2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:background="@color/vector_light_gray_color"
                 android:layout_weight="2"
-                android:onClick="onClickBottomButton">
+                android:background="@color/vector_light_gray_color"
+                android:onClick="onClickBottomButton"
+                android:orientation="vertical">
 
                 <ImageView
+                    android:id="@+id/imageView2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/explore_noforcus"
-                    android:id="@+id/imageView2"/>
+                    app:srcCompat="@drawable/explore_noforcus" />
 
                 <TextView
                     android:id="@+id/textView3"
@@ -203,17 +202,17 @@
                 android:id="@+id/messageItem3"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:background="@color/vector_light_gray_color"
+                android:layout_marginRight="40dp"
                 android:layout_weight="1"
+                android:background="@color/vector_light_gray_color"
                 android:onClick="onClickBottomButton"
-                android:layout_marginRight="40dp">
+                android:orientation="vertical">
 
                 <ImageView
+                    android:id="@+id/imageView3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/space_noforcus"
-                    android:id="@+id/imageView3"/>
+                    app:srcCompat="@drawable/space_noforcus" />
 
                 <TextView
                     android:id="@+id/textView4"

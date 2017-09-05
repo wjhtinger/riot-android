@@ -3480,7 +3480,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
 
         int softInputHeight = getSupportSoftInputHeight();
         if (softInputHeight == 0) {
-            softInputHeight = mSoftHeight == 0 ? 831 : mSoftHeight;
+            softInputHeight = mSoftHeight == 0 ? 600 : mSoftHeight;
         }
         room_functtion_pad_emojicons.getLayoutParams().height = softInputHeight;
 
