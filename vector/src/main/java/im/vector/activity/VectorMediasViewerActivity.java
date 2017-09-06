@@ -175,7 +175,7 @@ public class VectorMediasViewerActivity extends MXCActionBarActivity {
         super.onPause();
 
         // stop any playing video
-        mAdapter.stopPlayingVideo();
+        mAdapter.stopPlayingVideoDirect();
     }
 
     @Override

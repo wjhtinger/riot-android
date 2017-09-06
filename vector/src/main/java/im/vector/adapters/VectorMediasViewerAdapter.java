@@ -103,6 +103,7 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         this.mMaxImageHeight = maxImageHeight;
         this.mLayoutInflater = LayoutInflater.from(context);
         this.mMediasCache = mediasCache;
+        this.mFirstPage = -1;        
     }
 
     @Override
@@ -117,6 +118,10 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
 
             final View view = (View)object;
             mLatestPrimaryView = view;
+
+            mText_Current = (TextView) view.findViewById(R.id.text_currentpostion);
+            mText_Durtion = (TextView) view.findViewById(R.id.text_durtionposition);
+            mSeekBar = (SeekBar) view.findViewById(R.id.progress);
 
             view.post(new Runnable() {
                 @Override
@@ -496,6 +501,15 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         }
     }
 
+    public void stopPlayingVideoDirect() {
+        cancleControllerTimer();
+        if (null != mPlayingVideoView) {
+            mPlayingVideoView.stopPlayback();
+            mPlayingVideoView = null;
+            playStatus = 0;
+        }
+    }
+
     public void pausePlayingVideo(){
         if (null != mPlayingVideoView) {
             mPlayingVideoView.pause();
@@ -666,7 +680,12 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         mText_Durtion = (TextView) view.findViewById(R.id.text_durtionposition);
         mSeekBar = (SeekBar) view.findViewById(R.id.progress);
 
-        displayVideoThumbnail(view, !videoView.isPlaying());
+        if(mFirstPage == -1){
+            mFirstPage = position;
+        }else{
+            displayVideoThumbnail(view, !videoView.isPlaying());
+        }
+
 
         videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -874,6 +893,7 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
     private TextView mText_Durtion;
     private int mDuration = -1;
     private int playStatus = 0;  //0:stop 1:play 2:pause
+    private int mFirstPage = -1;
 
     private MediaPlayer.OnPreparedListener mOnPreparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
@@ -998,7 +1018,7 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         mText_Current.setText(stringForTime(current));
         mText_Durtion.setText(stringForTime(duration));
 
-        //Log.d(LOG_TAG, "setProgressAndTime: " + secProgress + " : " + progress);
+        //Log.d(LOG_TAG, "setProgressAndTime: " + secProgress + " : " + progress + ":::" + mSeekBar);
     }
 
     private void resetProgressAndTimer() {

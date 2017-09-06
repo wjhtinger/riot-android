@@ -13,7 +13,8 @@
     <RelativeLayout
         android:id="@+id/media_slider_videolayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#000">
 
         <VideoView android:id="@+id/media_slider_videoview"
             android:layout_gravity="center"
@@ -24,6 +25,7 @@
         <ImageView android:id="@+id/media_slider_video_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="invisible"
             android:background="#000" />
 
         <ImageView
@@ -34,6 +36,7 @@
             android:layout_centerVertical="true"
             android:alpha="0.7"
             android:background="#00777777"
+            android:visibility="invisible"
             android:src="@drawable/ic_material_play_circle" />
 
         <RelativeLayout
