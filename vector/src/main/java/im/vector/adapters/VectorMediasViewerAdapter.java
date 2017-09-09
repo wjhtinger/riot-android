@@ -137,8 +137,8 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
                         downloadHighResMedia(view, position);
                     } else if (position == mAutoPlayItemAt) {
                         SlidableMediaInfo mediaInfo = mMediasMessagesList.get(position);
-
-                        if (mediaInfo.mMessageType.equals(Message.MSGTYPE_VIDEO)) {
+                        mMediaType = mediaInfo.mMessageType;
+                        if (mediaInfo.mMessageType.equals(Message.MSGTYPE_VIDEO) || mediaInfo.mMessageType.equals(Message.MSGTYPE_AUDIO)) {
                             final VideoView videoView = (VideoView) view.findViewById(R.id.media_slider_videoview);
                             videoView.setOnPreparedListener(mOnPreparedListener);
                             playVideo(view, videoView, mediaInfo.mMediaUrl, mediaInfo.mMimeType);
@@ -379,6 +379,21 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
             }
         });
 
+        thumbView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mMediaType.equals(Message.MSGTYPE_AUDIO)){
+                    if(playStatus == 1){
+                        pausePlayingVideo();
+                        ((ImageView)videoLayout.findViewById(R.id.media_slider_video_playView)).setVisibility(View.VISIBLE);
+                    }else if(playStatus == 2){
+                        resumePlayingVideo();
+                        ((ImageView)videoLayout.findViewById(R.id.media_slider_video_playView)).setVisibility(View.INVISIBLE);
+                    }
+                }
+            }
+        });
+
         // black background
         view.setBackgroundColor(0xFF000000);
         imageWebView.setBackgroundColor(0xFF000000);
@@ -424,14 +439,21 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
             }
 
             String mediaUri = "file://" + mediaFile.getPath();
-
+            mMediaType = Message.MSGTYPE_IMAGE;
             String css = computeCss(mediaUri, mMaxImageWidth, mMaxImageHeight, rotationAngle);
             final String viewportContent = "width=640";
             loadImage(imageWebView, Uri.parse(mediaUri), viewportContent, css);
             container.addView(view, 0);
-        } else {
+        } else if(mediaInfo.mMessageType.equals(Message.MSGTYPE_VIDEO)) {
+            mMediaType = Message.MSGTYPE_VIDEO;
             loadVideo(position , view, mediaInfo.mThumbnailUrl, mediaUrl, mediaInfo.mMimeType);
             container.addView(view, 0);
+        }else if(mediaInfo.mMessageType.equals(Message.MSGTYPE_AUDIO)){
+            mMediaType = Message.MSGTYPE_AUDIO;
+            loadVideo(position , view, mediaInfo.mThumbnailUrl, mediaUrl, mediaInfo.mMimeType);
+            container.addView(view, 0);
+            thumbView.setVisibility(View.VISIBLE);
+            thumbView.setImageResource(R.drawable.music);
         }
 
         // check if the media is downloading
@@ -484,7 +506,12 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         final ImageView playView = (ImageView)view.findViewById(R.id.media_slider_video_playView);
 
         videoView.setVisibility(display ? View.GONE : View.VISIBLE);
-        thumbView.setVisibility(display ? View.VISIBLE : View.GONE);
+        if(mMediaType.equals(Message.MSGTYPE_AUDIO)){
+            thumbView.setVisibility(View.VISIBLE);
+        }
+        else{
+            thumbView.setVisibility(display ? View.VISIBLE : View.GONE);
+        }
         playView.setVisibility(display ? View.VISIBLE : View.GONE);
     }
 
@@ -679,6 +706,8 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         mText_Current = (TextView) view.findViewById(R.id.text_currentpostion);
         mText_Durtion = (TextView) view.findViewById(R.id.text_durtionposition);
         mSeekBar = (SeekBar) view.findViewById(R.id.progress);
+        SlidableMediaInfo mediaInfo = mMediasMessagesList.get(position);
+        mMediaType = mediaInfo.mMessageType;
 
         if(mFirstPage == -1){
             mFirstPage = position;
@@ -894,6 +923,7 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
     private int mDuration = -1;
     private int playStatus = 0;  //0:stop 1:play 2:pause
     private int mFirstPage = -1;
+    private String mMediaType = "";
 
     private MediaPlayer.OnPreparedListener mOnPreparedListener = new MediaPlayer.OnPreparedListener() {
         @Override

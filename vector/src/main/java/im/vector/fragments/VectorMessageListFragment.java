@@ -29,6 +29,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import org.matrix.androidsdk.rest.model.AudioMessage;
 import org.matrix.androidsdk.util.Log;
 
 import android.view.LayoutInflater;
@@ -862,6 +863,16 @@ public class VectorMessageListFragment extends MatrixMessageListFragment impleme
                 info.mMimeType = videoMessage.getVideoMimeType();
                 info.mEncryptedFileInfo = videoMessage.file;
                 res.add(info);
+            } else if(Message.MSGTYPE_AUDIO.equals(message.msgtype)){
+                SlidableMediaInfo info = new SlidableMediaInfo();
+                AudioMessage AudioMessage = (AudioMessage) message;
+                info.mMessageType = Message.MSGTYPE_AUDIO;
+                info.mFileName = AudioMessage.body;
+                info.mMediaUrl = AudioMessage.getUrl();
+                info.mThumbnailUrl = null;
+                info.mMimeType = AudioMessage.getMimeType();
+                info.mEncryptedFileInfo = AudioMessage.file;
+                res.add(info);
             }
         }
 
@@ -882,6 +893,8 @@ public class VectorMessageListFragment extends MatrixMessageListFragment impleme
             url = ((ImageMessage) mediaMessage).getUrl();
         } else if (mediaMessage instanceof VideoMessage) {
             url = ((VideoMessage) mediaMessage).getUrl();
+        }else if(mediaMessage instanceof AudioMessage){
+            url = ((AudioMessage) mediaMessage).getUrl();
         }
 
         // sanity check
@@ -928,7 +941,7 @@ public class VectorMessageListFragment extends MatrixMessageListFragment impleme
             Message message = JsonUtils.toMessage(event.getContent());
 
             // video and images are displayed inside a medias slider.
-            if (Message.MSGTYPE_IMAGE.equals(message.msgtype) || (Message.MSGTYPE_VIDEO.equals(message.msgtype))) {
+            if (Message.MSGTYPE_IMAGE.equals(message.msgtype) || (Message.MSGTYPE_VIDEO.equals(message.msgtype)) || Message.MSGTYPE_AUDIO.equals(message.msgtype)) {
                 ArrayList<SlidableMediaInfo> mediaMessagesList = listSlidableMessages();
                 int listPosition = getMediaMessagePosition(mediaMessagesList, message);
 
@@ -943,7 +956,7 @@ public class VectorMessageListFragment extends MatrixMessageListFragment impleme
 
                     getActivity().startActivity(viewImageIntent);
                 }
-            } else if (Message.MSGTYPE_FILE.equals(message.msgtype) || Message.MSGTYPE_AUDIO.equals(message.msgtype)) {
+            } else if (Message.MSGTYPE_FILE.equals(message.msgtype)) {
                 FileMessage fileMessage = JsonUtils.toFileMessage(event.getContent());
 
                 if (null != fileMessage.getUrl()) {
