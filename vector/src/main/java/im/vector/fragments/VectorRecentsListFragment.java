@@ -1341,6 +1341,7 @@ public class VectorRecentsListFragment extends Fragment implements VectorRoomSum
                                 params.put(VectorRoomActivity.EXTRA_ROOM_ID, roomId);
                                 params.put(VectorRoomActivity.EXTRA_EXPAND_ROOM_HEADER, true);
                                 CommonActivityUtils.goToRoomPage(getActivity(), mSession, params);
+                                dialog.dismiss();
                             }
                         });
                     }

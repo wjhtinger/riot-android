@@ -43,7 +43,6 @@
 
             <FrameLayout
                 android:id="@+id/home_recents_list_anchor"
-                android:layout_below="@+id/home_recents_sync_in_progress"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 

@@ -826,6 +826,11 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
             return convertView;
         }
 
+        convertView.findViewById(R.id.roomSummaryAdapter_down_layout).setVisibility(View.VISIBLE);
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)roomNameTxtView.getLayoutParams();
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        roomNameTxtView.setLayoutParams(layoutParams);
+
         showMoreView.setVisibility(View.GONE);
 
         RoomSummary childRoomSummary = mSummaryListByGroupPosition.get(groupPosition).get(childPosition);

@@ -621,14 +621,14 @@ public class VectorMessagesAdapter extends MessagesAdapter {
 
         // sanity check
         if (null == roomState) {
-            avatarsListView.setVisibility(View.INVISIBLE);
+            avatarsListView.setVisibility(View.GONE);
             return;
         }
 
         // hide the read receipts until there is a way to retrieve them
         // without triggering a request per message
         if (mIsPreviewMode) {
-            avatarsListView.setVisibility(View.INVISIBLE);
+            avatarsListView.setVisibility(View.GONE);
             return;
         }
 
@@ -637,7 +637,7 @@ public class VectorMessagesAdapter extends MessagesAdapter {
         // if there is no receipt to display
         // hide the dedicated layout
         if ((null == receipts) || (0 == receipts.size())) {
-            avatarsListView.setVisibility(View.INVISIBLE);
+            avatarsListView.setVisibility(View.GONE);
             return;
         }
 
