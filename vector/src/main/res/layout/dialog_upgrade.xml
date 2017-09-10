@@ -6,13 +6,12 @@
 
     <ProgressBar
         android:id="@+id/upgrade_progressBar"
-        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+        style="@android:style/Widget.DeviceDefault.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:background="@color/tertiary_text_material_light"
+        android:background="@color/vector_05_gray"
         android:fadingEdge="vertical"
-        android:foreground="@color/material_orange_700"
         android:max="100"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"

@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -92,8 +93,9 @@ public class Upgrader {
             mProgressText = (TextView) mDialogView.findViewById(R.id.upgrade_progress_text);
             mnoNotifyCheck = (CheckBox) mDialogView.findViewById(R.id.upgrade_nonotify_check);
             mProgressBar.setVisibility(View.VISIBLE);
-            //mProgressText.setVisibility(View.VISIBLE);
-            mnoNotifyCheck.setVisibility(View.GONE);
+            mProgressText.setVisibility(View.VISIBLE);
+            //mnoNotifyCheck.setVisibility(View.GONE);
+            mProgressBar.setProgress(0);
 
             String target = Environment.getExternalStorageDirectory() + "/update.apk";
             mUtils = new HttpUtils();
@@ -104,7 +106,7 @@ public class Upgrader {
 
                     int percent = (int)(current * 100 / total);
                     mProgressBar.setProgress(percent);
-                    //mProgressText.setText(percent + "%");
+                    mProgressText.setText(percent + "%");
                     Log.d(LOG_TAG, "Down percent:" + percent);
                 }
 
@@ -139,7 +141,7 @@ public class Upgrader {
     }
 
 
-    private void showUpgradeDialog() {
+    public void showUpgradeDialog() {
         Log.d(LOG_TAG, "showUpgradeDialog");
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         mDialogView = View.inflate(mContext, R.layout.dialog_upgrade, null);
@@ -176,7 +178,7 @@ public class Upgrader {
         });
 
         mUpgradeDialog = builder.create();
-        mUpgradeDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        //mUpgradeDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
         mUpgradeDialog.show();
     }
 
@@ -264,9 +266,12 @@ public class Upgrader {
 
                         Log.d(LOG_TAG, String.format("NewVersionCode[%d], OldVersionCode[%d], mDownloadUrl[%s]", mVersionCode, getVersionCode(), mDownloadUrl));
                         if (mVersionCode > getVersionCode()) {
-                            Looper.prepare();
-                            showUpgradeDialog();
-                            Looper.loop();
+                            setUpdate(mVersionCode, mVersionName, mDesc, mDownloadUrl);
+
+//                            Looper.prepare();
+//                            showUpgradeDialog();
+//                            Looper.loop();
+
 //                            mContext.runOnUiThread(new Runnable() {
 //                                @Override
 //                                public void run() {
@@ -275,7 +280,6 @@ public class Upgrader {
 //                            });
                         }
                     }
-
                 } catch (MalformedURLException e) {
                     // url错误的异常
                     Log.d(LOG_TAG, "url exception!");
@@ -302,5 +306,31 @@ public class Upgrader {
                 }
             }
         }.start();
+    }
+
+    public void setUpdate(int versionCode, String versionName, String dec, String downloadUrl){
+        SharedPreferences updateSettings= VectorApp.getInstance().getApplicationContext().getSharedPreferences("updateSettings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = updateSettings.edit();
+        editor.putInt("versionCode", versionCode);
+        editor.putString("versionName", versionName);
+        editor.putString("dec", dec);
+        editor.putString("downloadUrl", downloadUrl);
+        editor.commit();
+    }
+
+    public boolean getUpdate(){
+        SharedPreferences updateSettings= VectorApp.getInstance().getApplicationContext().getSharedPreferences("updateSettings", 0);
+        mVersionCode = updateSettings.getInt("versionCode", 0);
+
+        if(mVersionCode > 0){
+            mVersionName = updateSettings.getString("versionName", "");
+            mDesc = updateSettings.getString("dec", "");
+            mDownloadUrl = updateSettings.getString("downloadUrl", "");
+
+            updateSettings.edit().putInt("versionCode", 0).commit();       //去除升级标记
+            return true;
+        }else{
+            return false;
+        }
     }
 }

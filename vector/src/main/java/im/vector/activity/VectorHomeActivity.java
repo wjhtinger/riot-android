@@ -59,6 +59,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.windsing.DetectManager;
+import com.windsing.upgrade.Upgrader;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
@@ -533,6 +534,8 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
         mSupervisoryView = findViewById(R.id.home_supervisory_view);
         mWebSwipeRefresh = (SwipeRefreshLayout)findViewById(R.id.webview_swiperefreshlayout);
         initWebView();
+
+        updateCheck();
     }
 
     @Override
@@ -1720,6 +1723,13 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
         }
     }
 
+    private void updateCheck(){
+        Upgrader up = new Upgrader(this);
+         if(up.getUpdate()){
+             up.showUpgradeDialog();
+         }
+    }
+
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -1735,4 +1745,6 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
 
         return true;
     }
+
+
 }

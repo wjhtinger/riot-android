@@ -296,7 +296,7 @@ public class SplashActivity extends MXCActionBarActivity {
             onFinish();
         }
 
-        new Upgrader(getApplicationContext()).checkVerson();
+        new Upgrader(SplashActivity.this).checkVerson();
     }
 
     @Override

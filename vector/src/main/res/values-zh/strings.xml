@@ -1005,8 +1005,8 @@
     <string name="upgrade_yes">升级</string>
     <string name="upgrade_No">取消</string>
     <string name="upgrade_nonotify">忽略这个版本</string>
-    <string name="upgrade_newversion">最新版本</string>
-    <string name="upgrade_url">https://windsing.com.cn/upgrade/update.json</string>
+    <string name="upgrade_newversion">发现最新版本</string>
+    <string name="upgrade_url">https://windsing.com.cn:449/upgrade/update.json</string>
     <string name="upgrade_downlaod_file">下载升级包</string>
     <string name="upgrade_downlaod_fail">下载升级包失败!</string>
     <string name="upgrade_nofind_sdcard">没找到SDCard!</string>
