@@ -961,7 +961,7 @@ public final class GcmRegistrationManager {
     public int getBackgroundSyncDelay() {
         // on fdroid version, the default sync delay is about 10 seconds
         if ((null == mRegistrationToken) && !getGcmSharedPreferences().contains(PREFS_SYNC_DELAY)) {
-            return 10000;
+            return 10 * 6 * 1000;  //1 minute
         } else {
             int currentValue = 0;
             MXSession session = Matrix.getInstance(mContext).getDefaultSession();
@@ -1148,7 +1148,7 @@ public final class GcmRegistrationManager {
                 }
                 else{
                     Log.d(LOG_TAG, "set sync time out to 10000");
-                    setBackgroundSyncDelay(10000);
+                    setBackgroundSyncDelay(10 * 6 * 1000);
                 }
             }
         }
