@@ -126,7 +126,7 @@ public class CmdDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        view = getActivity().getLayoutInflater().inflate(R.layout.fragment_dialog_icon_text_list, null);
+        view = getActivity().getLayoutInflater().inflate(R.layout.fragment_dialog_detect, null);
         builder.setView(view);
 
         builder.setPositiveButton(getResources().getString(R.string.detect_dialog_start), new DialogInterface.OnClickListener() {

@@ -589,6 +589,27 @@ public class VectorMessageListFragment extends MatrixMessageListFragment impleme
                     startActivity(sendIntent);
                 }
             }
+        }else if (action == R.id.ic_action_vector_handwriting) {
+            Message message = JsonUtils.toMessage(event.getContent());
+            String mediaUrl = null;
+            String mediaMimeType = null;
+            EncryptedFileInfo encryptedFileInfo = null;
+
+            if (message instanceof ImageMessage) {
+                ImageMessage imageMessage = (ImageMessage) message;
+
+                mediaUrl = imageMessage.getUrl();
+                mediaMimeType = imageMessage.getMimeType();
+                encryptedFileInfo = imageMessage.file;
+            }
+            if (null != mediaUrl) {
+
+            }
+
+            Activity attachedActivity = getActivity();
+            if ((null != attachedActivity) && (attachedActivity instanceof VectorRoomActivity)) {
+                ((VectorRoomActivity) attachedActivity).showWhiteheBoard(mediaUrl);
+            }
         }
 //        else if (action == R.id.ic_action_vector_permalink) {
 //            VectorUtils.copyToClipboard(getActivity(), VectorUtils.getPermalink(event.roomId, event.eventId));
@@ -954,7 +975,7 @@ public class VectorMessageListFragment extends MatrixMessageListFragment impleme
                     viewImageIntent.putExtra(VectorMediasViewerActivity.KEY_INFO_LIST, mediaMessagesList);
                     viewImageIntent.putExtra(VectorMediasViewerActivity.KEY_INFO_LIST_INDEX, listPosition);
 
-                    getActivity().startActivity(viewImageIntent);
+                    getActivity().startActivityForResult(viewImageIntent, VectorRoomActivity.getRequestId());
                 }
             } else if (Message.MSGTYPE_FILE.equals(message.msgtype)) {
                 FileMessage fileMessage = JsonUtils.toFileMessage(event.getContent());

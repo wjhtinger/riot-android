@@ -82,8 +82,8 @@
     <string name="action_disable_room_notification">Disable room notifications</string>
     <string name="action_create_room">Create...</string>
     <string name="action_room_info">Room info</string>
-    <string name="action_voice_call">Voice Call</string>
-    <string name="action_video_call">Video Call</string>
+    <string name="action_voice_call">语音通话</string>
+    <string name="action_video_call">视频通话</string>
     <string name="action_search_room">Search room</string>
     <string name="action_search_contact">Search contact</string>
     <string name="action_mark_all_as_read">清除新信息标志</string>
@@ -431,7 +431,7 @@
 
     <!-- medias slider string -->
     <string name="media_slider_saved">已保存</string>
-    <string name="media_slider_saved_message">Save to downloads</string>
+    <string name="media_slider_saved_message">进行涂鸦？</string>
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="_continue">Continue</string>
@@ -608,8 +608,8 @@
     <!-- Room events -->
     <string name="room_event_action_report_prompt_reason">Reason for reporting this content</string>
     <string name="room_event_action_report_prompt_ignore_user">Do you want to hide all messages from this user?</string>
-    <string name="room_event_action_cancel_upload">Cancel Upload</string>
-    <string name="room_event_action_cancel_download">Cancel Download</string>
+    <string name="room_event_action_cancel_upload">取消上传</string>
+    <string name="room_event_action_cancel_download">取消下载</string>
 
     <!-- Room display name -->
     <string name="room_displayname_invite_from">收到%s发来的邀请</string>
@@ -919,8 +919,8 @@
 
     <string name="room_function_pad_file">发送文件</string>
     <string name="room_function_pad_camera">使用相机</string>
-    <string name="room_function_pad_audiocall">语音通话</string>
-    <string name="room_function_pad_videocall">视频通话</string>
+    <string name="room_function_pad_whiteboard">涂鸦</string>
+    <string name="room_function_pad_videocall">语音通话</string>
     <string name="room_function_pad_motiondetect">动作监控</string>
     <string name="room_function_pad_audiodetect">声音监控</string>
     <string name="room_function_pad_timerdetect">定时监控</string>
@@ -968,6 +968,7 @@
 
     <string name="detect_dialog_start">启动</string>
     <string name="detect_dialog_stop">停止</string>
+    <string name="handwriting">涂鸦</string>
 
     <string name="wordpress_server_url">http://www.windsing.com.cn:8081/wordpress/</string>
 

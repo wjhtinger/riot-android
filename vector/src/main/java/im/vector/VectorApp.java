@@ -29,6 +29,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
+import com.github.guanpy.wblib.utils.AppContextUtil;
+import com.github.guanpy.wblib.utils.OperationUtils;
+
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.util.Log;
 
@@ -221,6 +224,10 @@ public class VectorApp extends Application {
             // reported by GA
             Log.e(LOG_TAG, "cannot create the mMarkdownParser " + e.getMessage());
         }
+
+        AppContextUtil.init(this);
+        //SdCardStatus.init(StoreUtil.CACHE_DIR);
+        OperationUtils.getInstance().init();
     }
 
     /**

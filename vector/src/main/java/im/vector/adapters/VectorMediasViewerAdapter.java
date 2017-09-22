@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -34,6 +35,7 @@ import android.text.TextUtils;
 import org.matrix.androidsdk.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -60,6 +62,7 @@ import org.matrix.androidsdk.db.MXMediasCache;
 
 import im.vector.VectorApp;
 import im.vector.activity.CommonActivityUtils;
+import im.vector.activity.VectorMediasViewerActivity;
 import im.vector.util.SlidableMediaInfo;
 
 import java.io.File;
@@ -71,6 +74,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * An images slider
@@ -122,6 +127,16 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
             mText_Current = (TextView) view.findViewById(R.id.text_currentpostion);
             mText_Durtion = (TextView) view.findViewById(R.id.text_durtionposition);
             mSeekBar = (SeekBar) view.findViewById(R.id.progress);
+
+//            SlidableMediaInfo mediaInfo = mMediasMessagesList.get(position);
+//            if(mediaInfo.mMessageType.equals(Message.MSGTYPE_IMAGE)){
+//                //((Activity)mContext).findViewById(R.id.ic_action_handwriting).setVisibility(View.VISIBLE);
+//                ((VectorMediasViewerActivity)mContext).getmMenu().findItem(R.id.ic_action_handwriting).setVisible(true);
+//                ((Activity)mContext).invalidateOptionsMenu();
+//            }else{
+//                ((VectorMediasViewerActivity)mContext).getmMenu().findItem(R.id.ic_action_handwriting).setVisible(false);
+//                ((Activity)mContext).invalidateOptionsMenu();
+//            }
 
             view.post(new Runnable() {
                 @Override
@@ -366,7 +381,7 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         imageWebView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                VectorMediasViewerAdapter.this.onLongClick();
+                //VectorMediasViewerAdapter.this.onLongClick();
                 return true;
             }
         });
@@ -633,9 +648,15 @@ public class VectorMediasViewerAdapter extends PagerAdapter {
         File file = mMediasCache.mediaCacheFile(mediaInfo.mMediaUrl, mediaInfo.mMimeType);
 
         if (null != file) {
-            if (null != CommonActivityUtils.saveMediaIntoDownloads(mContext, file, null, mediaInfo.mMimeType)) {
-                Toast.makeText(mContext, mContext.getText(R.string.media_slider_saved), Toast.LENGTH_LONG).show();
-            }
+//            if (null != CommonActivityUtils.saveMediaIntoDownloads(mContext, file, null, mediaInfo.mMimeType)) {
+//                Toast.makeText(mContext, mContext.getText(R.string.media_slider_saved), Toast.LENGTH_LONG).show();
+//            }
+            Intent intent = new Intent();
+            intent.putExtra("WbMediaUrl", mediaInfo.mMediaUrl);
+            intent.putExtra("WbMediaMineType", mediaInfo.mMimeType);
+            ((Activity)mContext).setResult(Activity.RESULT_OK, intent);
+            ((Activity)mContext).finish();
+
         } else {
             downloadVideo(mLatestPrimaryView, mLatestPrimaryItemPosition, true);
             final String downloadId = mMediasCache.downloadMedia(mContext, mSession.getHomeserverConfig(), mediaInfo.mMediaUrl, mediaInfo.mMimeType, mediaInfo.mEncryptedFileInfo);

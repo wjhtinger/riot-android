@@ -29,8 +29,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -66,6 +68,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -73,7 +76,18 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.gpy.whiteboard.view.widget.floatingactionmenu.FloatingActionsMenu;
+import com.example.gpy.whiteboard.view.widget.floatingactionmenu.FloatingImageButton;
+import com.github.guanpy.library.ann.ReceiveEvents;
+import com.github.guanpy.wblib.bean.DrawPoint;
+import com.github.guanpy.wblib.utils.Events;
+import com.github.guanpy.wblib.utils.OperationUtils;
+import com.github.guanpy.wblib.utils.WhiteBoardVariable;
+import com.github.guanpy.wblib.widget.DrawPenView;
+import com.github.guanpy.wblib.widget.DrawTextLayout;
+import com.github.guanpy.wblib.widget.DrawTextView;
 import com.windsing.DetectManager;
+import com.windsing.common.FileControl;
 import com.windsing.ui.CmdDialogFragment;
 
 import org.matrix.androidsdk.MXSession;
@@ -122,6 +136,13 @@ import io.github.rockerhieu.emojicon.EmojiconGridFragment;
 import io.github.rockerhieu.emojicon.EmojiconsFragment;
 import io.github.rockerhieu.emojicon.emoji.Emojicon;
 
+import com.github.guanpy.library.EventBus;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -132,7 +153,7 @@ import java.util.TimerTask;
 /**
  * Displays a single room with messages.
  */
-public class VectorRoomActivity extends MXCActionBarActivity implements EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener, MatrixMessageListFragment.IRoomPreviewDataListener, MatrixMessageListFragment.IEventSendingListener, MatrixMessageListFragment.IOnScrollListener {
+public class VectorRoomActivity extends MXCActionBarActivity implements View.OnClickListener, EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener, MatrixMessageListFragment.IRoomPreviewDataListener, MatrixMessageListFragment.IEventSendingListener, MatrixMessageListFragment.IOnScrollListener {
 
     /**
      * the session
@@ -188,6 +209,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
     private static final int TAKE_IMAGE_REQUEST_CODE = 1;
     public static final int GET_MENTION_REQUEST_CODE = 2;
     private static final int REQUEST_ROOM_AVATAR_CODE = 3;
+    private static final int REQUEST_WB_IMAGE_REQUEST_CODE = 4;
+    private static final int REQUEST_WB_MRDIA_VIWE_REQUEST_CODE = 5;
 
     private VectorMessageListFragment mVectorMessageListFragment;
     private MXSession mSession;
@@ -619,6 +642,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
             public void onClick(View view) {
                 hidePadType(0);
                 hidePadType(1);
+                hidePadType(2);
                 enableActionBarHeader(HIDE_ACTION_BAR_HEADER);
                 runOnUiThread(new Runnable() {
                     @Override
@@ -792,6 +816,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
                 if (mEditText.requestFocus()) {
                     hidePadType(0);
                     hidePadType(1);
+                    hidePadType(2);
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(mEditText, InputMethodManager.SHOW_IMPLICIT);
 
@@ -1037,6 +1062,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
         // to have notifications for this room
         ViewedRoomTracker.getInstance().setViewedRoomId(null);
         ViewedRoomTracker.getInstance().setMatrixId(null);
+
+        EventBus.unregisterAnnotatedReceiver(this);
     }
 
     @Override
@@ -1169,6 +1196,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
 
         displayE2eRoomAlert();
 
+        EventBus.registerAnnotatedReceiver(this);
+
         Log.d(LOG_TAG, "-- Resume the activity");
     }
 
@@ -1183,6 +1212,10 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
                 insertUserDisplayNameInTextEditor(data.getStringExtra(VectorMemberDetailsActivity.RESULT_MENTION_ID));
             } else if (requestCode == REQUEST_ROOM_AVATAR_CODE) {
                 onActivityResultRoomAvatarUpdate(data);
+            } else if (requestCode == REQUEST_WB_IMAGE_REQUEST_CODE){
+                setWBBackground(data);
+            }else if (requestCode == REQUEST_WB_MRDIA_VIWE_REQUEST_CODE){
+                setWBBackgroundFromMediaView(data);
             }
         }
     }
@@ -3235,10 +3268,12 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
                 }
                 break;
             case R.id.room_function_pad_2:
-                lunchCall(1);
+                //lunchCall(1);
+                showWhiteheBoard(null);
                 break;
             case R.id.room_function_pad_3:
-                lunchCall(0);
+                //lunchCall(0);
+                lunchCallAV();
                 break;
             case R.id.room_function_pad_4:
                 detectOptionDialog(DetectManager.detectType.MOTION);
@@ -3283,6 +3318,23 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
                     startIpCall(false);
                 }
             }
+        } else {
+            displayConfCallNotAllowed();
+        }
+    }
+
+    private void lunchCallAV(){
+        if ((null != mRoom) && mRoom.isEncrypted() && (mRoom.getActiveMembers().size() > 2)) {
+        // display the dialog with the info text
+        AlertDialog.Builder permissionsInfoDialog = new AlertDialog.Builder(VectorRoomActivity.this);
+        Resources resource = getResources();
+        permissionsInfoDialog.setMessage(resource.getString(R.string.room_no_conference_call_in_encrypted_rooms));
+        permissionsInfoDialog.setIcon(android.R.drawable.ic_dialog_alert);
+        permissionsInfoDialog.setPositiveButton(resource.getString(R.string.ok), null);
+        permissionsInfoDialog.show();
+
+        } else if (isUserAllowedToStartConfCall()) {
+            displayVideoCallIpDialog();
         } else {
             displayConfCallNotAllowed();
         }
@@ -3407,12 +3459,14 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
 
     private void freshButtomPad(){
         hidePadType(0);
+        //hidePadType(2);
 
         View room_function_pad = findViewById(R.id.room_function_pad);
+        View room_functtion_pad_white_board = findViewById(R.id.wb_content);
         View function_pad_separator = findViewById(R.id.function_pad_separator);
         Float arc0, arc1;
         int duration;
-        if(room_function_pad.getVisibility() == View.GONE){
+        if(room_function_pad.getVisibility() == View.GONE && room_functtion_pad_white_board.getVisibility() == View.GONE){
             TranslateAnimation mHiddenAction = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
                     Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
             mHiddenAction.setDuration(200);
@@ -3425,6 +3479,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
             duration = 1000;
         }else {
             room_function_pad.setVisibility(View.GONE);
+            room_functtion_pad_white_board.setVisibility(View.GONE);
             function_pad_separator.setVisibility(View.GONE);
             moreImg = R.drawable.ic_material_file;
             arc0 = -370F;
@@ -3472,17 +3527,29 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
         });
     }
 
+    private void sendImage(String file){
+        Uri uri =  Uri.fromFile(new File(file));
+        ArrayList<SharedDataItem> sharedDataItems = new ArrayList<>();
+        sharedDataItems.add(new SharedDataItem(uri));
+
+        if (0 != sharedDataItems.size()) {
+            mVectorRoomMediasSender.sendMedias(sharedDataItems);
+        }
+    }
+
     private void showEmojiPad(){
         hidePadType(1);
+        hidePadType(2);
 
         View room_functtion_pad_emojicons = findViewById(R.id.emojicons);
         View function_pad_separator = findViewById(R.id.function_pad_separator);
 
-        int softInputHeight = getSupportSoftInputHeight();
-        if (softInputHeight == 0) {
-            softInputHeight = mSoftHeight == 0 ? 600 : mSoftHeight;
+        int softInputHeight = getButtomPadHeight();
+        if(softInputHeight == 0){
+            softInputHeight = 600;
         }
-        room_functtion_pad_emojicons.getLayoutParams().height = softInputHeight;
+
+        room_functtion_pad_emojicons.getLayoutParams().height = softInputHeight - 4;
 
         Float arc0, arc1, arc2, arc3;
         int duration;
@@ -3529,10 +3596,22 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
             }
         }else if(type == 1){
             View room_function_pad = findViewById(R.id.room_function_pad);
+            View room_functtion_pad_white_board = findViewById(R.id.wb_content);
             if (room_function_pad.getVisibility() == View.VISIBLE) {
                 room_function_pad.setVisibility(View.GONE);
                 mSendImageView.setImageResource(R.drawable.ic_material_file);
                 moreImg = R.drawable.ic_material_file;
+            }
+            if(room_functtion_pad_white_board.getVisibility() == View.VISIBLE){
+                room_functtion_pad_white_board.setVisibility(View.GONE);
+                mSendImageView.setImageResource(R.drawable.ic_material_file);
+                moreImg = R.drawable.ic_material_file;
+            }
+
+        }else if(type == 2){
+            View room_functtion_pad_white_board = findViewById(R.id.wb_content);
+            if (room_functtion_pad_white_board.getVisibility() == View.VISIBLE) {
+                room_functtion_pad_white_board.setVisibility(View.GONE);
             }
         }
     }
@@ -3579,15 +3658,924 @@ public class VectorRoomActivity extends MXCActionBarActivity implements Emojicon
             softInputHeight = softInputHeight - getSoftButtonsBarHeight();
         }
 
-        if (softInputHeight > 0) {
-            mSoftHeight = softInputHeight;
-        }
-
         return softInputHeight;
     }
 
-    private boolean isSoftShow() {
-        return getSupportSoftInputHeight() != 0;
+    private int getButtomPadHeight(){
+        if(mSoftHeight == 0){
+            SharedPreferences updateSettings= VectorApp.getInstance().getApplicationContext().getSharedPreferences("uiSettings", 0);
+            mSoftHeight = updateSettings.getInt("buttomPadHeight", 0);
+        }
+
+        if(mSoftHeight < 400){
+            mSoftHeight = getSupportSoftInputHeight();
+            if (mSoftHeight < 400) {
+                mSoftHeight = 0;
+            }else {
+                SharedPreferences updateSettings= VectorApp.getInstance().getApplicationContext().getSharedPreferences("uiSettings", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = updateSettings.edit();
+                editor.putInt("buttomPadHeight", mSoftHeight);
+                editor.commit();
+            }
+        }
+
+        return mSoftHeight;
+    }
+
+
+    //white board functions/////////////////////////////////////////////////////////////////////////
+    View mVBottomBack;
+    FrameLayout mFlView;
+    ImageView mBackroundview;
+    DrawPenView mDbView;
+    DrawTextLayout mDtView;
+
+    FloatingActionsMenu mFabMenuSize;
+    FloatingImageButton mBtSizeLarge;
+    FloatingImageButton mBtSizeMiddle;
+    FloatingImageButton mBtSizeMini;
+    FloatingImageButton mBtSizeMiniMini;
+
+    FloatingActionsMenu mFabMenuColor;
+    FloatingImageButton mBtColorGreen;
+    FloatingImageButton mBtColorPurple;
+    FloatingImageButton mBtColorPink;
+    FloatingImageButton mBtColorOrange;
+    FloatingImageButton mBtColorBlack;
+
+    FloatingActionsMenu mFabMenuText;
+    FloatingImageButton mBtTextUnderline;
+    FloatingImageButton mBtTextItalics;
+    FloatingImageButton mBtTextBold;
+    ImageView mIvWhiteBoardQuit;
+    ImageView mIvWhiteBoardConfirm;
+
+    FloatingActionsMenu mFabMenuEraser;
+    FloatingImageButton mBtEraserLarge;
+    FloatingImageButton mBtEraserMiddle;
+    FloatingImageButton mBtEraserMini;
+
+    ImageView mIvWhiteBoardUndo;
+    ImageView mIvWhiteBoardRedo;
+
+    ImageView mIvWhiteBoardAdd;
+
+    ImageView mIvWhiteBoardSend;
+    ImageView mIvWhiteBoardDisable;
+    ImageView mIvWhiteBoardExtend;
+    ImageView mIvWhiteBoardSetbackground;
+    RelativeLayout mRlBottom;
+
+    public void showWhiteheBoard(String backgournd){
+        //hidePadType(1);
+        View room_function_pad = findViewById(R.id.room_function_pad);
+        if (room_function_pad.getVisibility() == View.VISIBLE) {
+            room_function_pad.setVisibility(View.GONE);
+        }
+
+        View room_functtion_pad_white_board = findViewById(R.id.wb_content);
+        View function_pad_separator = findViewById(R.id.function_pad_separator);
+
+        int softInputHeight = getButtomPadHeight();
+        if(softInputHeight == 0){
+            softInputHeight = 800;
+        }
+        room_functtion_pad_white_board.getLayoutParams().height = softInputHeight;
+
+        function_pad_separator.setVisibility(View.VISIBLE);
+        room_functtion_pad_white_board.setVisibility(View.VISIBLE);
+
+        mVBottomBack = findViewById(R.id.v_bottom_back);
+        mFlView = (FrameLayout)findViewById(R.id.fl_view);
+        mBackroundview = (ImageView)findViewById(R.id.backround_view);
+        mDbView = (DrawPenView)findViewById(R.id.db_view);
+        mDtView = (DrawTextLayout)findViewById(R.id.dt_view);
+        //text
+        mFabMenuSize = (FloatingActionsMenu)findViewById(R.id.fab_menu_size);
+        mBtSizeLarge = (FloatingImageButton)findViewById(R.id.bt_size_large);
+        mBtSizeMiddle = (FloatingImageButton)findViewById(R.id.bt_size_middle);
+        mBtSizeMini = (FloatingImageButton)findViewById(R.id.bt_size_mini);
+        mBtSizeMiniMini = (FloatingImageButton)findViewById(R.id.bt_size_minimini);
+        //color
+        mFabMenuColor = (FloatingActionsMenu)findViewById(R.id.fab_menu_color);
+        mBtColorGreen = (FloatingImageButton)findViewById(R.id.bt_color_green);
+        mBtColorPurple = (FloatingImageButton)findViewById(R.id.bt_color_purple);
+        mBtColorPink = (FloatingImageButton)findViewById(R.id.bt_color_pink);
+        mBtColorOrange = (FloatingImageButton)findViewById(R.id.bt_color_orange);
+        mBtColorBlack = (FloatingImageButton)findViewById(R.id.bt_color_black);
+        //text
+        mFabMenuText = (FloatingActionsMenu)findViewById(R.id.fab_menu_text);
+        mBtTextUnderline = (FloatingImageButton)findViewById(R.id.bt_text_underline);
+        mBtTextItalics = (FloatingImageButton)findViewById(R.id.bt_text_italics);
+        mBtTextBold = (FloatingImageButton)findViewById(R.id.bt_text_bold);
+        mIvWhiteBoardQuit = (ImageView)findViewById(R.id.iv_white_board_quit);
+        mIvWhiteBoardConfirm = (ImageView)findViewById(R.id.iv_white_board_confirm);
+
+        //eraser
+        mFabMenuEraser = (FloatingActionsMenu)findViewById(R.id.fab_menu_eraser);
+        mBtEraserLarge = (FloatingImageButton)findViewById(R.id.bt_eraser_large);
+        mBtEraserMiddle = (FloatingImageButton)findViewById(R.id.bt_eraser_middle);
+        mBtEraserMini = (FloatingImageButton)findViewById(R.id.bt_eraser_mini);
+        //undo&redo
+        mIvWhiteBoardUndo = (ImageView)findViewById(R.id.iv_white_board_undo);
+        mIvWhiteBoardRedo = (ImageView)findViewById(R.id.iv_white_board_redo);
+
+        //new board
+        mIvWhiteBoardAdd = (ImageView)findViewById(R.id.iv_white_board_add);
+
+        mIvWhiteBoardSend = (ImageView)findViewById(R.id.iv_white_board_send);
+        mIvWhiteBoardExtend = (ImageView)findViewById(R.id.iv_white_board_extend);
+        mIvWhiteBoardSetbackground = (ImageView)findViewById(R.id.iv_white_board_set_background);
+        mIvWhiteBoardDisable = (ImageView)findViewById(R.id.iv_white_board_disable);
+        mRlBottom = (RelativeLayout)findViewById(R.id.rl_bottom);
+
+        mFabMenuSize.setOnFloatingActionsMenuClickListener(new FloatingActionsMenu.OnFloatingActionsMenuClickListener() {
+            @Override
+            public void addButtonLister() {
+                ToolsOperation(WhiteBoardVariable.Operation.PEN_CLICK);
+            }
+        });
+        mBtSizeLarge.setOnClickListener(this);
+        mBtSizeMiddle.setOnClickListener(this);
+        mBtSizeMini.setOnClickListener(this);
+        mBtSizeMiniMini.setOnClickListener(this);
+
+        mFabMenuColor.setOnFloatingActionsMenuClickListener(new FloatingActionsMenu.OnFloatingActionsMenuClickListener() {
+            @Override
+            public void addButtonLister() {
+                ToolsOperation(WhiteBoardVariable.Operation.COLOR_CLICK);
+            }
+        });
+        mBtColorGreen.setOnClickListener(this);
+        mBtColorPurple.setOnClickListener(this);
+        mBtColorPink.setOnClickListener(this);
+        mBtColorOrange.setOnClickListener(this);
+        mBtColorBlack.setOnClickListener(this);
+
+        mFabMenuText.setOnFloatingActionsMenuClickListener(new FloatingActionsMenu.OnFloatingActionsMenuClickListener() {
+            @Override
+            public void addButtonLister() {
+                ToolsOperation(WhiteBoardVariable.Operation.TEXT_CLICK);
+            }
+        });
+        mBtTextUnderline.setOnClickListener(this);
+        mBtTextItalics.setOnClickListener(this);
+        mBtTextBold.setOnClickListener(this);
+        mIvWhiteBoardQuit.setOnClickListener(this);
+        mIvWhiteBoardConfirm.setOnClickListener(this);
+
+        mFabMenuEraser.setOnFloatingActionsMenuClickListener(new FloatingActionsMenu.OnFloatingActionsMenuClickListener() {
+            @Override
+            public void addButtonLister() {
+                ToolsOperation(WhiteBoardVariable.Operation.ERASER_CLICK);
+            }
+        });
+        mBtEraserLarge.setOnClickListener(this);
+        mBtEraserMiddle.setOnClickListener(this);
+        mBtEraserMini.setOnClickListener(this);
+
+        mIvWhiteBoardUndo.setOnClickListener(this);
+        mIvWhiteBoardRedo.setOnClickListener(this);
+
+        mIvWhiteBoardAdd.setOnClickListener(this);
+
+        mIvWhiteBoardSend.setOnClickListener(this);
+        mIvWhiteBoardExtend.setOnClickListener(this);
+        mIvWhiteBoardSetbackground.setOnClickListener(this);
+        mIvWhiteBoardDisable.setOnClickListener(this);
+
+        mVBottomBack.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(v.getId() == R.id.v_bottom_back){
+                    if(event.getAction() == MotionEvent.ACTION_DOWN){
+                        ToolsOperation(WhiteBoardVariable.Operation.OUTSIDE_CLICK);
+                    }
+                }
+                return false;
+            }
+        });
+
+        if(backgournd != null){
+            mBackroundview.setImageURI(Uri.parse(backgournd));
+        }
+        initView();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_white_board_quit://退出文字编辑
+                afterEdit(false);
+                break;
+            case R.id.iv_white_board_confirm://保存文字编辑
+                afterEdit(true);
+                break;
+            case R.id.bt_size_large://设置画笔尺寸-大号
+                setPenSize(WhiteBoardVariable.PenSize.LARRGE);
+                break;
+            case R.id.bt_size_middle://设置画笔尺寸-中号
+                setPenSize(WhiteBoardVariable.PenSize.MIDDLE);
+                break;
+            case R.id.bt_size_mini://设置画笔尺寸-小号
+                setPenSize(WhiteBoardVariable.PenSize.MINI);
+                break;
+            case R.id.bt_size_minimini://设置画笔尺寸-小号
+                setPenSize(WhiteBoardVariable.PenSize.MINI / 2);
+                break;
+            case R.id.bt_color_green://设置颜色-绿色
+                setColor(WhiteBoardVariable.Color.GREEN);
+                break;
+            case R.id.bt_color_purple://设置颜色-紫色
+                setColor(WhiteBoardVariable.Color.PURPLE);
+                break;
+            case R.id.bt_color_pink://设置颜色-粉色
+                setColor(WhiteBoardVariable.Color.PINK);
+                break;
+            case R.id.bt_color_orange://设置颜色-橙色
+                setColor(WhiteBoardVariable.Color.ORANGE);
+                break;
+            case R.id.bt_color_black://设置颜色-黑色
+                setColor(WhiteBoardVariable.Color.BLACK);
+                break;
+
+            case R.id.bt_text_underline://设置文字样式-下划线
+                setTextStyle(WhiteBoardVariable.TextStyle.CHANGE_UNDERLINE);
+                break;
+            case R.id.bt_text_italics://设置文字样式-斜体
+                setTextStyle(WhiteBoardVariable.TextStyle.CHANGE_ITALICS);
+                break;
+            case R.id.bt_text_bold://设置文字样式-粗体
+                setTextStyle(WhiteBoardVariable.TextStyle.CHANGE_BOLD);
+                break;
+
+            case R.id.bt_eraser_large://设置橡皮擦尺寸-大号
+                setEraserSize(WhiteBoardVariable.EraserSize.LARRGE);
+                break;
+            case R.id.bt_eraser_middle://设置橡皮擦尺寸-中号
+                setEraserSize(WhiteBoardVariable.EraserSize.MIDDLE);
+                break;
+            case R.id.bt_eraser_mini://设置橡皮擦尺寸-小号
+                setEraserSize(WhiteBoardVariable.EraserSize.MINI);
+                break;
+            case R.id.iv_white_board_undo://撤销
+                ToolsOperation(WhiteBoardVariable.Operation.OUTSIDE_CLICK);
+                if (OperationUtils.getInstance().DISABLE) {
+                    undo();
+                }
+                break;
+            case R.id.iv_white_board_redo://重做
+                ToolsOperation(WhiteBoardVariable.Operation.OUTSIDE_CLICK);
+                if (OperationUtils.getInstance().DISABLE) {
+                    redo();
+                }
+                break;
+            case R.id.iv_white_board_add://新建白板
+                ToolsOperation(WhiteBoardVariable.Operation.OUTSIDE_CLICK);
+                newPage();
+                break;
+            case R.id.iv_white_board_disable://禁止/解禁按钮
+                ToolsOperation(WhiteBoardVariable.Operation.OUTSIDE_CLICK);
+                if (mRlBottom.getVisibility() == View.VISIBLE) {
+                   //OperationUtils.getInstance().DISABLE = false;
+                    mIvWhiteBoardDisable.setImageResource(R.drawable.white_board_undisable_selector);
+                    mRlBottom.setVisibility(View.GONE);
+                    mIvWhiteBoardSend.setVisibility(View.GONE);
+                    mIvWhiteBoardExtend.setVisibility(View.GONE);
+                    mIvWhiteBoardSetbackground.setVisibility(View.GONE);
+                } else {
+                    //OperationUtils.getInstance().DISABLE = true;
+                    mIvWhiteBoardDisable.setImageResource(R.drawable.white_board_disable_selector);
+                    mRlBottom.setVisibility(View.VISIBLE);
+                    if(!OperationUtils.getInstance().getSavePoints().isEmpty()){
+                        mIvWhiteBoardSend.setVisibility(View.VISIBLE);
+                    }
+                    mIvWhiteBoardExtend.setVisibility(View.VISIBLE);
+                    mIvWhiteBoardSetbackground.setVisibility(View.VISIBLE);
+                }
+                break;
+            case R.id.iv_white_board_send:
+                saveImage();
+                break;
+            case R.id.iv_white_board_extend:
+                View room_functtion_pad_white_board = findViewById(R.id.wb_content);
+
+                if(room_functtion_pad_white_board.getLayoutParams().height == RelativeLayout.LayoutParams.WRAP_CONTENT){
+                    int softInputHeight = getButtomPadHeight();
+                    if(softInputHeight == 0){
+                        softInputHeight = 800;
+                    }
+                    room_functtion_pad_white_board.getLayoutParams().height = softInputHeight;
+                    getSupportActionBar().show();
+                    //TODO,这个方式不好，需找到根本方案
+                    mVectorMessageListFragment.scrollToBottom(300);
+                }else{
+                    room_functtion_pad_white_board.getLayoutParams().height = RelativeLayout.LayoutParams.WRAP_CONTENT;
+                    //room_functtion_pad_white_board.invalidate();
+                    getSupportActionBar().hide();
+                }
+                room_functtion_pad_white_board.setVisibility(View.GONE);
+                room_functtion_pad_white_board.setVisibility(View.VISIBLE);
+                mDbView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        showPoints();
+                    }
+                });
+
+                break;
+            case R.id.iv_white_board_set_background:
+                launchFileSelectionIntentWB();
+                break;
+        }
+    }
+
+    private void initView() {
+        OperationUtils.getInstance().mCurrentPenSize = WhiteBoardVariable.PenSize.MINI;
+        changePenBack();
+        changeColorBack();
+        changeEraserBack();
+        ToolsOperation(WhiteBoardVariable.Operation.PEN_CLICK);
+        mDbView.post(new Runnable() {
+            @Override
+            public void run() {
+                showPoints();
+            }
+        });
+    }
+
+    /**
+     * 设置画笔尺寸
+     */
+    private void setPenSize(int size) {
+        OperationUtils.getInstance().mCurrentPenSize = size;
+        changePenBack();
+        mDbView.setPenSize();
+    }
+
+    /**
+     * 切换画笔尺寸按按钮背景
+     */
+    private void changePenBack() {
+        if (OperationUtils.getInstance().mCurrentPenSize == WhiteBoardVariable.PenSize.LARRGE) {
+            mBtSizeLarge.drawCircleAndRing(WhiteBoardVariable.PenSize.LARRGE, OperationUtils.getInstance().mCurrentColor);
+            mBtSizeMiddle.drawCircle(WhiteBoardVariable.PenSize.MIDDLE);
+            mBtSizeMini.drawCircle(WhiteBoardVariable.PenSize.MINI);
+            mBtSizeMiniMini.drawCircle(WhiteBoardVariable.PenSize.MINI/2);
+        } else if (OperationUtils.getInstance().mCurrentPenSize == WhiteBoardVariable.PenSize.MIDDLE) {
+            mBtSizeLarge.drawCircle(WhiteBoardVariable.PenSize.LARRGE);
+            mBtSizeMiddle.drawCircleAndRing(WhiteBoardVariable.PenSize.MIDDLE, OperationUtils.getInstance().mCurrentColor);
+            mBtSizeMini.drawCircle(WhiteBoardVariable.PenSize.MINI);
+            mBtSizeMiniMini.drawCircle(WhiteBoardVariable.PenSize.MINI/2);
+        } else if (OperationUtils.getInstance().mCurrentPenSize == WhiteBoardVariable.PenSize.MINI) {
+            mBtSizeLarge.drawCircle(WhiteBoardVariable.PenSize.LARRGE);
+            mBtSizeMiddle.drawCircle(WhiteBoardVariable.PenSize.MIDDLE);
+            mBtSizeMini.drawCircleAndRing(WhiteBoardVariable.PenSize.MINI, OperationUtils.getInstance().mCurrentColor);
+            mBtSizeMiniMini.drawCircle(WhiteBoardVariable.PenSize.MINI/2);
+        }else if (OperationUtils.getInstance().mCurrentPenSize == WhiteBoardVariable.PenSize.MINI/2) {
+            mBtSizeLarge.drawCircle(WhiteBoardVariable.PenSize.LARRGE);
+            mBtSizeMiddle.drawCircle(WhiteBoardVariable.PenSize.MIDDLE);
+            mBtSizeMini.drawCircle(WhiteBoardVariable.PenSize.MINI);
+            mBtSizeMiniMini.drawCircleAndRing(WhiteBoardVariable.PenSize.MINI/2, OperationUtils.getInstance().mCurrentColor);
+        }
+
+    }
+
+    /**
+     * 设置颜色
+     */
+    private void setColor(int color) {
+        OperationUtils.getInstance().mCurrentColor = color;
+        changeColorBack();
+        setPenSize(OperationUtils.getInstance().mCurrentPenSize);
+        mDbView.setPenColor();
+        mDtView.setTextColor();
+    }
+
+    /**
+     * 切换颜色控制按钮背景
+     */
+    private void changeColorBack() {
+        if (OperationUtils.getInstance().mCurrentColor == WhiteBoardVariable.Color.BLACK) {
+            mFabMenuColor.setAddButtonBackground(R.drawable.white_board_color_black_selector);
+        } else if (OperationUtils.getInstance().mCurrentColor == WhiteBoardVariable.Color.ORANGE) {
+            mFabMenuColor.setAddButtonBackground(R.drawable.white_board_color_orange_selector);
+        } else if (OperationUtils.getInstance().mCurrentColor == WhiteBoardVariable.Color.PINK) {
+            mFabMenuColor.setAddButtonBackground(R.drawable.white_board_color_pink_selector);
+        } else if (OperationUtils.getInstance().mCurrentColor == WhiteBoardVariable.Color.PURPLE) {
+            mFabMenuColor.setAddButtonBackground(R.drawable.white_board_color_purple_selector);
+        } else if (OperationUtils.getInstance().mCurrentColor == WhiteBoardVariable.Color.GREEN) {
+            mFabMenuColor.setAddButtonBackground(R.drawable.white_board_color_green_selector);
+        }
+    }
+
+    /**
+     * 设置文字风格
+     */
+    private void setTextStyle(int textStyle) {
+        mDtView.setTextStyle(textStyle);
+        changeTextBack();
+    }
+
+    /**
+     * 切换文字相关按钮背景
+     */
+    private void changeTextBack() {
+        int size = OperationUtils.getInstance().getSavePoints().size();
+        if (size < 1) {
+            return;
+        }
+        DrawPoint dp = OperationUtils.getInstance().getSavePoints().get(size - 1);
+        if (dp.getType() != OperationUtils.DRAW_TEXT) {
+            return;
+        }
+        if (dp.getDrawText().getIsUnderline()) {
+            mBtTextUnderline.setBackgroundResource(R.drawable.white_board_text_underline_selected_selector);
+        } else {
+            mBtTextUnderline.setBackgroundResource(R.drawable.white_board_text_underline_selector);
+        }
+
+        if (dp.getDrawText().getIsItalics()) {
+            mBtTextItalics.setBackgroundResource(R.drawable.white_board_text_italics_selected_selector);
+        } else {
+            mBtTextItalics.setBackgroundResource(R.drawable.white_board_text_italics_selector);
+        }
+
+        if (dp.getDrawText().getIsBold()) {
+            mBtTextBold.setBackgroundResource(R.drawable.white_board_text_bold_selected_selector);
+        } else {
+            mBtTextBold.setBackgroundResource(R.drawable.white_board_text_bold_selector);
+        }
+    }
+
+    /**
+     * 设置橡皮擦尺寸
+     */
+    private void setEraserSize(int size) {
+        OperationUtils.getInstance().mCurrentEraserSize = size;
+        changeEraserBack();
+        mDbView.setEraserSize();
+
+    }
+
+    /**
+     * 切换橡皮擦尺寸按钮背景
+     */
+    private void changeEraserBack() {
+        if (OperationUtils.getInstance().mCurrentEraserSize == WhiteBoardVariable.EraserSize.LARRGE) {
+            mBtEraserLarge.drawCircleAndRing(WhiteBoardVariable.EraserSize.LARRGE, WhiteBoardVariable.Color.BLACK);
+            mBtEraserMiddle.drawCircle(WhiteBoardVariable.EraserSize.MIDDLE, WhiteBoardVariable.Color.BLACK);
+            mBtEraserMini.drawCircle(WhiteBoardVariable.EraserSize.MINI, WhiteBoardVariable.Color.BLACK);
+        } else if (OperationUtils.getInstance().mCurrentEraserSize == WhiteBoardVariable.EraserSize.MIDDLE) {
+            mBtEraserLarge.drawCircle(WhiteBoardVariable.EraserSize.LARRGE, WhiteBoardVariable.Color.BLACK);
+            mBtEraserMiddle.drawCircleAndRing(WhiteBoardVariable.EraserSize.MIDDLE, WhiteBoardVariable.Color.BLACK);
+            mBtEraserMini.drawCircle(WhiteBoardVariable.EraserSize.MINI, WhiteBoardVariable.Color.BLACK);
+        } else if (OperationUtils.getInstance().mCurrentEraserSize == WhiteBoardVariable.EraserSize.MINI) {
+            mBtEraserLarge.drawCircle(WhiteBoardVariable.EraserSize.LARRGE, WhiteBoardVariable.Color.BLACK);
+            mBtEraserMiddle.drawCircle(WhiteBoardVariable.EraserSize.MIDDLE, WhiteBoardVariable.Color.BLACK);
+            mBtEraserMini.drawCircleAndRing(WhiteBoardVariable.EraserSize.MINI, WhiteBoardVariable.Color.BLACK);
+
+        }
+    }
+
+    /**
+     * 新建白板
+     */
+    private void newPage() {
+        mBackroundview.setImageURI(null);
+        OperationUtils.getInstance().newPage();
+        showPoints();
+    }
+
+    /**
+     * 重新显示白板
+     */
+    private void showPoints() {
+        mDbView.showPoints();
+        mDtView.showPoints();
+        showUndoRedo();
+    }
+
+    /**
+     * 撤销
+     */
+    private void undo() {
+        int size = OperationUtils.getInstance().getSavePoints().size();
+        if (size == 0) {
+            return;
+        } else {
+            OperationUtils.getInstance().getDeletePoints().add(OperationUtils.getInstance().getSavePoints().get(size - 1));
+            OperationUtils.getInstance().getSavePoints().remove(size - 1);
+            size = OperationUtils.getInstance().getDeletePoints().size();
+            if (OperationUtils.getInstance().getDeletePoints().get(size - 1).getType() == OperationUtils.DRAW_PEN) {
+                mDbView.undo();
+            } else if (OperationUtils.getInstance().getDeletePoints().get(size - 1).getType() == OperationUtils.DRAW_TEXT) {
+                mDtView.undo();
+            }
+            showUndoRedo();
+        }
+
+    }
+
+    /**
+     * 重做
+     */
+    private void redo() {
+        int size = OperationUtils.getInstance().getDeletePoints().size();
+        if (size == 0) {
+            return;
+        } else {
+            OperationUtils.getInstance().getSavePoints().add(OperationUtils.getInstance().getDeletePoints().get(size - 1));
+            OperationUtils.getInstance().getDeletePoints().remove(size - 1);
+            size = OperationUtils.getInstance().getSavePoints().size();
+            if (OperationUtils.getInstance().getSavePoints().get(size - 1).getType() == OperationUtils.DRAW_PEN) {
+                mDbView.redo();
+            } else if (OperationUtils.getInstance().getSavePoints().get(size - 1).getType() == OperationUtils.DRAW_TEXT) {
+                mDtView.redo();
+            }
+            showUndoRedo();
+        }
+
+    }
+
+    /**
+     * 文字编辑之后
+     */
+    private void afterEdit(boolean isSave) {
+        mRlBottom.setVisibility(View.VISIBLE);
+        mIvWhiteBoardDisable.setVisibility(View.VISIBLE);
+        mIvWhiteBoardExtend.setVisibility(View.VISIBLE);
+        mIvWhiteBoardSetbackground.setVisibility(View.VISIBLE);
+        mIvWhiteBoardQuit.setVisibility(View.GONE);
+        mIvWhiteBoardConfirm.setVisibility(View.GONE);
+        if(mRlBottom.getVisibility() == View.VISIBLE){
+            mIvWhiteBoardSend.setVisibility(View.VISIBLE);
+        }
+        mDbView.showPoints();
+        mDtView.afterEdit(isSave);
+    }
+
+    @ReceiveEvents(name = Events.WHITE_BOARD_TEXT_EDIT)
+    private void textEdit() {//文字编辑
+        mRlBottom.setVisibility(View.GONE);
+        mIvWhiteBoardSend.setVisibility(View.GONE);
+        mIvWhiteBoardDisable.setVisibility(View.GONE);
+        mIvWhiteBoardExtend.setVisibility(View.GONE);
+        mIvWhiteBoardSetbackground.setVisibility(View.GONE);
+        mIvWhiteBoardQuit.setVisibility(View.VISIBLE);
+        mIvWhiteBoardConfirm.setVisibility(View.VISIBLE);
+    }
+
+    @ReceiveEvents(name = Events.WHITE_BOARD_UNDO_REDO)
+    private void showUndoRedo() {//是否显示撤销、重装按钮
+        if (OperationUtils.getInstance().getSavePoints().isEmpty()) {
+            mIvWhiteBoardUndo.setVisibility(View.INVISIBLE);
+            mIvWhiteBoardSend.setVisibility(View.INVISIBLE);
+        } else {
+            mIvWhiteBoardUndo.setVisibility(View.VISIBLE);
+            if(mRlBottom.getVisibility() == View.VISIBLE){
+                mIvWhiteBoardSend.setVisibility(View.VISIBLE);
+            }
+        }
+        if (OperationUtils.getInstance().getDeletePoints().isEmpty()) {
+            mIvWhiteBoardRedo.setVisibility(View.INVISIBLE);
+        } else {
+            mIvWhiteBoardRedo.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void ToolsOperation(int currentOperation) {
+        setPenOperation(currentOperation);
+        setColorOperation(currentOperation);
+        setTextOperation(currentOperation);
+        setEraserOperation(currentOperation);
+        showOutSideView();
+    }
+
+    /**
+     * 显示挡板
+     */
+    private void showOutSideView() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (OperationUtils.getInstance().mCurrentOPerationPen == WhiteBoardVariable.Operation.PEN_EXPAND
+                        || OperationUtils.getInstance().mCurrentOPerationColor == WhiteBoardVariable.Operation.COLOR_EXPAND
+                        || OperationUtils.getInstance().mCurrentOPerationText == WhiteBoardVariable.Operation.TEXT_EXPAND
+                        || OperationUtils.getInstance().mCurrentOPerationEraser == WhiteBoardVariable.Operation.ERASER_EXPAND) {
+                    mVBottomBack.setVisibility(View.VISIBLE);
+                } else {
+                    mVBottomBack.setVisibility(View.GONE);
+                }
+            }
+        }, 100);
+
+    }
+
+    /**
+     * 白板工具栏点击切换操作-画笔
+     */
+    private void setPenOperation(int currentOperation) {
+        switch (currentOperation) {
+            case WhiteBoardVariable.Operation.PEN_CLICK:
+                switch (OperationUtils.getInstance().mCurrentOPerationPen) {
+                    case WhiteBoardVariable.Operation.PEN_NORMAL:
+                        OperationUtils.getInstance().mCurrentDrawType = OperationUtils.DRAW_PEN;
+                        mDbView.setPaint(null);
+                        mFabMenuSize.setAddButtonBackground(R.drawable.white_board_pen_selected_selector);
+                        OperationUtils.getInstance().mCurrentOPerationPen = WhiteBoardVariable.Operation.PEN_CLICK;
+                        break;
+                    case WhiteBoardVariable.Operation.PEN_CLICK:
+                        mFabMenuSize.expand();
+                        changePenBack();
+                        OperationUtils.getInstance().mCurrentOPerationPen = WhiteBoardVariable.Operation.PEN_EXPAND;
+                        break;
+                    case WhiteBoardVariable.Operation.PEN_EXPAND:
+                        mFabMenuSize.collapse();
+                        OperationUtils.getInstance().mCurrentOPerationPen = WhiteBoardVariable.Operation.PEN_CLICK;
+                        break;
+                }
+                break;
+            case WhiteBoardVariable.Operation.TEXT_CLICK:
+            case WhiteBoardVariable.Operation.ERASER_CLICK:
+                switch (OperationUtils.getInstance().mCurrentOPerationPen) {
+                    case WhiteBoardVariable.Operation.PEN_NORMAL:
+                        break;
+                    case WhiteBoardVariable.Operation.PEN_CLICK:
+                        mFabMenuSize.clearDraw();
+                        mFabMenuSize.setAddButtonBackground(R.drawable.white_board_pen_selector);
+                        OperationUtils.getInstance().mCurrentOPerationPen = WhiteBoardVariable.Operation.PEN_NORMAL;
+                        break;
+                    case WhiteBoardVariable.Operation.PEN_EXPAND:
+                        mFabMenuSize.collapse();
+                        mFabMenuSize.clearDraw();
+                        mFabMenuSize.setAddButtonBackground(R.drawable.white_board_pen_selector);
+                        OperationUtils.getInstance().mCurrentOPerationPen = WhiteBoardVariable.Operation.PEN_NORMAL;
+                        break;
+                }
+                break;
+            case WhiteBoardVariable.Operation.COLOR_CLICK:
+            case WhiteBoardVariable.Operation.OUTSIDE_CLICK:
+                switch (OperationUtils.getInstance().mCurrentOPerationPen) {
+                    case WhiteBoardVariable.Operation.PEN_NORMAL:
+                        break;
+                    case WhiteBoardVariable.Operation.PEN_CLICK:
+                        break;
+                    case WhiteBoardVariable.Operation.PEN_EXPAND:
+                        mFabMenuSize.collapse();
+                        OperationUtils.getInstance().mCurrentOPerationPen = WhiteBoardVariable.Operation.PEN_CLICK;
+                        break;
+                }
+                break;
+
+        }
+
+    }
+
+    /**
+     * 白板工具栏点击切换操作-颜色
+     */
+    private void setColorOperation(int currentOperation) {
+        switch (currentOperation) {
+            case WhiteBoardVariable.Operation.PEN_CLICK:
+            case WhiteBoardVariable.Operation.TEXT_CLICK:
+            case WhiteBoardVariable.Operation.ERASER_CLICK:
+            case WhiteBoardVariable.Operation.OUTSIDE_CLICK:
+                switch (OperationUtils.getInstance().mCurrentOPerationColor) {
+                    case WhiteBoardVariable.Operation.COLOR_NORMAL:
+                        break;
+                    case WhiteBoardVariable.Operation.COLOR_EXPAND:
+                        mFabMenuColor.collapse();
+                        OperationUtils.getInstance().mCurrentOPerationColor = WhiteBoardVariable.Operation.COLOR_NORMAL;
+                        break;
+                }
+                break;
+            case WhiteBoardVariable.Operation.COLOR_CLICK:
+                switch (OperationUtils.getInstance().mCurrentOPerationColor) {
+                    case WhiteBoardVariable.Operation.COLOR_NORMAL:
+                        mFabMenuColor.expand();
+                        OperationUtils.getInstance().mCurrentOPerationColor = WhiteBoardVariable.Operation.COLOR_EXPAND;
+                        break;
+                    case WhiteBoardVariable.Operation.COLOR_EXPAND:
+                        mFabMenuColor.collapse();
+                        OperationUtils.getInstance().mCurrentOPerationColor = WhiteBoardVariable.Operation.COLOR_NORMAL;
+                        break;
+                }
+                break;
+
+        }
+
+    }
+
+    /**
+     * 白板工具栏点击切换操作-文字
+     */
+    private void setTextOperation(int currentOperation) {
+        switch (currentOperation) {
+            case WhiteBoardVariable.Operation.TEXT_CLICK:
+                switch (OperationUtils.getInstance().mCurrentOPerationText) {
+                    case WhiteBoardVariable.Operation.TEXT_NORMAL:
+                        OperationUtils.getInstance().mCurrentDrawType = OperationUtils.DRAW_TEXT;
+                        mFabMenuText.setAddButtonBackground(R.drawable.white_board_text_selected_selector);
+                        OperationUtils.getInstance().mCurrentOPerationText = WhiteBoardVariable.Operation.TEXT_CLICK;
+                        break;
+                    case WhiteBoardVariable.Operation.TEXT_CLICK:
+                        int size = OperationUtils.getInstance().getSavePoints().size();
+                        if (size > 0) {
+                            DrawPoint dp = OperationUtils.getInstance().getSavePoints().get(size - 1);
+                            if (dp.getType() == OperationUtils.DRAW_TEXT && dp.getDrawText().getStatus() == DrawTextView.TEXT_DETAIL) {
+                                changeTextBack();
+                                mFabMenuText.expand();
+                                OperationUtils.getInstance().mCurrentOPerationText = WhiteBoardVariable.Operation.TEXT_EXPAND;
+                            }
+                        }
+                        break;
+                    case WhiteBoardVariable.Operation.TEXT_EXPAND:
+                        mFabMenuText.collapse();
+                        OperationUtils.getInstance().mCurrentOPerationText = WhiteBoardVariable.Operation.TEXT_CLICK;
+                        break;
+                }
+                break;
+            case WhiteBoardVariable.Operation.PEN_CLICK:
+            case WhiteBoardVariable.Operation.ERASER_CLICK:
+                switch (OperationUtils.getInstance().mCurrentOPerationText) {
+                    case WhiteBoardVariable.Operation.TEXT_NORMAL:
+                        break;
+                    case WhiteBoardVariable.Operation.TEXT_CLICK:
+                        mFabMenuText.clearDraw();
+                        mFabMenuText.setAddButtonBackground(R.drawable.white_board_text_selector);
+                        OperationUtils.getInstance().mCurrentOPerationText = WhiteBoardVariable.Operation.TEXT_NORMAL;
+                        break;
+                    case WhiteBoardVariable.Operation.TEXT_EXPAND:
+                        mFabMenuText.collapse();
+                        mFabMenuText.clearDraw();
+                        mFabMenuText.setAddButtonBackground(R.drawable.white_board_text_selector);
+                        OperationUtils.getInstance().mCurrentOPerationText = WhiteBoardVariable.Operation.TEXT_NORMAL;
+                        break;
+                }
+                break;
+            case WhiteBoardVariable.Operation.COLOR_CLICK:
+            case WhiteBoardVariable.Operation.OUTSIDE_CLICK:
+                switch (OperationUtils.getInstance().mCurrentOPerationText) {
+                    case WhiteBoardVariable.Operation.TEXT_NORMAL:
+                        break;
+                    case WhiteBoardVariable.Operation.TEXT_CLICK:
+                        break;
+                    case WhiteBoardVariable.Operation.TEXT_EXPAND:
+                        mFabMenuText.collapse();
+                        OperationUtils.getInstance().mCurrentOPerationText = WhiteBoardVariable.Operation.TEXT_CLICK;
+                        break;
+                }
+                break;
+
+        }
+
+    }
+
+    /**
+     * 白板工具栏点击切换操作-橡皮擦
+     */
+    private void setEraserOperation(int currentOperation) {
+        switch (currentOperation) {
+            case WhiteBoardVariable.Operation.ERASER_CLICK:
+                switch (OperationUtils.getInstance().mCurrentOPerationEraser) {
+                    case WhiteBoardVariable.Operation.ERASER_NORMAL:
+                        OperationUtils.getInstance().mCurrentDrawType = OperationUtils.DRAW_ERASER;
+                        mDbView.changeEraser();
+                        mFabMenuEraser.setAddButtonBackground(R.drawable.white_board_eraser_selected_selector);
+                        OperationUtils.getInstance().mCurrentOPerationEraser = WhiteBoardVariable.Operation.ERASER_CLICK;
+                        break;
+                    case WhiteBoardVariable.Operation.ERASER_CLICK:
+                        mFabMenuEraser.expand();
+                        changeEraserBack();
+                        OperationUtils.getInstance().mCurrentOPerationEraser = WhiteBoardVariable.Operation.ERASER_EXPAND;
+                        break;
+                    case WhiteBoardVariable.Operation.ERASER_EXPAND:
+                        mFabMenuEraser.collapse();
+                        OperationUtils.getInstance().mCurrentOPerationEraser = WhiteBoardVariable.Operation.ERASER_CLICK;
+                        break;
+                }
+                break;
+            case WhiteBoardVariable.Operation.TEXT_CLICK:
+            case WhiteBoardVariable.Operation.PEN_CLICK:
+                switch (OperationUtils.getInstance().mCurrentOPerationEraser) {
+                    case WhiteBoardVariable.Operation.ERASER_NORMAL:
+                        break;
+                    case WhiteBoardVariable.Operation.ERASER_CLICK:
+                        mFabMenuEraser.clearDraw();
+                        mFabMenuEraser.setAddButtonBackground(R.drawable.white_board_eraser_selector);
+                        OperationUtils.getInstance().mCurrentOPerationEraser = WhiteBoardVariable.Operation.ERASER_NORMAL;
+                        break;
+                    case WhiteBoardVariable.Operation.ERASER_EXPAND:
+                        mFabMenuEraser.collapse();
+                        mFabMenuEraser.clearDraw();
+                        mFabMenuEraser.setAddButtonBackground(R.drawable.white_board_eraser_selector);
+                        OperationUtils.getInstance().mCurrentOPerationEraser = WhiteBoardVariable.Operation.ERASER_NORMAL;
+                        break;
+                }
+                break;
+            case WhiteBoardVariable.Operation.COLOR_CLICK:
+            case WhiteBoardVariable.Operation.OUTSIDE_CLICK:
+                switch (OperationUtils.getInstance().mCurrentOPerationEraser) {
+                    case WhiteBoardVariable.Operation.ERASER_NORMAL:
+                        break;
+                    case WhiteBoardVariable.Operation.ERASER_CLICK:
+                        break;
+                    case WhiteBoardVariable.Operation.ERASER_EXPAND:
+                        mFabMenuEraser.collapse();
+                        OperationUtils.getInstance().mCurrentOPerationEraser = WhiteBoardVariable.Operation.ERASER_CLICK;
+                        break;
+                }
+                break;
+
+        }
+
+    }
+
+    /**
+     * 保存当前白板为图片
+     */
+    private void saveImage() {
+        String fileName = FileControl.getFileString("Whiteboard", "wb") + ".png";
+
+        File file = new File(fileName);
+        try {
+            File directory = file.getParentFile();
+            if (!directory.exists() && !directory.mkdirs()) {
+                showMessage(("涂鸦文件目录错误"));
+                return;
+            }
+            file.createNewFile();
+            FileOutputStream out = new FileOutputStream(file);
+            mFlView.setDrawingCacheEnabled(true);
+            mFlView.buildDrawingCache();
+            Bitmap bitmap = mFlView.getDrawingCache();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+            mFlView.destroyDrawingCache();
+
+//            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//            Uri uri = Uri.fromFile(file);
+//            intent.setData(uri);
+//            sendBroadcast(intent);//这个广播的目的就是更新图库
+
+            //showMessage(getString(R.string.white_board_export_tip) + fileName);
+        } catch (Exception e) {
+            showMessage(("涂鸦文件生成失败！"));
+            e.printStackTrace();
+        }
+
+        sendImage(fileName);
+        freshButtomPad();
+    }
+
+    @SuppressLint("NewApi")
+    private void launchFileSelectionIntentWB() {
+        enableActionBarHeader(HIDE_ACTION_BAR_HEADER);
+
+        Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            fileIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        }
+        fileIntent.setType("image/*");
+        startActivityForResult(fileIntent, REQUEST_WB_IMAGE_REQUEST_CODE);
+    }
+
+    private void setWBBackground(final Intent aData) {
+
+        Uri uri = aData.getData();
+        //Drawable d = Drawable.createFromStream(this.getContentResolver().openInputStream(uri), null);
+        //mFlView.setBackgroundDrawable(d);
+        //mBackroundview.setImageDrawable(d);
+        mBackroundview.setImageURI(uri);
+    }
+
+    private void setWBBackgroundFromMediaView(final  Intent aData){
+        String url = aData.getStringExtra("WbMediaUrl");
+        String mineType = aData.getStringExtra("WbMediaMineType");
+
+        File file = mSession.getMediasCache().mediaCacheFile(url, mineType);
+        InputStream in = null;
+        try {
+            in = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        Drawable d = Drawable.createFromStream(in, null);
+        showWhiteheBoard(null);
+        mBackroundview.setImageDrawable(d);
+
+        moreImg = R.drawable.ic_material_file2;
+        mSendImageView.setImageResource(moreImg);
+    }
+
+    private void showMessage(CharSequence msg) {
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+    }
+
+    static public int getRequestId(){
+        return REQUEST_WB_MRDIA_VIWE_REQUEST_CODE;
     }
 
 }

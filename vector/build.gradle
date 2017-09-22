@@ -134,12 +134,14 @@ dependencies {
 
     compile 'com.googlecode.libphonenumber:libphonenumber:8.0.1'
 
+    compile 'com.github.guanpy:eventbus:1.0.0'
+
     /************* Matrix SDK management **************/
     // use the matrix SDK as external lib
     compile(name: 'windsing-sdk', ext: 'aar')
     compile(name: 'olm-sdk', ext: 'aar')
     compile(name: 'library-release', ext: 'aar')
-
+    compile(name: 'wblib-release', ext: 'aar')
 
     // use the matrix SDK as a part of the project
     // you have to uncomment some lines in settings.gradle

@@ -431,7 +431,7 @@
 
     <!-- medias slider string -->
     <string name="media_slider_saved">Saved</string>
-    <string name="media_slider_saved_message">Save to downloads</string>
+    <string name="media_slider_saved_message">Handwriting</string>
     <string name="yes">YES</string>
     <string name="no">NO</string>
     <string name="_continue">Continue</string>
@@ -919,7 +919,7 @@
 
     <string name="room_function_pad_file">Send File</string>
     <string name="room_function_pad_camera">Use Camera</string>
-    <string name="room_function_pad_audiocall">Audio Call</string>
+    <string name="room_function_pad_whiteboard">Handwriting</string>
     <string name="room_function_pad_videocall">Video Call</string>
     <string name="room_function_pad_motiondetect">Motion Detect</string>
     <string name="room_function_pad_audiodetect">Audio Detect</string>
@@ -967,6 +967,7 @@
 
     <string name="detect_dialog_start">Start</string>
     <string name="detect_dialog_stop">Stop</string>
+    <string name="handwriting">handwriting</string>
 
     <string name="wordpress_server_url">http://www.windsing.com.cn:8081/wordpress/</string>
 

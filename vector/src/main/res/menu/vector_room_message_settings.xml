@@ -55,6 +55,13 @@
         android:icon="@drawable/ic_material_save"
         android:title="@string/save"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/ic_action_vector_handwriting"
+        android:icon="@drawable/ic_material_handwriting"
+        android:title="@string/handwriting"
+        app:showAsAction="never" />
+
     <!--
     <item
         android:id="@+id/ic_action_view_source"

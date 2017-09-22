@@ -16,6 +16,7 @@
 
 package im.vector.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -57,6 +58,8 @@ public class VectorMediasViewerActivity extends MXCActionBarActivity {
     public static final String KEY_THUMBNAIL_HEIGHT = "ImageSliderActivity.KEY_THUMBNAIL_HEIGHT";
 
     public static final String EXTRA_MATRIX_ID = "ImageSliderActivity.EXTRA_MATRIX_ID";
+
+    private Menu mMenu;
 
     private MXSession mSession;
     private MXMediasCache mxMediasCache;
@@ -187,6 +190,7 @@ public class VectorMediasViewerActivity extends MXCActionBarActivity {
 
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.vector_medias_viewer, menu);
+        mMenu = menu;
         return true;
     }
 
@@ -207,7 +211,14 @@ public class VectorMediasViewerActivity extends MXCActionBarActivity {
                 if (null != fullFilePath) {
                     Toast.makeText(this, getText(R.string.media_slider_saved) + ":" + fullFilePath, Toast.LENGTH_LONG).show();
                 }
-            } else {
+            }else if(action == R.id.ic_action_handwriting){
+                //handwriting
+                Intent intent = new Intent();
+                intent.putExtra("WbMediaUrl", mediaInfo.mMediaUrl);
+                intent.putExtra("WbMediaMineType", mediaInfo.mMimeType);
+                setResult(Activity.RESULT_OK, intent);
+                finish();
+            }else {
                 // shared
                 Uri mediaUri = null;
 
@@ -284,8 +295,15 @@ public class VectorMediasViewerActivity extends MXCActionBarActivity {
         } else if (id ==  R.id.ic_action_download) {
             onAction(mViewPager.getCurrentItem(), id);
             return true;
+        }else if(id == R.id.ic_action_handwriting){
+            onAction(mViewPager.getCurrentItem(), id);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public Menu getmMenu(){
+        return mMenu;
     }
 }

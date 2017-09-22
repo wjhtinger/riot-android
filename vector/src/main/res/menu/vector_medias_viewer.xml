@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="org.matrix.vector.activity.RoomActivity">
 
+    <item android:id="@+id/ic_action_handwriting"
+        android:title="handwriting"
+        android:icon="@drawable/ic_handwriting_white"
+        app:showAsAction="always" />
+
     <item android:id="@+id/ic_action_share"
         android:title="Share"
         android:icon="@drawable/ic_share_white"

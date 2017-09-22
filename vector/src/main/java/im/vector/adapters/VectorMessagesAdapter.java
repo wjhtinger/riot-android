@@ -735,6 +735,8 @@ public class VectorMessagesAdapter extends MessagesAdapter {
         if (!TextUtils.isEmpty(textMsg)) {
             menu.findItem(R.id.ic_action_vector_copy).setVisible(true);
             menu.findItem(R.id.ic_action_vector_quote).setVisible(true);
+        }else{
+            //menu.findItem(R.id.ic_action_vector_handwriting).setVisible(true);
         }
 
         if (event.isUploadingMedias(mMediasCache)) {
