@@ -941,7 +941,7 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
             final boolean isFavorite = groupPosition == mFavouritesGroupPosition;
             final boolean isLowPrior = groupPosition == mLowPriorGroupPosition;
 
-            actionClickArea.setVisibility(View.VISIBLE);
+            //actionClickArea.setVisibility(View.VISIBLE);
             actionClickArea.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -950,7 +950,7 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
             });
 
             timestampTxtView.setVisibility(mIsSearchMode ? View.INVISIBLE : View.VISIBLE);
-            actionImageView.setVisibility(mIsSearchMode ? View.INVISIBLE : View.VISIBLE);
+            actionImageView.setVisibility(mIsSearchMode ? View.INVISIBLE : View.GONE);
         }
 
         separatorView.setVisibility(isLastChild ? View.GONE : View.VISIBLE);
