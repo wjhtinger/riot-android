@@ -332,9 +332,12 @@ public class VectorMessagesAdapter extends MessagesAdapter {
             boolean isAvatarOnRightSide = isAvatarDisplayedOnRightSide(event);
             GradientDrawable mGroupDrawable = (GradientDrawable)contentLayout.getBackground();
             View messageSenderLayout = view.findViewById(R.id.message_sender_layout);
+            TextView messageTextView = (TextView)view.findViewById(R.id.messagesAdapter_body);
 
             if(isAvatarOnRightSide){
-                mGroupDrawable.setColor(0xffffed87); //(0xfff7d96a); //0xff55beff蓝
+                mGroupDrawable.setColor(0xfffcc11d);//(0xfffff952); //(0xfff7d96a); //0xff55beff蓝
+//                if(messageTextView != null)
+//                    messageTextView.setTextColor(0xFF000000);
 
                 if(messageSenderLayout != null){
                     RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -349,7 +352,9 @@ public class VectorMessagesAdapter extends MessagesAdapter {
                     tsTextView.setText(getFormattedTimestamp(event));
                 }
             }else{
-                mGroupDrawable.setColor(0xffe8e8e8); //0xffe8e8e8灰
+                mGroupDrawable.setColor(0xffe8e8e8); //0xffe8e8e8灰 //0xff0ab6c6蓝
+//                if(messageTextView != null)
+//                    messageTextView.setTextColor(0xFF000000);
 
                 if(messageSenderLayout != null){
                     RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
