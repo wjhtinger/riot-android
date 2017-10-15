@@ -402,6 +402,8 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
+
+        <activity android:name="com.xj.images.activities.DisplayImageActivity"></activity>
     </application>
 
 </manifest>

@@ -1022,4 +1022,8 @@
     <string name="room_recents_device">DEVICE</string>
     <string name="room_recents_device_ptz">PTZ Device</string>
 
+    <!--picuture search-->
+    <string name="picture_search_start">Search</string>
+    <string name="picture_search_edit_hint">Input picture key words...</string>
+
 </resources>

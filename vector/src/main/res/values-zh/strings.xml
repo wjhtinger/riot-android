@@ -114,7 +114,7 @@
     <string name="send_bug_report_failed">发送失败(%s)</string>
     <string name="send_bug_report_progress">发送进度(%s%%)</string>
 
-    <string name="send_files_in">Send into</string>
+    <string name="send_files_in">发送</string>
     <string name="save_files_in">Save into</string>
     <string name="file_is_saved">%1$s is saved.</string>
     <string name="read_receipt">Read</string>
@@ -1023,5 +1023,7 @@
     <string name="room_recents_device">设备</string>
     <string name="room_recents_device_ptz">云台</string>
 
-
+    <!--picuture search-->
+    <string name="picture_search_start">搜索</string>
+    <string name="picture_search_edit_hint">输入图片关键字...</string>
 </resources>

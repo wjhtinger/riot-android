@@ -41,6 +41,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -137,6 +140,11 @@ import io.github.rockerhieu.emojicon.EmojiconsFragment;
 import io.github.rockerhieu.emojicon.emoji.Emojicon;
 
 import com.github.guanpy.library.EventBus;
+import com.xj.images.adapters.ImageRecyclerAdapter;
+import com.xj.images.beans.Image;
+import com.xj.images.presenter.DefaultPresenterImpl;
+import com.xj.images.presenter.Presenter;
+import com.xj.images.view.ViewInterface;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -153,7 +161,7 @@ import java.util.TimerTask;
 /**
  * Displays a single room with messages.
  */
-public class VectorRoomActivity extends MXCActionBarActivity implements View.OnClickListener, EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener, MatrixMessageListFragment.IRoomPreviewDataListener, MatrixMessageListFragment.IEventSendingListener, MatrixMessageListFragment.IOnScrollListener {
+public class VectorRoomActivity extends MXCActionBarActivity implements ViewInterface, View.OnClickListener, EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener, MatrixMessageListFragment.IRoomPreviewDataListener, MatrixMessageListFragment.IEventSendingListener, MatrixMessageListFragment.IOnScrollListener {
 
     /**
      * the session
@@ -211,6 +219,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
     private static final int REQUEST_ROOM_AVATAR_CODE = 3;
     private static final int REQUEST_WB_IMAGE_REQUEST_CODE = 4;
     private static final int REQUEST_WB_MRDIA_VIWE_REQUEST_CODE = 5;
+    private static final int REQUEST_PIC_SEARCH_VIWE_REQUEST_CODE = 6;
 
     private VectorMessageListFragment mVectorMessageListFragment;
     private MXSession mSession;
@@ -643,6 +652,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
                 hidePadType(0);
                 hidePadType(1);
                 hidePadType(2);
+                hidePadType(3);
                 enableActionBarHeader(HIDE_ACTION_BAR_HEADER);
                 runOnUiThread(new Runnable() {
                     @Override
@@ -817,6 +827,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
                     hidePadType(0);
                     hidePadType(1);
                     hidePadType(2);
+                    hidePadType(3);
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(mEditText, InputMethodManager.SHOW_IMPLICIT);
 
@@ -985,13 +996,16 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
             }
         });
 
-        View avatarLayout = findViewById(R.id.room_self_avatar);
-
-        if (null != avatarLayout) {
-            mAvatarImageView = (ImageView) avatarLayout.findViewById(R.id.avatar_img);
+        mAvatarImageView = (ImageView)findViewById(R.id.room_self_avatar);
+        if (null != mAvatarImageView) {
+            VectorUtils.loadUserAvatar(this, mSession, mAvatarImageView, mSession.getMyUser());
         }
 
-        refreshSelfAvatar();
+//        if (null != avatarLayout) {
+//            mAvatarImageView = (ImageView) avatarLayout.findViewById(R.id.avatar_img);
+//        }
+
+//        refreshSelfAvatar();
 
         // in case a "Send as" dialog was in progress when the activity was destroyed (life cycle)
         mVectorRoomMediasSender.resumeResizeMediaAndSend();
@@ -1216,6 +1230,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
                 setWBBackground(data);
             }else if (requestCode == REQUEST_WB_MRDIA_VIWE_REQUEST_CODE){
                 setWBBackgroundFromMediaView(data);
+            }else if(requestCode == REQUEST_PIC_SEARCH_VIWE_REQUEST_CODE){
+                handlePicSearch(data);
             }
         }
     }
@@ -3261,18 +3277,18 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
             case R.id.room_function_pad_0:
                 VectorRoomActivity.this.launchFileSelectionIntent();
                 break;
-
             case R.id.room_function_pad_1:
                 if(CommonActivityUtils.checkPermissions(CommonActivityUtils.REQUEST_CODE_PERMISSION_TAKE_PHOTO, VectorRoomActivity.this)){
                     launchCamera();
                 }
                 break;
             case R.id.room_function_pad_2:
-                //lunchCall(1);
                 showWhiteheBoard(null);
                 break;
+            case R.id.room_function_pad_2_5:
+                showPicSearch(null);
+                break;
             case R.id.room_function_pad_3:
-                //lunchCall(0);
                 lunchCallAV();
                 break;
             case R.id.room_function_pad_4:
@@ -3463,16 +3479,18 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
 
         View room_function_pad = findViewById(R.id.room_function_pad);
         View room_functtion_pad_white_board = findViewById(R.id.wb_content);
+        View room_functtion_pad_pic_search_board = findViewById(R.id.pic_search_pad);
         View function_pad_separator = findViewById(R.id.function_pad_separator);
         Float arc0, arc1;
         int duration;
-        if(room_function_pad.getVisibility() == View.GONE && room_functtion_pad_white_board.getVisibility() == View.GONE){
+        if(room_function_pad.getVisibility() == View.GONE
+                && (room_functtion_pad_white_board.getVisibility() == View.GONE && room_functtion_pad_pic_search_board.getVisibility() == View.GONE)){
             TranslateAnimation mHiddenAction = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
                     Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
             mHiddenAction.setDuration(200);
             room_function_pad.startAnimation(mHiddenAction);
             room_function_pad.setVisibility(View.VISIBLE);
-            function_pad_separator.setVisibility(View.VISIBLE);
+            //function_pad_separator.setVisibility(View.VISIBLE);
             moreImg = R.drawable.ic_material_file2;
             arc0 = 370F;
             arc1 = 360F;
@@ -3480,6 +3498,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
         }else {
             room_function_pad.setVisibility(View.GONE);
             room_functtion_pad_white_board.setVisibility(View.GONE);
+            room_functtion_pad_pic_search_board.setVisibility(View.GONE);
             function_pad_separator.setVisibility(View.GONE);
             moreImg = R.drawable.ic_material_file;
             arc0 = -370F;
@@ -3540,6 +3559,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
     private void showEmojiPad(){
         hidePadType(1);
         hidePadType(2);
+        hidePadType(3);
 
         View room_functtion_pad_emojicons = findViewById(R.id.emojicons);
         View function_pad_separator = findViewById(R.id.function_pad_separator);
@@ -3560,7 +3580,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
             mHiddenAction.setDuration(200);
             room_functtion_pad_emojicons.startAnimation(mHiddenAction);
             room_functtion_pad_emojicons.setVisibility(View.VISIBLE);
-            function_pad_separator.setVisibility(View.VISIBLE);
+            //function_pad_separator.setVisibility(View.VISIBLE);
             moreImgEmoji = R.drawable.ic_material_emoji2;
             arc0 = 50F;
             arc1 = -50F;
@@ -3607,11 +3627,17 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
                 mSendImageView.setImageResource(R.drawable.ic_material_file);
                 moreImg = R.drawable.ic_material_file;
             }
-
         }else if(type == 2){
             View room_functtion_pad_white_board = findViewById(R.id.wb_content);
             if (room_functtion_pad_white_board.getVisibility() == View.VISIBLE) {
                 room_functtion_pad_white_board.setVisibility(View.GONE);
+            }
+        }else if(type == 3){
+            View room_functtion_pad_pic_search_board = findViewById(R.id.pic_search_pad);
+            if (room_functtion_pad_pic_search_board.getVisibility() == View.VISIBLE) {
+                room_functtion_pad_pic_search_board.setVisibility(View.GONE);
+                mSendImageView.setImageResource(R.drawable.ic_material_file);
+                moreImg = R.drawable.ic_material_file;
             }
         }
     }
@@ -3742,7 +3768,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
         }
         room_functtion_pad_white_board.getLayoutParams().height = softInputHeight;
 
-        function_pad_separator.setVisibility(View.VISIBLE);
+        //function_pad_separator.setVisibility(View.VISIBLE);
         room_functtion_pad_white_board.setVisibility(View.VISIBLE);
 
         mVBottomBack = findViewById(R.id.v_bottom_back);
@@ -3995,7 +4021,10 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
         changePenBack();
         changeColorBack();
         changeEraserBack();
+        OperationUtils.getInstance().mCurrentOPerationPen = WhiteBoardVariable.Operation.PEN_NORMAL;
         ToolsOperation(WhiteBoardVariable.Operation.PEN_CLICK);
+        //mFabMenuSize.collapse();
+
         mDbView.post(new Runnable() {
             @Override
             public void run() {
@@ -4144,7 +4173,13 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
     private void newPage() {
         mBackroundview.setImageURI(null);
         OperationUtils.getInstance().newPage();
-        showPoints();
+        mDbView.post(new Runnable() {
+            @Override
+            public void run() {
+                showPoints();
+            }
+        });
+        mBackroundview.setImageDrawable(null);
     }
 
     /**
@@ -4564,6 +4599,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
         }
         Drawable d = Drawable.createFromStream(in, null);
         showWhiteheBoard(null);
+        newPage();
         mBackroundview.setImageDrawable(d);
 
         moreImg = R.drawable.ic_material_file2;
@@ -4578,6 +4614,241 @@ public class VectorRoomActivity extends MXCActionBarActivity implements View.OnC
         return REQUEST_WB_MRDIA_VIWE_REQUEST_CODE;
     }
 
+
+
+    //阅后即焚
+    private void delMessageAll(){
+        int count = mVectorMessageListFragment.mMessageListView.getCount();
+        Event event;
+        for(int i = 0; i < count; i++){
+            event = mVectorMessageListFragment.getEvent(i);
+            if(event != null){
+//                if (event.isUndeliverable() || event.isUnkownDevice()) {
+//                    // delete from the store
+//                    mSession.getDataHandler().deleteRoomEvent(event);
+//
+//                    // remove from the adapter
+//                    mVectorMessageListFragment.mAdapter.removeEventById(event.eventId);
+//                    mVectorMessageListFragment.mAdapter.notifyDataSetChanged();
+//                    mVectorMessageListFragment.mEventSendingListener.onMessageRedacted(event);
+//                } else {
+//                    mVectorMessageListFragment.redactEvent(event.eventId);
+//                }
+                if(!mSession.getMyUserId().equals(event.getSender())){
+                    mRoom.redact(event.eventId, new ApiCallback<Event>() {
+                        @Override
+                        public void onSuccess(Event event) {
+
+                        }
+
+                        @Override
+                        public void onNetworkError(Exception e) {
+
+                        }
+
+                        @Override
+                        public void onMatrixError(MatrixError matrixError) {
+
+                        }
+
+                        @Override
+                        public void onUnexpectedError(Exception e) {
+
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+
+
+
+    //图片搜索
+    private RecyclerView mRecyclerView;
+    private ArrayList<Image> mImages = new ArrayList<Image>();
+    private ImageRecyclerAdapter mAdapter;
+    private StaggeredGridLayoutManager mLayoutManager;
+    private Presenter mPresenter;
+    private Button mPicSearchButton;
+    private EditText mPicSearchEdit;
+    private View mRoom_functtion_pad_pic_search_board;
+    private int mSoftInputHeight;
+
+    private void showPicSearch(String picString) {
+        //hidePadType(1);
+        View room_function_pad = findViewById(R.id.room_function_pad);
+        if (room_function_pad.getVisibility() == View.VISIBLE) {
+            room_function_pad.setVisibility(View.GONE);
+        }
+
+        mRoom_functtion_pad_pic_search_board = findViewById(R.id.pic_search_pad);
+        //View function_pad_separator = findViewById(R.id.function_pad_separator);
+
+        mSoftInputHeight = getButtomPadHeight();
+        if (mSoftInputHeight == 0) {
+            mSoftInputHeight = 800;
+        }
+        mRoom_functtion_pad_pic_search_board.getLayoutParams().height = mSoftInputHeight;
+
+        //function_pad_separator.setVisibility(View.VISIBLE);
+        mRoom_functtion_pad_pic_search_board.setVisibility(View.VISIBLE);
+
+        picSearchInit();
+    }
+
+    private void picSearchInit(){
+        if(mPresenter != null){
+            return;
+        }
+
+        mPresenter = new DefaultPresenterImpl(this);
+
+        mRecyclerView = (RecyclerView)findViewById(R.id.pic_search_recycler_view);
+        mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new ImageRecyclerAdapter(this,mImages);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(newState == RecyclerView.SCROLL_STATE_IDLE /*|| newState == RecyclerView.SCROLL_STATE_SETTLING*/){
+                    int pos[] = mLayoutManager.findLastVisibleItemPositions(null);
+                    if (null != pos && 0 < pos.length){
+                        android.util.Log.d("alanF", (mImages.size() - 1) + "====" + pos[pos.length -1]);
+                        if(Math.abs((mImages.size() - 1) - pos[pos.length -1]) < 4) {
+                            android.util.Log.d("alanF", "load data");
+                            mPresenter.loadIamges();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+
+        mPicSearchButton = (Button) findViewById(R.id.pic_search_button);
+        mPicSearchEdit = (EditText) findViewById(R.id.pic_search_edit);
+        mPicSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String keyWord = mPicSearchEdit.getText().toString();
+                if(keyWord != null && !keyWord.equals("")){
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mPicSearchButton.getWindowToken(), 0);
+
+                    mPresenter.setQueryKeyWord(keyWord);
+                    mPresenter.loadIamges();
+
+                    mPicSearchButton.setEnabled(false);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRoom_functtion_pad_pic_search_board.getLayoutParams().height = mSoftInputHeight;
+                        }
+                    }, 100);
+                }
+            }
+        });
+
+        mPicSearchEdit.requestFocus();
+        mPicSearchEdit.requestFocusFromTouch();
+        mPicSearchEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mPicSearchButton.setEnabled(true);
+            }
+        });
+
+        mPicSearchEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            Thread.sleep(100);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+//                    }
+//                });
+                //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+
+                //findViewById(R.id.pic_search_recycler_view).setVisibility(View.GONE);
+
+                mRoom_functtion_pad_pic_search_board.getLayoutParams().height = 150;
+            }
+        });
+    }
+
+    private void handlePicSearch(final  Intent aData){
+        String fileName = aData.getStringExtra("PicSearchFileName");
+        int action = aData.getIntExtra("PicSearchAction", 0);
+
+        if(action == 0){
+            sendImage(fileName);
+        }else if(action == 1){
+            hidePadType(3);
+            InputStream in = null;
+            try {
+                in = new FileInputStream(fileName);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            Drawable d = Drawable.createFromStream(in, null);
+            showWhiteheBoard(null);
+            newPage();
+            mBackroundview.setImageDrawable(d);
+
+            moreImg = R.drawable.ic_material_file2;
+            mSendImageView.setImageResource(moreImg);
+        }
+    }
+
+    @Override
+    public void notifyDataChanged() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void addImage(Image image) {
+        mImages.add(image);
+    }
+
+    @Override
+    public void addImages(@NonNull List<Image> images) {
+        mImages.addAll(images);
+    }
+
+    @Override
+    public void clearAllDatas() {
+        mImages.clear();
+    }
+
+    static public int getPicSearchRequestId(){
+        return REQUEST_PIC_SEARCH_VIWE_REQUEST_CODE;
+    }
 }
 
 

@@ -129,7 +129,7 @@
             android:id="@+id/main_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/room_background"
+            android:background="@drawable/chat_room_backround"
             android:paddingTop="0dp"
             android:paddingBottom="0dp"
             android:layout_weight="20">
@@ -157,21 +157,31 @@
                 android:id="@+id/room_bottom_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/corners_bg_room_bottom"
                 android:layout_alignParentBottom="true">
 
                 <RelativeLayout
                     android:id="@+id/room_self_avatar_container"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
-
+                    <!--
                     <include layout="@layout/vector_room_round_avatar"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_centerVertical="true"
                         android:id="@+id/room_self_avatar"/>
+                        -->
+
+                    <im.vector.view.VectorCircularImageView
+                        android:id="@+id/room_self_avatar"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_centerVertical="true"/>
                 </RelativeLayout>
 
                 <LinearLayout
@@ -203,7 +213,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:inputType="textCapSentences|textMultiLine"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:hint="@string/room_message_placeholder_not_encrypted"
                         android:id="@+id/editText_messageBox"
                         android:layout_centerVertical="true"
@@ -291,6 +301,7 @@
                 android:layout_height="1dp"
                 android:layout_alignParentLeft="true"
                 android:layout_above="@id/room_bottom_layout"
+                android:visibility="gone"
                 android:background="@color/vector_light_gray_color" />
 
             <RelativeLayout
@@ -436,6 +447,27 @@
                     <ImageButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:src="@drawable/room_function_videocall"
+                        android:id="@+id/room_function_pad_3"
+                        android:onClick="roomFunctionPadClick"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/room_function_pad_videocall"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:clickable="true">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:src="@drawable/room_function_whiteboard"
                         android:id="@+id/room_function_pad_2"
                         android:onClick="roomFunctionPadClick"/>
@@ -457,15 +489,16 @@
                     <ImageButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/room_function_videocall"
-                        android:id="@+id/room_function_pad_3"
+                        android:src="@drawable/room_function_pic_search"
+                        android:id="@+id/room_function_pad_2_5"
                         android:onClick="roomFunctionPadClick"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/room_function_pad_videocall"
+                        android:text="图片搜索"
                         android:textSize="10sp" />
                 </LinearLayout>
+
             </TableRow>
 
             <TableRow android:layout_gravity="center"
@@ -646,6 +679,54 @@
             android:layout_width="match_parent"
             android:layout_height="230dp"
             android:visibility="gone"/>
+
+
+        <RelativeLayout
+            android:id="@+id/pic_search_pad"
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:visibility="gone">
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/pic_search_recycler_view">
+            </android.support.v7.widget.RecyclerView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white_board_drawtext_back"
+                android:layout_alignParentBottom="true"
+                android:alpha="0.8"
+                android:orientation="horizontal"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp">
+
+                <EditText
+                    android:id="@+id/pic_search_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/picture_search_edit_hint"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:textColorHint="@color/vector_0_54_black_color"
+                    android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/pic_search_button"
+                    style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="@string/picture_search_start"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
 
         <RelativeLayout
             android:id="@+id/wb_content"
