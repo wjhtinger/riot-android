@@ -27,6 +27,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
 import com.github.guanpy.wblib.utils.AppContextUtil;
@@ -612,6 +613,12 @@ public class VectorApp extends Application {
         }
 
         return stats;
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this) ;
     }
 }
 

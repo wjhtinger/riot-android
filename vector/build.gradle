@@ -23,6 +23,7 @@ android {
         ndk {
                 abiFilters "armeabi", "armeabi-v7a"
         }
+        multiDexEnabled true
     }
 
     signingConfigs {
@@ -53,6 +54,11 @@ android {
         matrixorg.initWith(buildTypes.release)
         matrixorg {
             signingConfig signingConfigs.release
+        }
+
+        dexOptions {
+            incremental true
+            javaMaxHeapSize "4g"
         }
     }
 
@@ -153,6 +159,14 @@ dependencies {
     appCompile 'com.google.android.gms:play-services-gcm:8.1.0'
     appCompile 'com.google.android.gms:play-services-analytics:8.1.0'
 
+    //for pic search
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile "io.reactivex:rxjava:1.2.5"
+    compile 'com.jakewharton:butterknife:8.4.0'
+    compile 'com.squareup.okhttp3:okhttp:3.5.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+
+    compile 'com.android.support:multidex:1.0.1'
     // fdroid flavor only
 }
 
