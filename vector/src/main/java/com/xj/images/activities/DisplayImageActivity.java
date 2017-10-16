@@ -78,7 +78,7 @@ public class DisplayImageActivity extends Activity {
         DiskCache diskCache = ImageGlideModule.getDiskCache(this);
         File file = diskCache.get(new StringSignature(mShowingImageUrl));
         if (null != file) {
-            String fileName = mShowingImageUrl.hashCode() + ".jpg";
+            String fileName = mShowingImageUrl.hashCode() + mShowingImageUrl.substring(mShowingImageUrl.lastIndexOf("."));
             File newImageFile = new File(FileUtils.getExternalDir(), fileName);
             try {
                 if (!newImageFile.exists()) {

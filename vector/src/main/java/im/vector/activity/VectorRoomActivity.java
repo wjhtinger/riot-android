@@ -48,6 +48,7 @@ import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.KeyListener;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 
@@ -1000,6 +1001,25 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
         if (null != mAvatarImageView) {
             VectorUtils.loadUserAvatar(this, mSession, mAvatarImageView, mSession.getMyUser());
         }
+        mAvatarImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Editable text = mEditText.getText();
+                if (!TextUtils.isEmpty(text)){
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mAvatarImageView.getWindowToken(), 0);
+                    moreImg = R.drawable.ic_material_file2;
+                    mSendImageView.setImageResource(moreImg);
+                    mEditText.setText("");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showPicSearch(text.toString());;
+                        }
+                    }, 50);
+                }
+            }
+        });
 
 //        if (null != avatarLayout) {
 //            mAvatarImageView = (ImageView) avatarLayout.findViewById(R.id.avatar_img);
@@ -4695,6 +4715,12 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
         mRoom_functtion_pad_pic_search_board.setVisibility(View.VISIBLE);
 
         picSearchInit();
+
+        if(picString != null && !picString.equals("")){
+            mPresenter.setQueryKeyWord(picString);
+            mPresenter.loadIamges();
+            mPicSearchEdit.setText(picString);
+        }
     }
 
     private void picSearchInit(){
@@ -4744,7 +4770,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
                     mPresenter.setQueryKeyWord(keyWord);
                     mPresenter.loadIamges();
 
-                    mPicSearchButton.setEnabled(false);
+                    //mPicSearchButton.setEnabled(false);
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -4776,23 +4802,46 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
         mPicSearchEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            Thread.sleep(100);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-//                    }
-//                });
-                //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+            ViewGroup.LayoutParams para = mRoom_functtion_pad_pic_search_board.getLayoutParams();//.height = 150;
+            para.height = 150;
+            mRoom_functtion_pad_pic_search_board.setLayoutParams(para);
 
-                //findViewById(R.id.pic_search_recycler_view).setVisibility(View.GONE);
+            //todo, 某些手机会高度设置不成功，所以再延时设置一次
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ViewGroup.LayoutParams para = mRoom_functtion_pad_pic_search_board.getLayoutParams();//.height = 150;
+                    para.height = 150;
+                    mRoom_functtion_pad_pic_search_board.setLayoutParams(para);
+                }
+            }, 50);
+            }
+        });
 
-                mRoom_functtion_pad_pic_search_board.getLayoutParams().height = 150;
+        mPicSearchEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event)
+            {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    String keyWord = mPicSearchEdit.getText().toString();
+                    if(keyWord != null && !keyWord.equals("")) {
+                        ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
+                                .hideSoftInputFromWindow(mPicSearchEdit.getWindowToken(), 0);
+
+                        mPresenter.setQueryKeyWord(keyWord);
+                        mPresenter.loadIamges();
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mRoom_functtion_pad_pic_search_board.getLayoutParams().height = mSoftInputHeight;
+                            }
+                        }, 50);
+                    }
+                }
+
+                return true;
             }
         });
     }

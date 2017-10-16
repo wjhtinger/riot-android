@@ -1026,4 +1026,7 @@
     <!--picuture search-->
     <string name="picture_search_start">搜索</string>
     <string name="picture_search_edit_hint">输入图片关键字...</string>
+    <string name="picture_search_no_more">没有更多图片了</string>
+    <string name="picture_search_loading">图片加载中[%d页]</string>
+
 </resources>

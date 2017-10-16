@@ -709,7 +709,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="@string/picture_search_edit_hint"
-                    android:inputType="textCapSentences|textMultiLine"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:singleLine="true"
                     android:textColorHint="@color/vector_0_54_black_color"
                     android:textSize="16sp" />
 

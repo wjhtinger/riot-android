@@ -1025,5 +1025,6 @@
     <!--picuture search-->
     <string name="picture_search_start">Search</string>
     <string name="picture_search_edit_hint">Input picture key words...</string>
-
+    <string name="picture_search_no_more">No more pictures</string>
+    <string name="picture_search_loading">Picture is at loading[%d Page]</string>
 </resources>

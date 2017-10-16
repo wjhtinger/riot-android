@@ -24,6 +24,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import im.vector.R;
+import im.vector.VectorApp;
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
@@ -125,12 +127,12 @@ public class DefaultPresenterImpl implements Presenter {
             return;
         }
         if(mBaiduEnd && mSoEnd){
-            Toast.makeText(ImageApp.getInstance(),"只有这些图片了，亲，试试其他关键字？？？", Toast.LENGTH_LONG).show();
+            Toast.makeText(VectorApp.getInstance(), R.string.picture_search_no_more, Toast.LENGTH_LONG).show();
             return;
         }
         if(mLoading){
             Log.i("alanF", "loading:" + mCurrentPage+" return");
-            Toast.makeText(ImageApp.getInstance(),"正在加载" + mCurrentPage + "页数据，请稍后", Toast.LENGTH_SHORT).show();
+            Toast.makeText(VectorApp.getInstance(), VectorApp.getInstance().getString(R.string.picture_search_loading, mCurrentPage), Toast.LENGTH_SHORT).show();
             return;
         }
         Log.i("alanF", "will load:" + mCurrentPage);

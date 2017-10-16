@@ -134,6 +134,11 @@
             android:minHeight="10dp"
             android:visibility="gone" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/vector_actionbar_background" />
+
         <LinearLayout
             android:id="@+id/home_buttom_pad"
             android:layout_width="match_parent"
