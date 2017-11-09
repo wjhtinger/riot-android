@@ -1909,8 +1909,8 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
 
         // theses both settings are dedicated when a client does not support GCM
         if (gcmmgr.hasRegistrationToken()) {
-            mBackgroundSyncCategory.removePreference(mSyncRequestTimeoutPreference);
-            mBackgroundSyncCategory.removePreference(mSyncRequestDelayPreference);
+            //mBackgroundSyncCategory.removePreference(mSyncRequestTimeoutPreference);
+            //mBackgroundSyncCategory.removePreference(mSyncRequestDelayPreference);
         }
     }
 
