@@ -72,13 +72,14 @@ public class DisplayImageActivity extends Activity {
 
     private boolean mMenusShowing = false;
     private WallpaperManager mWallpaperManager;
+    private String mFileExtName = ".jpg";
 
     @OnClick({R.id.save_image,R.id.share_image,R.id.image,R.id.set_wallpaper})
      public void doClick(View view){
         DiskCache diskCache = ImageGlideModule.getDiskCache(this);
         File file = diskCache.get(new StringSignature(mShowingImageUrl));
         if (null != file) {
-            String fileName = mShowingImageUrl.hashCode() + mShowingImageUrl.substring(mShowingImageUrl.lastIndexOf("."));
+            String fileName = mShowingImageUrl.hashCode() + mFileExtName;//mShowingImageUrl.substring(mShowingImageUrl.lastIndexOf("."));
             File newImageFile = new File(FileUtils.getExternalDir(), fileName);
             try {
                 if (!newImageFile.exists()) {
@@ -168,11 +169,18 @@ public class DisplayImageActivity extends Activity {
                                 mShowingImageUrl = mImage.getImageThumbBakURL();
                                 Log.d("alanF", "loadBakImage:" + mShowingImageUrl);
                                 Glide.with(DisplayImageActivity.this).load(mShowingImageUrl).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(target);
+                                //mMenus.setVisibility(View.VISIBLE);
                                 return true;
                             }
 
                             @Override
                             public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                if(resource.isAnimated()){
+                                    mFileExtName = ".gif";
+                                }else{
+                                    mFileExtName = ".jpg";
+                                }
+                                mMenus.setVisibility(View.VISIBLE);
                                 return false;
                             }
                         }).into(target);
@@ -181,6 +189,12 @@ public class DisplayImageActivity extends Activity {
 
                     @Override
                     public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        if(resource.isAnimated()){
+                            mFileExtName = ".gif";
+                        }else{
+                            mFileExtName = ".jpg";
+                        }
+                        mMenus.setVisibility(View.VISIBLE);
                         return false;
                     }
                 })
@@ -192,5 +206,7 @@ public class DisplayImageActivity extends Activity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(0, R.anim.default_anim_out);
+        mMenus.setVisibility(View.GONE);
+        mFileExtName = ".jpg";
     }
 }

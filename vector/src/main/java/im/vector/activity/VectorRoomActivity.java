@@ -653,7 +653,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
                 hidePadType(0);
                 hidePadType(1);
                 hidePadType(2);
-                hidePadType(3);
+                //hidePadType(3);
                 enableActionBarHeader(HIDE_ACTION_BAR_HEADER);
                 runOnUiThread(new Runnable() {
                     @Override
@@ -667,6 +667,10 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
                         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
                     }
                 });
+
+                if(mPicSearch){
+                    findViewById(R.id.pic_search_pad).setVisibility(View.GONE);
+                }
             }
         });
 
@@ -690,7 +694,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
         mSendButtonLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!TextUtils.isEmpty(mEditText.getText())) {
+                if (!TextUtils.isEmpty(mEditText.getText()) && !mPicSearch) {
                     ObjectAnimator.ofFloat(v, "translationX", 0F, 20F, 0F).setDuration(300).start();//
                     sendTextMessage();
                 } else {
@@ -828,7 +832,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
                     hidePadType(0);
                     hidePadType(1);
                     hidePadType(2);
-                    hidePadType(3);
+                    //hidePadType(3);
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(mEditText, InputMethodManager.SHOW_IMPLICIT);
 
@@ -844,6 +848,10 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
                             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
                         }
                     });
+
+                    if(mPicSearch){
+                        findViewById(R.id.pic_search_pad).setVisibility(View.GONE);
+                    }
 
                 }
             }
@@ -1008,15 +1016,19 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
                 if (!TextUtils.isEmpty(text)){
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mAvatarImageView.getWindowToken(), 0);
+                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
                     moreImg = R.drawable.ic_material_file2;
                     mSendImageView.setImageResource(moreImg);
-                    mEditText.setText("");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            showPicSearch(text.toString());;
-                        }
-                    }, 50);
+//                    mEditText.setText("");
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            showPicSearch(text.toString());;
+//                        }
+//                    }, 50);
+                    hidePadType(0);
+                    prePicSearch();
+                    showPicSearch(text.toString());
                 }
             }
         });
@@ -1122,8 +1134,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
 
             // listen for room name or topic changes
             mRoom.addEventListener(mRoomEventListener);
-
-            mEditText.setHint(mRoom.isEncrypted() ? R.string.room_message_placeholder_encrypted : R.string.room_message_placeholder_not_encrypted);
+            if(!mPicSearch)
+                mEditText.setHint(mRoom.isEncrypted() ? R.string.room_message_placeholder_encrypted : R.string.room_message_placeholder_not_encrypted);
         }
 
         mSession.getDataHandler().addListener(mGlobalEventListener);
@@ -2016,7 +2028,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
      */
     private void manageSendMoreButtons() {
         boolean hasText = (mEditText.getText().length() > 0);
-        mSendImageView.setImageResource(hasText ? R.drawable.ic_material_send_green : moreImg);
+        if(!mPicSearch)
+            mSendImageView.setImageResource(hasText ? R.drawable.ic_material_send_green : moreImg);
     }
 
     /**
@@ -3306,7 +3319,10 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
                 showWhiteheBoard(null);
                 break;
             case R.id.room_function_pad_2_5:
-                showPicSearch(null);
+                prePicSearch();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(mEditText, InputMethodManager.SHOW_IMPLICIT);
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
                 break;
             case R.id.room_function_pad_3:
                 lunchCallAV();
@@ -3504,7 +3520,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
         Float arc0, arc1;
         int duration;
         if(room_function_pad.getVisibility() == View.GONE
-                && (room_functtion_pad_white_board.getVisibility() == View.GONE && room_functtion_pad_pic_search_board.getVisibility() == View.GONE)){
+                && (room_functtion_pad_white_board.getVisibility() == View.GONE && room_functtion_pad_pic_search_board.getVisibility() == View.GONE)
+                && !mPicSearch){
             TranslateAnimation mHiddenAction = new TranslateAnimation(Animation.RELATIVE_TO_SELF,0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
                     Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
             mHiddenAction.setDuration(200);
@@ -3524,6 +3541,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
             arc0 = -370F;
             arc1 = -360F;
             duration = 500;
+
+            endPicSearch();
         }
 
         ObjectAnimator animator = new ObjectAnimator().ofFloat(mSendImageView, "rotation", 0F, arc0, arc1);
@@ -3654,10 +3673,11 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
             }
         }else if(type == 3){
             View room_functtion_pad_pic_search_board = findViewById(R.id.pic_search_pad);
-            if (room_functtion_pad_pic_search_board.getVisibility() == View.VISIBLE) {
+            if (mPicSearch) {
                 room_functtion_pad_pic_search_board.setVisibility(View.GONE);
                 mSendImageView.setImageResource(R.drawable.ic_material_file);
                 moreImg = R.drawable.ic_material_file;
+                endPicSearch();
             }
         }
     }
@@ -4607,6 +4627,8 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
     }
 
     private void setWBBackgroundFromMediaView(final  Intent aData){
+        hidePadType(3);
+
         String url = aData.getStringExtra("WbMediaUrl");
         String mineType = aData.getStringExtra("WbMediaMineType");
 
@@ -4693,7 +4715,43 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
     private Button mPicSearchButton;
     private EditText mPicSearchEdit;
     private View mRoom_functtion_pad_pic_search_board;
+    private View mPictureSearchLayout;
     private int mSoftInputHeight;
+    private boolean mPicSearch = false;
+
+
+    private void prePicSearch(){
+        mPicSearch = true;
+        mPictureSearchLayout = findViewById(R.id.room_picture_search_layout);
+        mPictureSearchLayout.setVisibility(View.VISIBLE);
+        mPictureSearchLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String picString = mEditText.getText().toString();
+                if(picString != null && !picString.equals("")) {
+                    ObjectAnimator.ofFloat(v, "translationY", 0F, 30F, 0F).setDuration(300).start();
+                    ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(mPictureSearchLayout.getWindowToken(), 0);
+                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+
+                    showPicSearch(picString);
+                }
+            }
+        });
+
+        mEditText.setHint(R.string.picture_search_edit_hint);
+        findViewById(R.id.room_function_pad).setVisibility(View.GONE);
+    }
+
+    private void endPicSearch(){
+        if(mPicSearch){
+            mPictureSearchLayout = findViewById(R.id.room_picture_search_layout);
+            mPictureSearchLayout.setVisibility(View.GONE);
+            mEditText.setHint(R.string.room_message_placeholder_not_encrypted);
+            mEditText.setText("");
+            mPicSearch = false;
+        }
+    }
 
     private void showPicSearch(String picString) {
         //hidePadType(1);
@@ -4716,10 +4774,9 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
 
         picSearchInit();
 
-        if(picString != null && !picString.equals("")){
+        if(picString != null && !picString.equals("")) {
             mPresenter.setQueryKeyWord(picString);
             mPresenter.loadIamges();
-            mPicSearchEdit.setText(picString);
         }
     }
 
@@ -4817,6 +4874,10 @@ public class VectorRoomActivity extends MXCActionBarActivity implements ViewInte
             }, 50);
             }
         });
+
+
+
+
 
         mPicSearchEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 

@@ -29,6 +29,7 @@
         android:layout_marginBottom="20dp"
         android:orientation="vertical"
         android:alpha="0.7"
+        android:visibility="gone"
         android:gravity="center_horizontal">
         <Button
             android:layout_width="wrap_content"

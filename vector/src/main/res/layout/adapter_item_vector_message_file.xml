@@ -89,11 +89,12 @@
 
                             <!-- the media type -->
                             <ImageView
-                                android:paddingLeft="4dp"
+                                android:id="@+id/messagesAdapter_image_type"
                                 android:layout_width="@dimen/chat_avatar_size"
                                 android:layout_height="@dimen/chat_avatar_size"
-                                android:id="@+id/messagesAdapter_image_type"
-                                android:src="@drawable/filetype_image"/>
+                                android:layout_gravity="center_vertical"
+                                android:paddingLeft="4dp"
+                                android:src="@drawable/filetype_image" />
 
                             <!-- the media -->
                             <TextView

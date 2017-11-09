@@ -1006,7 +1006,7 @@
     <string name="upgrade_No">Cancel</string>
     <string name="upgrade_nonotify">Not notify next time</string>
     <string name="upgrade_newversion">New App version</string>
-    <string name="upgrade_url">https://windsing.com.cn/upgrade/update.json</string>
+    <string name="upgrade_url">https://windsing.com.cn:449/upgrade/update.json</string>
     <string name="upgrade_downlaod_file">Download upgrade file</string>
     <string name="upgrade_downlaod_fail">Upgrade file download fail!</string>
     <string name="upgrade_nofind_sdcard">Not found sdCard!</string>

@@ -229,6 +229,22 @@
                         android:layout_height="match_parent" />
 
                     <RelativeLayout
+                        android:id="@+id/room_picture_search_layout"
+                        android:layout_width="37dp"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"
+                        android:layout_marginRight="5dp"
+                        android:contentDescription="@string/call_connecting">
+
+                        <ImageView
+                            android:id="@+id/room_picture_search_image_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/room_function_pic_search2"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout
                         android:id="@+id/room_start_call_layout"
                         android:layout_width="37dp"
                         android:layout_height="match_parent"
@@ -700,6 +716,7 @@
                 android:layout_alignParentBottom="true"
                 android:alpha="0.8"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp">
 
