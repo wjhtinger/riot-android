@@ -365,6 +365,19 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
             }
         });
 
+        final EditTextPreference setRobotKey = (EditTextPreference) findPreference(appContext.getString(R.string.settings_set_robot_key));
+        Context context = VectorApp.getInstance().getApplicationContext();
+        SharedPreferences robotSettings = context.getSharedPreferences("robotSettings", 0);
+        //String robotKey = robotSettings.getString("robotKey", context.getString(R.string.webcam_robot_key));
+        setRobotKey.setText(null);
+        setRobotKey.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                onSetRobotKeyClick((null == newValue) ? null : ((String) newValue).trim());
+                return false;
+            }
+        });
+
         // push rules
         for (String resourceText : mPushesRuleByResourceId.keySet()) {
             final CheckBoxPreference switchPreference = (CheckBoxPreference) findPreference(resourceText);
@@ -1136,6 +1149,19 @@ public class VectorSettingsPreferencesFragment extends PreferenceFragment implem
                 }
             });
         }
+    }
+
+    private void onSetRobotKeyClick(final String value) {
+        if(value.isEmpty()){
+            return;
+        }
+
+        SharedPreferences robotSettings = VectorApp.getInstance().getApplicationContext().getSharedPreferences("robotSettings", 0);
+        SharedPreferences.Editor editor = robotSettings.edit();
+        editor.putString("robotKey", value);
+        editor.commit();
+
+        refreshDisplay();
     }
 
     /**

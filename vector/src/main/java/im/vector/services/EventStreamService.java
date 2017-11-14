@@ -25,6 +25,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -194,6 +195,7 @@ public class EventStreamService extends Service {
 
     FinalHttp fh;
     AjaxParams ajaxParams;
+    String mRobotKey = null;
 
 
     /**
@@ -1288,6 +1290,11 @@ public class EventStreamService extends Service {
             fh = new FinalHttp();
         }
 
+        if(mRobotKey == null){
+            SharedPreferences robotSettings = context.getSharedPreferences("robotSettings", 0);
+            mRobotKey = robotSettings.getString("robotKey", context.getString(R.string.webcam_robot_key));
+        }
+
         if(msg == null){
             return;
         }
@@ -1298,7 +1305,7 @@ public class EventStreamService extends Service {
 
         AjaxParams ajaxParams;
         ajaxParams=new AjaxParams();
-        ajaxParams.put("key", context.getResources().getString(R.string.webcam_robot_key));
+        ajaxParams.put("key", mRobotKey);
         ajaxParams.put("info", msg);
 
         String url = context.getResources().getString(R.string.webcam_robot_url);

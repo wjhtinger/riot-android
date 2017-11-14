@@ -714,7 +714,7 @@
     <string name="settings_notifications">消息提醒设置</string>
     <string name="settings_ignored_users">Ignored users</string>
     <string name="settings_other">其他</string>
-    <string name="settings_advanced">Advanced</string>
+    <string name="settings_advanced">高级</string>
     <string name="settings_cryptography">Cryptography</string>
     <string name="settings_notifications_targets">Notification Targets</string>
     <string name="settings_contact">Local contacts</string>
@@ -1032,4 +1032,8 @@
     <!--robot-->
     <string name="webcam_robot_url">http://www.tuling123.com/openapi/api</string>
     <string name="webcam_robot_key">efb755dc65364bca9e2c759aec259753</string>
+
+    <string name="settings_set_robot_key">设置机器人Key</string>
+
+
 </resources>
