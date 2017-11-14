@@ -36,12 +36,21 @@ import android.text.TextUtils;
 
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo;
 import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap;
+import org.matrix.androidsdk.rest.callback.ApiCallback;
+import org.matrix.androidsdk.rest.model.MatrixError;
+import org.matrix.androidsdk.rest.model.Message;
 import org.matrix.androidsdk.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.windsing.DetectManager;
+import com.windsing.robot.bean.Answer;
+import com.windsing.robot.util.PraseUtil;
+
+import net.tsz.afinal.FinalHttp;
+import net.tsz.afinal.http.AjaxCallBack;
+import net.tsz.afinal.http.AjaxParams;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
@@ -182,6 +191,10 @@ public class EventStreamService extends Service {
      * GCM manager
      */
     private GcmRegistrationManager mGcmRegistrationManager;
+
+    FinalHttp fh;
+    AjaxParams ajaxParams;
+
 
     /**
      * @return the event stream instance
@@ -1242,6 +1255,9 @@ public class EventStreamService extends Service {
     private void wsCmdHandle(final MXSession session, final Event event, String cmd){
         String cmdStringTag = getResources().getString(R.string.tag_message_command);
         if(cmd.length() < cmdStringTag.length() || !cmd.substring(0, 9).equals(cmdStringTag)) {
+            if (Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_monitoring))) {
+                robotResponse(getApplicationContext(), session, session.getDataHandler().getRoom(event.roomId), cmd);
+            }
             return;
         }
         Log.d(LOG_TAG,"##### wsCmdHandle:" + cmd);
@@ -1264,5 +1280,101 @@ public class EventStreamService extends Service {
                 }
             }
         }
+    }
+
+
+    private void robotResponse(final Context context, final MXSession session, final Room room, String msg){
+        if(fh == null){
+            fh = new FinalHttp();
+        }
+
+        if(msg == null){
+            return;
+        }
+
+        if (TextUtils.isEmpty(msg)) {
+            return;
+        }
+
+        AjaxParams ajaxParams;
+        ajaxParams=new AjaxParams();
+        ajaxParams.put("key", context.getResources().getString(R.string.webcam_robot_key));
+        ajaxParams.put("info", msg);
+
+        String url = context.getResources().getString(R.string.webcam_robot_url);
+        fh.post(url, ajaxParams, new AjaxCallBack<Object>() {
+            @Override
+            public void onSuccess(Object o) {
+                super.onSuccess(o);
+                org.matrix.androidsdk.util.Log.d(LOG_TAG,"response>>" + o);
+                Answer answer = PraseUtil.praseMsgText((String) o);
+                String responeContent;
+                if (answer == null) {
+                    responeContent = "网络错误";
+                    //changeList(msgtype, responeContent);
+                } else {
+                    switch (answer.getCode()) {
+                        case "40001"://参数key错误
+                        case "40002"://请求内容info为空
+                        case "40004"://当天请求次数已使用完
+                        case "40007"://数据格式异常
+                        case "100000"://文本
+                            responeContent = answer.getText();
+                            //changeList(msgtype, responeContent);
+
+                            sendMsg(session, room, responeContent);
+
+                            break;
+                        case "200000"://链接
+                            responeContent = answer.getText() + answer.getUrl();
+                            //changeList(msgtype, responeContent);
+                            break;
+                        case "302000"://新闻
+                        case "308000"://菜谱
+                            responeContent=answer.getJsoninfo();
+                            //changeList(Const.MSG_TYPE_LIST, responeContent);
+                            break;
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t, int errorNo, String strMsg) {
+                super.onFailure(t, errorNo, strMsg);
+                //changeList(msgtype, "网络连接失败");
+            }
+        });
+    }
+
+    private void sendMsg(MXSession session, Room room, String bodyString){
+        android.util.Log.d(LOG_TAG, "sendMsg:" + bodyString);
+
+        Message message = new Message();
+        message.msgtype = Message.MSGTYPE_TEXT;
+        message.body = bodyString;
+
+        final Event event = new Event(message, session.getCredentials().userId, room.getRoomId());
+        room.storeOutgoingEvent(event);
+        room.sendEvent(event, new ApiCallback<Void>() {
+            @Override
+            public void onSuccess(Void info) {
+                android.util.Log.d(LOG_TAG, "Send message : onSuccess ");
+            }
+
+            @Override
+            public void onNetworkError(Exception e) {
+                android.util.Log.d(LOG_TAG, "Send message : onNetworkError " + e.getLocalizedMessage());
+            }
+
+            @Override
+            public void onMatrixError(MatrixError e) {
+                android.util.Log.d(LOG_TAG, "Send message : onMatrixError " + e.getLocalizedMessage());
+            }
+
+            @Override
+            public void onUnexpectedError(Exception e) {
+                android.util.Log.d(LOG_TAG, "Send message : onUnexpectedError " + e.getLocalizedMessage());
+            }
+        });
     }
 }

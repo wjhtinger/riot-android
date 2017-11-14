@@ -1027,4 +1027,9 @@
     <string name="picture_search_edit_hint">Input picture key words...</string>
     <string name="picture_search_no_more">No more pictures</string>
     <string name="picture_search_loading">Picture is at loading[%d Page]</string>
+
+    <!--robot-->
+    <string name="webcam_robot_url">http://www.tuling123.com/openapi/api</string>
+    <string name="webcam_robot_key">"efb755dc65364bca9e2c759aec259753"</string>
+
 </resources>

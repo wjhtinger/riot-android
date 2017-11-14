@@ -148,6 +148,9 @@ dependencies {
     compile(name: 'olm-sdk', ext: 'aar')
     compile(name: 'library-release', ext: 'aar')
     compile(name: 'wblib-release', ext: 'aar')
+    compile files('libs/afinal_0.5.1_bin.jar')
+    compile files('libs/jsoup-1.8.1.jar')
+
 
     // use the matrix SDK as a part of the project
     // you have to uncomment some lines in settings.gradle

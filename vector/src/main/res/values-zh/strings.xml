@@ -1029,4 +1029,7 @@
     <string name="picture_search_no_more">没有更多图片了</string>
     <string name="picture_search_loading">图片加载中[%d页]</string>
 
+    <!--robot-->
+    <string name="webcam_robot_url">http://www.tuling123.com/openapi/api</string>
+    <string name="webcam_robot_key">efb755dc65364bca9e2c759aec259753</string>
 </resources>
