@@ -264,13 +264,13 @@ public class VectorMessagesAdapter extends MessagesAdapter {
 
         MessageRow row = getItem(position);
         final Event event = row.getEvent();
-
+        int type = getItemViewType(position);
         if (mE2eIconByEventId.containsKey(event.eventId)) {
             senderMargin.setVisibility(senderNameView.getVisibility());
             e2eIconView.setVisibility(View.VISIBLE);
             e2eIconView.setImageResource(mE2eIconByEventId.get(event.eventId));
 
-            int type = getItemViewType(position);
+
 
             if ((type == ROW_TYPE_IMAGE) || (type == ROW_TYPE_VIDEO)) {
                 View bodyLayoutView = view.findViewById(org.matrix.androidsdk.R.id.messagesAdapter_body_layout);
@@ -335,9 +335,9 @@ public class VectorMessagesAdapter extends MessagesAdapter {
             TextView messageTextView = (TextView)view.findViewById(R.id.messagesAdapter_body);
 
             if(isAvatarOnRightSide){
-                mGroupDrawable.setColor(0xfffcc11d);//(0xfffff952); //(0xfff7d96a); //0xff55beff蓝
-//                if(messageTextView != null)
-//                    messageTextView.setTextColor(0xFF000000);
+                mGroupDrawable.setColor(0xffff970b);//(0xfffcc11d);//(0xfffff952); //(0xfff7d96a); //0xff55beff蓝
+                if(messageTextView != null && type == ROW_TYPE_TEXT)
+                    messageTextView.setTextColor(0xFFFFFFFF);
 
                 if(messageSenderLayout != null){
                     RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -843,8 +843,8 @@ public class VectorMessagesAdapter extends MessagesAdapter {
         float alpha = (!isInSelectionMode || isHighlighted) ? 1.0f : 0.2f;
 
         // the message body is dimmed when not selected
-        contentView.findViewById(R.id.messagesAdapter_body_view).setAlpha(alpha);
-        contentView.findViewById(R.id.messagesAdapter_avatars_list).setAlpha(alpha);
+        //contentView.findViewById(R.id.messagesAdapter_body_view).setAlpha(alpha);
+        //contentView.findViewById(R.id.messagesAdapter_avatars_list).setAlpha(alpha);
 
         TextView tsTextView = (TextView)contentView.findViewById(org.matrix.androidsdk.R.id.messagesAdapter_timestamp);
         if (isInSelectionMode && isHighlighted) {
