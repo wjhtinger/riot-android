@@ -1257,8 +1257,8 @@ public class EventStreamService extends Service {
     private void wsCmdHandle(final MXSession session, final Event event, String cmd){
         String cmdStringTag = getResources().getString(R.string.tag_message_command);
         if(cmd.length() < cmdStringTag.length() || !cmd.substring(0, 9).equals(cmdStringTag)) {
-            if (Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_monitoring))) {
-                robotResponse(getApplicationContext(), session, session.getDataHandler().getRoom(event.roomId), cmd);
+            if (Matrix.getInstance(this).getSharedGCMRegistrationManager().isFunctionEnable(this.getString(R.string.settings_set_robot_en))) {
+                robotResponse(getApplicationContext(), session, event, session.getDataHandler().getRoom(event.roomId), cmd);
             }
             return;
         }
@@ -1285,7 +1285,7 @@ public class EventStreamService extends Service {
     }
 
 
-    private void robotResponse(final Context context, final MXSession session, final Room room, String msg){
+    private void robotResponse(final Context context, final MXSession session,final Event event, final Room room, String msg){
         if(fh == null){
             fh = new FinalHttp();
         }
@@ -1328,18 +1328,30 @@ public class EventStreamService extends Service {
                         case "100000"://文本
                             responeContent = answer.getText();
                             //changeList(msgtype, responeContent);
-
-                            sendMsg(session, room, responeContent);
+                            String tag = "-wscmd-]";//TODO 图灵机器人返回值限制导致
+                            if(responeContent.length() > tag.length() &&  responeContent.substring(0, 8).equals(tag)){
+                                String cmd = "[" + responeContent;
+                                if (Matrix.getInstance(getApplicationContext()).getSharedGCMRegistrationManager().isFunctionEnable(getString(R.string.settings_enable_monitoring))) {
+                                    DetectManager.instance(getApplicationContext()).detectHandle(session, session.getDataHandler().getRoom(event.roomId), cmd);
+                                }
+                                else{
+                                    sendMsg(session, room, responeContent);
+                                }
+                            }else{
+                                sendMsg(session, room, responeContent);
+                            }
 
                             break;
                         case "200000"://链接
                             responeContent = answer.getText() + answer.getUrl();
+                            sendMsg(session, room, responeContent);
                             //changeList(msgtype, responeContent);
                             break;
                         case "302000"://新闻
                         case "308000"://菜谱
                             responeContent=answer.getJsoninfo();
                             //changeList(Const.MSG_TYPE_LIST, responeContent);
+                            sendMsg(session, room, responeContent);
                             break;
                     }
                 }

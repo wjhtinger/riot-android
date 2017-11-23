@@ -1130,7 +1130,8 @@ public final class GcmRegistrationManager {
         boolean en = true;
         if(str.equals(mContext.getString(R.string.settings_enable_monitoring))
             || str.equals(mContext.getString(R.string.settings_enable_call_auto_answer))
-            || str.equals(mContext.getString(R.string.settings_enable_save_local_file))){
+            || str.equals(mContext.getString(R.string.settings_enable_save_local_file))
+            || str.equals(mContext.getString(R.string.settings_set_robot_en))){
             en = false;
         }
 

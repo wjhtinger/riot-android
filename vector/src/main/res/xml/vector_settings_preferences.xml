@@ -283,13 +283,19 @@
     <im.vector.preference.VectorDividerCategory/>
     -->
     <PreferenceCategory
-        android:title="@string/settings_advanced"
-        android:key="@string/settings_advanced" >
+        android:title="@string/settings_robot"
+        android:key="@string/settings_robot" >
+
+        <im.vector.preference.VectorSwitchPreference
+            android:title="@string/settings_set_robot_en"
+            android:key="@string/settings_set_robot_en"
+            android:summary="@string/settings_summary_set_robot_en"/>
 
         <EditTextPreference
             android:focusable="true"
             android:title="@string/settings_set_robot_key"
-            android:key="@string/settings_set_robot_key"/>
+            android:key="@string/settings_set_robot_key"
+            android:summary="@string/settings_summary_set_robot_key"/>
 
     </PreferenceCategory>
 

@@ -86,7 +86,7 @@
     <string name="action_video_call">视频通话</string>
     <string name="action_search_room">Search room</string>
     <string name="action_search_contact">Search contact</string>
-    <string name="action_mark_all_as_read">清除新信息标志</string>
+    <string name="action_mark_all_as_read">清除新信息提示</string>
     <string name="action_quick_reply">快速回复</string>
     <string name="action_open">打开应用</string>
     <string name="action_close">关闭</string>
@@ -1032,8 +1032,18 @@
     <!--robot-->
     <string name="webcam_robot_url">http://www.tuling123.com/openapi/api</string>
     <string name="webcam_robot_key">efb755dc65364bca9e2c759aec259753</string>
+    <string name="settings_robot">聊天机器人设置</string>
+    <string name="settings_set_robot_en">启动机器人</string>
+    <string name="settings_set_robot_key">设置机器人KEY</string>
+    <string name="settings_summary_set_robot_en">机器人将会帮你自动聊天。</string>
+    <string name="settings_summary_set_robot_key">定制和训练自己的专属机器人。</string>
 
-    <string name="settings_set_robot_key">设置机器人Key</string>
-
-
+    <!-- qr code-->
+    <string name="room_sliding_menu_qr">二维码</string>
+    <string name="title_activity_qr">我的二维码</string>
+    <string name="title_activity_scan_qr">扫描二维码/条码</string>
+    <string name="activity_qr_scanme">扫我跟我亲近吧</string>
+    <string name="action_scan_qr">扫一扫</string>
+    <string name="action_scan_qr_guide">将二维码图片对准扫描框即可扫描</string>
+    <string name="action_scan_qr_web_vew">再次点击返回键退出</string>
 </resources>

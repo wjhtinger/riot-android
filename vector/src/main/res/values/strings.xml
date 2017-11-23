@@ -1031,7 +1031,19 @@
     <!--robot-->
     <string name="webcam_robot_url">http://www.tuling123.com/openapi/api</string>
     <string name="webcam_robot_key">"efb755dc65364bca9e2c759aec259753"</string>
+    <string name="settings_robot">Chat robot setting</string>
+    <string name="settings_set_robot_en">Enable robot</string>
+    <string name="settings_set_robot_key">Set robot KEY</string>
+    <string name="settings_summary_set_robot_en">robot help you to chat with others。</string>
+    <string name="settings_summary_set_robot_key">custom my own robot。</string>
 
-    <string name="settings_set_robot_key">Set Robot Key</string>
+    <!-- qr code-->
+    <string name="room_sliding_menu_qr">QR code</string>
+    <string name="title_activity_qr">My QR code</string>
+    <string name="title_activity_scan_qr">Scan QR Code</string>
+    <string name="activity_qr_scanme">Just scan me</string>
+    <string name="action_scan_qr">Scan</string>
+    <string name="action_scan_qr_guide">Put the QR Code in the rect to scan</string>
+    <string name="action_scan_qr_web_vew">Type again to back</string>
 
 </resources>
