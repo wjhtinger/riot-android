@@ -43,6 +43,8 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.vondear.rxtools.activity.ActivityScanerCode;
+import com.vondear.rxtools.activity.ActivityWebView;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.adapters.MessageRow;
@@ -1088,9 +1090,13 @@ public class VectorMessageListFragment extends MatrixMessageListFragment impleme
                         getActivity().startActivity(intent);
                     }
                 } else {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    intent.putExtra(Browser.EXTRA_APPLICATION_ID, getActivity().getPackageName());
-                    getActivity().startActivity(intent);
+                    //Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    //intent.putExtra(Browser.EXTRA_APPLICATION_ID, getActivity().getPackageName());
+                    //getActivity().startActivity(intent);
+
+                    Intent webIntent = new Intent(getActivity(), ActivityWebView.class);
+                    webIntent.putExtra(ActivityWebView.WEB_VIEW_URL, uri.toString());
+                    startActivity(webIntent);
                 }
             }
         } catch (Exception e) {
