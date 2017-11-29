@@ -18,6 +18,7 @@ package im.vector.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import com.windsing.upgrade.Upgrader;
 
@@ -128,6 +129,9 @@ public class SplashActivity extends MXCActionBarActivity {
         Log.e(LOG_TAG, "onCreate");
 
         setContentView(R.layout.vector_activity_splash);
+
+        int flag= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        getWindow().setFlags(flag, flag);
 
         mSessions =  Matrix.getInstance(getApplicationContext()).getSessions();
 
