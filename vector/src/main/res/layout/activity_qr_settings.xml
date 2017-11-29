@@ -1,0 +1,47 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/room_background"
+        android:id="@+id/vector_qr_page">
+
+        <im.vector.view.VectorCircularImageView
+            android:id="@+id/iv_qr_main_avatar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/navigation_avatar_top_margin">
+
+        </im.vector.view.VectorCircularImageView>
+
+        <TextView
+            android:id="@+id/iv_qr_main_displayname"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_below="@+id/iv_qr_main_avatar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="A displayname here"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/iv_qr_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:visibility="visible" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_qr_code"
+            android:layout_centerHorizontal="true"
+            android:text="@string/activity_qr_scanme" />
+
+    </RelativeLayout>
+
+</FrameLayout>

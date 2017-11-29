@@ -137,6 +137,39 @@
         </activity>
 
         <activity
+            android:name="im.vector.activity.VectorQRActivity"
+            android:label="@string/title_activity_qr"
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName="im.vector.activity.VectorHomeActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="im.vector.activity.VectorHomeActivity"/>
+        </activity>
+
+        <activity
+            android:name="com.vondear.rxtools.activity.ActivityScanerCode"
+            android:label="@string/title_activity_scan_qr"
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName="im.vector.activity.VectorHomeActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="im.vector.activity.VectorHomeActivity"/>
+        </activity>
+
+        <activity
+            android:name="com.vondear.rxtools.activity.ActivityWebView"
+            android:label="@string/title_activity_scan_qr"
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName="im.vector.activity.VectorHomeActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="im.vector.activity.VectorHomeActivity"/>
+        </activity>
+
+        <activity
             android:name="im.vector.activity.VectorSettingsActivity"
             android:label="@string/title_activity_settings"
             android:windowSoftInputMode="adjustResize"

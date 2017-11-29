@@ -32,6 +32,7 @@ import android.text.TextUtils;
 
 import com.github.guanpy.wblib.utils.AppContextUtil;
 import com.github.guanpy.wblib.utils.OperationUtils;
+import com.vondear.rxtools.RxTool;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.util.Log;
@@ -229,6 +230,8 @@ public class VectorApp extends Application {
         AppContextUtil.init(this);
         //SdCardStatus.init(StoreUtil.CACHE_DIR);
         OperationUtils.getInstance().init();
+
+        RxTool.init(this);
     }
 
     /**

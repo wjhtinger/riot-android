@@ -58,6 +58,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.vondear.rxtools.activity.ActivityScanerCode;
 import com.windsing.DetectManager;
 import com.windsing.upgrade.Upgrader;
 
@@ -842,6 +843,11 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
                 }
                 break;
 
+            case R.id.ic_action_scan_qr:
+                final Intent settingsIntent = new Intent(VectorHomeActivity.this, ActivityScanerCode.class);
+                settingsIntent.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, mSession.getMyUserId());
+                VectorHomeActivity.this.startActivity(settingsIntent);
+                break;
             //back in web
 //            case R.id.ic_action_web_back:
 //                if(mWebView.canGoBack()){
@@ -1214,6 +1220,13 @@ public class VectorHomeActivity extends AppCompatActivity implements VectorRecen
 
             public void onDrawerClosed(View view) {
                 switch (VectorHomeActivity.this.mSlidingMenuIndex){
+                    case R.id.sliding_menu_qr: {
+                        // launch the settings activity
+                        final Intent settingsIntent = new Intent(VectorHomeActivity.this, VectorQRActivity.class);
+                        settingsIntent.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, mSession.getMyUserId());
+                        VectorHomeActivity.this.startActivity(settingsIntent);
+                        break;
+                    }
                     case R.id.sliding_menu_settings: {
                         // launch the settings activity
                         final Intent settingsIntent = new Intent(VectorHomeActivity.this, VectorSettingsActivity.class);
