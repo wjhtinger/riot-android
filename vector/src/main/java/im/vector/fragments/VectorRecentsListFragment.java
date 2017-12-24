@@ -43,6 +43,9 @@ import android.widget.ExpandableListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import cn.appkf.flappybird.android.flappybirdlunch;
+import com.ispring.gameplane.GameActivity;
+
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.data.Room;
 import org.matrix.androidsdk.data.RoomAccountData;
@@ -221,7 +224,17 @@ public class VectorRecentsListFragment extends Fragment implements VectorRoomSum
                 }
                 else if (mAdapter.isDeviceGroupPosition(groupPosition)) {
                     //do nothing
-
+                }
+                else if(mAdapter.isGameGroupPosition(groupPosition)){
+                    Intent intent = null;
+                    if (childPosition == 0) {
+                        intent = new Intent(getActivity(), flappybirdlunch.class);
+                    } else if (childPosition == 1) {
+                        intent = new Intent(getActivity(), GameActivity.class);
+                    }
+                    if (intent != null) {
+                        getActivity().startActivity(intent);
+                    }
                 } else {
                     RoomSummary roomSummary = mAdapter.getRoomSummaryAt(groupPosition, childPosition);
                     MXSession session = Matrix.getInstance(getActivity()).getSession(roomSummary.getMatrixId());

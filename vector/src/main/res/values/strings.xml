@@ -1022,6 +1022,11 @@
     <string name="room_recents_device">DEVICE</string>
     <string name="room_recents_device_ptz">PTZ Device</string>
 
+    <!-- game -->
+    <string name="room_recents_game">Game</string>
+    <string name="room_recents_game_plane">Paper airplane</string>
+    <string name="room_recents_game_bird">Flappy bird</string>
+
     <!--picuture search-->
     <string name="picture_search_start">Search</string>
     <string name="picture_search_edit_hint">Input picture key words...</string>

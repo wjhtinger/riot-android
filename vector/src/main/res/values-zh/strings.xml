@@ -1023,6 +1023,11 @@
     <string name="room_recents_device">设备</string>
     <string name="room_recents_device_ptz">云台</string>
 
+    <!-- game -->
+    <string name="room_recents_game">游戏</string>
+    <string name="room_recents_game_plane">纸飞机</string>
+    <string name="room_recents_game_bird">笨鸟快飞</string>
+
     <!--picuture search-->
     <string name="picture_search_start">搜索</string>
     <string name="picture_search_edit_hint">输入图片关键字...</string>

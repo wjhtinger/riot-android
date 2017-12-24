@@ -101,6 +101,7 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
     private int mNoTagGroupPosition = -1;    // "Rooms" index
     private int mLowPriorGroupPosition = -1;  // "Low Priority" index
     private int mDeviceGroupPosition = -1;  // "Low Priority" index
+    private int mGameGroupPosition = -1;  // "Low Priority" index
 
     private final String DBG_CLASS_NAME;
 
@@ -203,7 +204,11 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
         }
         else if (mDeviceGroupPosition == groupPosition) {
             retValue = mContext.getResources().getString(R.string.room_recents_device);
-        } else {
+        }
+        else if (mGameGroupPosition == groupPosition) {
+            retValue = mContext.getResources().getString(R.string.room_recents_game);
+        }
+        else {
             // unknown section
             retValue = "??";
         }
@@ -269,7 +274,9 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
         return (mDeviceGroupPosition == groupPosition);
     }
 
-    /**
+    public boolean isGameGroupPosition(int groupPosition) {
+        return (mGameGroupPosition == groupPosition);
+    }    /**
      * @return the directory group position
      */
     public int getDirectoryGroupPosition() {
@@ -459,6 +466,12 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
                 summaryListByGroupsRetValue.add(new ArrayList<RoomSummary>());
             }
 
+            if(mForceDirectoryGroupDisplay){
+                mGameGroupPosition = groupIndex;
+                groupIndex++;
+                summaryListByGroupsRetValue.add(new ArrayList<RoomSummary>());
+            }
+
             // in avoiding empty history mode
             // check if there is really nothing else
             if (mDisplayDirectoryGroupWhenEmpty && !mForceDirectoryGroupDisplay && (groupIndex > 1)) {
@@ -625,6 +638,10 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
 
         if (mDeviceGroupPosition == groupPosition) {
             return 1;
+        }
+
+        if (mGameGroupPosition == groupPosition) {
+            return 2;
         }
 
         return mSummaryListByGroupPosition.get(groupPosition).size();
@@ -821,6 +838,38 @@ public class VectorRoomSummaryAdapter extends BaseExpandableListAdapter {
                 roomNameTxtView.setLayoutParams(layoutParams);
                 convertView.findViewById(R.id.roomSummaryAdapter_down_layout).setVisibility(View.GONE);
                 avatarImageView.setImageResource(R.drawable.ic_developer_board_black_24dp);
+            }
+
+            return convertView;
+        }
+
+        if (mGameGroupPosition == groupPosition){
+            bingUnreadMsgView.setVisibility(View.INVISIBLE);
+            timestampTxtView.setVisibility(View.GONE);
+            actionImageView.setVisibility(View.GONE);
+            invitationView.setVisibility(View.GONE);
+            separatorView.setVisibility(View.GONE);
+            separatorGroupView.setVisibility(View.VISIBLE);
+            showMoreView.setVisibility(View.VISIBLE);
+            actionClickArea.setVisibility(View.GONE);
+            unreadCountTxtView.setVisibility(View.GONE);
+            directChatIcon.setVisibility(View.GONE);
+            encryptedIcon.setVisibility(View.GONE);
+
+            if(childPosition == 0){
+                roomNameTxtView.setText(mContext.getResources().getString(R.string.room_recents_game_bird));
+                RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+                roomNameTxtView.setLayoutParams(layoutParams);
+                convertView.findViewById(R.id.roomSummaryAdapter_down_layout).setVisibility(View.GONE);
+                avatarImageView.setImageResource(R.drawable.plane_bird);
+            }else if(childPosition == 1){
+                roomNameTxtView.setText(mContext.getResources().getString(R.string.room_recents_game_plane));
+                RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+                roomNameTxtView.setLayoutParams(layoutParams);
+                convertView.findViewById(R.id.roomSummaryAdapter_down_layout).setVisibility(View.GONE);
+                avatarImageView.setImageResource(R.drawable.plane_icon);
             }
 
             return convertView;
