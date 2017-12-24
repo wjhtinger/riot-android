@@ -151,7 +151,7 @@ dependencies {
     compile files('libs/afinal_0.5.1_bin.jar')
     compile files('libs/jsoup-1.8.1.jar')
     compile files('libs/zxing_core_3.0.1.jar')
-
+    compile "com.badlogicgames.gdx:gdx-backend-android:1.6.1"
 
     // use the matrix SDK as a part of the project
     // you have to uncomment some lines in settings.gradle
