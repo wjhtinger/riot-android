@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_LOGS" />
+
 
     <!-- universal links management -->
     <uses-permission android:name="android.permission.REORDER_TASKS" />
@@ -20,7 +20,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <!-- shared files from external application -->
-    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
+
 
     <!-- to be able to turn on display when a notification is received-->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -428,16 +428,16 @@
         <activity android:name=".activity.VectorSharedFilesActivity"
             android:theme="@android:style/Theme.NoDisplay">
 
-            <intent-filter> 
-                <action android:name="android.intent.action.SEND" /> 
-                <category android:name="android.intent.category.DEFAULT" /> 
-                <data android:mimeType="*/*" /> 
-            </intent-filter> 
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
 
-            <intent-filter> 
-                <action android:name="android.intent.action.SEND_MULTIPLE" /> 
-                <category android:name="android.intent.category.DEFAULT" /> 
-                <data android:mimeType="*/*" /> 
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
 

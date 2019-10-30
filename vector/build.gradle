@@ -12,8 +12,8 @@ android {
 
     defaultConfig {
         applicationId "im.windsing"
-        minSdkVersion 16
-        targetSdkVersion 23
+        minSdkVersion 17
+        targetSdkVersion 26
         // use the version code
         versionCode rootProject.ext.versionCodeProp
         versionName rootProject.ext.versionNameProp
@@ -24,6 +24,7 @@ android {
                 abiFilters "armeabi", "armeabi-v7a"
         }
         multiDexEnabled true
+        flavorDimensions ""
     }
 
     signingConfigs {
